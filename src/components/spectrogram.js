@@ -21,6 +21,7 @@ const Aux = props => props.children;
 
 // let tempCanvas = new Konva.Layer();
 // let tempCanvas = window.createElement('canvas');
+let tempCanvas =  document.createElement('canvas');
 
 
 let rectangles = [];
@@ -61,6 +62,19 @@ tempCanvas : this.refs.canvas
     mainLayer.setAttrs(updatedProps);
 }
 
+// componentWillUpdate() {
+//   // let ctx = this.mainLayer.canvas._canvas.getContext('2d');
+//   this.mainLayer.move({x:-4, y:0});
+//   let tempLayer = new Konva.Layer();
+//   // ctx.drawImage(this.state.tempCanvas, 0, 0, this.width, this.height,
+//               // 0, 0, this.width, this.height);
+//
+//   let tempCtx = this.state.tempCanvas.getContext('2d');
+//   tempCtx.drawImage(this.mainLayer.canvas._canvas, 0, 0, this.width, this.height);
+// }
+// componentDidUpdate() {
+//
+// }
 
 onStream(stream) {
   let input = audioContext.createMediaStreamSource(stream);
@@ -89,6 +103,7 @@ return this.renderFreqDomain();
 
 renderFreqDomain = ()=> {
 
+var tempCtx = tempCanvas.getContext('2d');
 
 
   let freq = new Uint8Array(analyser.frequencyBinCount);
@@ -98,8 +113,11 @@ renderFreqDomain = ()=> {
   // Copy the current canvas onto the temp canvas.
   this.state.tempCanvas.width = this.state.width;
   this.state.tempCanvas.height = this.state.height;
-  let tempCtx = this.state.tempCanvas.getContext('2d');
-  tempCtx.drawImage(this.mainLayer.canvas._canvas, 0, 0, this.width, this.height);
+
+  let mainCanvas = this.mainLayer.getCanvas()._canvas;
+  let ctx = mainCanvas.getContext('2d');
+  tempCtx.drawImage(mainCanvas, 0, 0, this.width, this.height);
+
 
       const image = new window.Image();
     image.src = "http://konvajs.github.io/assets/yoda.jpg";
@@ -196,15 +214,16 @@ let recs = rectangles.map((rectangle, index)=>{
   //   this.setState({currentPos:this.state.width})
   //
   // }
-  let ctx = this.mainLayer.canvas._canvas.getContext('2d');
 
-  this.mainLayer.move({x:-4, y:0});
   this.setState({rectangles: recs});
   // console.log(this.refs.stage);
-ctx.drawImage(this.state.tempCanvas, 0, 0, this.width, this.height,
-              0, 0, this.width, this.height);
+  ctx.translate(-this.state.speed, 0);
 
+  ctx.drawImage(tempCanvas, 0, 0, this.state.width, this.state.height,
+                0, 0, this.state.width, this.state.height);
 
+  // Reset the transformation matrix.
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
 // let t = new Konva.Transform();
 // t.translate({x:1, y:1});
 // this.mainLayer.t;
@@ -213,7 +232,6 @@ ctx.drawImage(this.state.tempCanvas, 0, 0, this.width, this.height,
 // transform(this.mainLayer);
 /*
   // Translate the canvas.
-  ctx.translate(-this.speed, 0);
   // Draw the copied image.
   ctx.drawImage(this.tempCanvas, 0, 0, this.width, this.height,
                 0, 0, this.width, this.height);
