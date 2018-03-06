@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { Stage, Layer, Rect, Group, Image } from 'react-konva';
 import Konva from 'konva';
+import './spectrogram.css';
 const ReactAnimationFrame = require('react-animation-frame');
-
 //TODO: Resize of canvas
 //TODO: MAINLAYER, TEMPLAYER
 
@@ -90,7 +90,6 @@ return this.renderFreqDomain();
 renderFreqDomain = ()=> {
 
 
-  let transform = new Konva.Transform([1, 0, 0, 1, 0, 0]);
 
   let freq = new Uint8Array(analyser.frequencyBinCount);
   analyser.getByteFrequencyData(freq);
@@ -197,12 +196,21 @@ let recs = rectangles.map((rectangle, index)=>{
   //   this.setState({currentPos:this.state.width})
   //
   // }
-  this.setState({rectangles: recs});
+  let ctx = this.mainLayer.canvas._canvas.getContext('2d');
+
   this.mainLayer.move({x:-4, y:0});
+  this.setState({rectangles: recs});
   // console.log(this.refs.stage);
-let ctx = this.mainLayer.canvas._canvas.getContext('2d');
 ctx.drawImage(this.state.tempCanvas, 0, 0, this.width, this.height,
               0, 0, this.width, this.height);
+
+
+// let t = new Konva.Transform();
+// t.translate({x:1, y:1});
+// this.mainLayer.t;
+// this.mainLayer.add(new Konva.Transformer([1, 0, 0, 1, 0, 0]));
+
+// transform(this.mainLayer);
 /*
   // Translate the canvas.
   ctx.translate(-this.speed, 0);
@@ -251,14 +259,7 @@ newFreqAlgorithm(index) {
           this.mainLayer = node;
         }}>
     {this.state.rectangles}
-    <Image
-    x={500}
-    y={100}
-    image={this.state.image}
-      ref={node=>{
-        this.imageNode = node;
-      }}
-      />
+
       </Layer>
 
 
