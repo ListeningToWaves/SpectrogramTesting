@@ -1,0 +1,13 @@
+#tempCanvas {
+  border: 3px solid red;
+  display: none;
+}
+canvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    left: 1px;
+  }
+  .canvas-container {
+  }

@@ -5,7 +5,7 @@ import Konva from 'konva';
 import './spectrogram.css';
 const ReactAnimationFrame = require('react-animation-frame');
 //TODO: Resize of canvas
-//TODO: MAINLAYER, TEMPLAYER
+//TODO: Make it look better
 
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const analyser = audioContext.createAnalyser();
@@ -36,8 +36,8 @@ class Spectrogram extends Component {
       resolutionMax: 20000,
       resolutionMin: 20,
       currentPos: window.innerWidth,
-      rectangles: [],
-      image: new window.Image(),
+      rectangles: [[],[]],
+      image: null,
       tempCanvas: null
     });
     // this.loop = this.loop.bind(this);
@@ -102,7 +102,20 @@ return this.renderFreqDomain();
 }
 
 renderFreqDomain = ()=> {
+    // if(this.state.currentRectangles){
+    //   this.state.currentRectangles.forEach((rect)=>{
+    //
+    //   })
+  //}
 
+  // this.mainGroup.toImage({
+  //   callback: (img)=>{
+  //     this.setState({
+  //       image: img
+  //     });
+  //   }
+  // });
+    // this.setState({rectangles: [this.state.currentRectangles,...this.state.rectangles]});
 var tempCtx = tempCanvas.getContext('2d');
 
 
@@ -113,22 +126,22 @@ var tempCtx = tempCanvas.getContext('2d');
   // Copy the current canvas onto the temp canvas.
   this.state.tempCanvas.width = this.state.width;
   this.state.tempCanvas.height = this.state.height;
-
-  let mainCanvas = this.mainLayer.getCanvas()._canvas;
-  let ctx = mainCanvas.getContext('2d');
-  tempCtx.drawImage(mainCanvas, 0, 0, this.width, this.height);
-
-
-      const image = new window.Image();
-    image.src = "http://konvajs.github.io/assets/yoda.jpg";
-    // image.src = this.mainLayer.canvas._canvas;
-    image.onload = () => {
-      // setState will redraw layer
-      // because "image" property is changed
-      this.setState({
-        image: image
-      });
-    };
+  //
+  // let mainCanvas = this.mainLayer.getCanvas()._canvas;
+  // let ctx = mainCanvas.getContext('2d');
+  // tempCtx.drawImage(mainCanvas, 0, 0, this.width, this.height);
+  //
+  //
+  //     const image = new window.Image();
+  //   image.src = "http://konvajs.github.io/assets/yoda.jpg";
+  //   // image.src = this.mainLayer.canvas._canvas;
+  //   image.onload = () => {
+  //     // setState will redraw layer
+  //     // because "image" property is changed
+  //     this.setState({
+  //       image: image
+  //     });
+  //   };
 
      // console.log(this.mainLayer);
   // calling set state here will do nothing
@@ -179,7 +192,7 @@ var tempCtx = tempCanvas.getContext('2d');
     var y = Math.round(percent *this.state.height);
     rectangles.push(
       {
-      x:this.state.currentPos - this.state.speed,
+      x:this.state.width - this.state.speed,
       y:this.state.height - y,
       width:this.state.speed,
       height:this.state.speed,
@@ -195,6 +208,7 @@ var tempCtx = tempCanvas.getContext('2d');
     //              this.speed, this.speed);
   }
 
+  // this.mainGroup.
   // return (
 let recs = rectangles.map((rectangle, index)=>{
       return (<Rect
@@ -206,7 +220,22 @@ let recs = rectangles.map((rectangle, index)=>{
       key = {index}
       />
     )
-    })
+  });
+  this.setState({
+    currentRectangles: recs
+  });
+  this.mainGroup.move({x:-this.state.speed, y:0});
+  this.imageGroup.move({x:-this.state.speed, y:0});
+  this.mainLayer.toImage({
+    callback: (img)=>{
+      this.setState({
+        image: img
+      });
+    }
+  });
+  this.mainGroup.move({x:this.state.speed, y:0});
+  this.imageGroup.move({x:this.state.speed, y:0});
+
   // );
   // if(this.state.currentPos !== 1){
   //   this.setState({currentPos:this.state.currentPos - 0 })
@@ -215,15 +244,15 @@ let recs = rectangles.map((rectangle, index)=>{
   //
   // }
 
-  this.setState({rectangles: recs});
-  // console.log(this.refs.stage);
-  ctx.translate(-this.state.speed, 0);
-
-  ctx.drawImage(tempCanvas, 0, 0, this.state.width, this.state.height,
-                0, 0, this.state.width, this.state.height);
-
-  // Reset the transformation matrix.
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  // this.setState({rectangles: [recs,...this.state.rectangles]});
+  // this.imageGroup.move({x:-this.state.speed, y:0});
+  // ctx.translate(-this.state.speed, 0);
+  //
+  // ctx.drawImage(tempCanvas, 0, 0, this.state.width, this.state.height,
+  //               0, 0, this.state.width, this.state.height);
+  //
+  // // Reset the transformation matrix.
+  // ctx.setTransform(1, 0, 0, 1, 0, 0);
 // let t = new Konva.Transform();
 // t.translate({x:1, y:1});
 // this.mainLayer.t;
@@ -276,8 +305,15 @@ newFreqAlgorithm(index) {
       <Layer ref={node => {
           this.mainLayer = node;
         }}>
-    {this.state.rectangles}
-
+        <Group ref={node => {
+            this.mainGroup = node;
+          }}>
+{this.state.currentRectangles}
+    </Group>
+    <Image ref={node => {
+        this.imageGroup = node;
+      }}
+      image={this.state.image}/>
       </Layer>
 
 
