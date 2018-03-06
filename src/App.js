@@ -6,6 +6,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+      <Spectrogram />
       <div id="instructions">
         <h2>Spectrogram & Oscillator</h2>
         <ol>
@@ -23,7 +24,6 @@ class App extends Component {
         <a href="http://smus.com/spectrogram-and-oscillator/" target="_blank">about</a>
       </div>
 
-      <Spectrogram />
 
       </div>
     );

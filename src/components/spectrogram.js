@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { render } from 'react-dom';
-import { Stage, Layer, Rect, Group, Image } from 'react-konva';
+import { Stage, Layer, Rect, Image } from 'react-konva';
 import Konva from 'konva';
 import './spectrogram.css';
+
+import Axes from './axes';
+
 const ReactAnimationFrame = require('react-animation-frame');
 //TODO: Resize of canvas
 //TODO: Make it look better
@@ -17,13 +19,6 @@ analyser.maxDecibels = -20;
 analyser.smoothingTimeConstant = 0;
 analyser.fftSize = fftSize;
 
-const Aux = props => props.children;
-
-// let tempCanvas = new Konva.Layer();
-// let tempCanvas = window.createElement('canvas');
-let tempCanvas =  document.createElement('canvas');
-
-
 let rectangles = [];
 class Spectrogram extends Component {
   constructor(){
@@ -31,16 +26,15 @@ class Spectrogram extends Component {
     this.state = ({
       width: window.innerWidth,
       height: window.innerHeight,
-      speed: 2,
+      speed: 4,
       log: true,
       resolutionMax: 20000,
       resolutionMin: 20,
       currentPos: window.innerWidth,
-      rectangles: [[],[]],
+      currentRectangles: [],
       image: null,
       tempCanvas: null
     });
-    // this.loop = this.loop.bind(this);
 
   }
 
@@ -54,27 +48,14 @@ componentDidMount(){
                                 this.onStream.bind(this),
                                 this.onStreamError.bind(this));
     }
-this.setState({
-tempCanvas : this.refs.canvas
-});
+
     const mainLayer = this.mainLayer;
     let updatedProps = {clearBeforeDraw: false};
     mainLayer.setAttrs(updatedProps);
 }
+componentDidUpdate(){
 
-// componentWillUpdate() {
-//   // let ctx = this.mainLayer.canvas._canvas.getContext('2d');
-//   this.mainLayer.move({x:-4, y:0});
-//   let tempLayer = new Konva.Layer();
-//   // ctx.drawImage(this.state.tempCanvas, 0, 0, this.width, this.height,
-//               // 0, 0, this.width, this.height);
-//
-//   let tempCtx = this.state.tempCanvas.getContext('2d');
-//   tempCtx.drawImage(this.mainLayer.canvas._canvas, 0, 0, this.width, this.height);
-// }
-// componentDidUpdate() {
-//
-// }
+}
 
 onStream(stream) {
   let input = audioContext.createMediaStreamSource(stream);
@@ -93,39 +74,16 @@ onStreamError(e) {
 }
 
 onAnimationFrame = (time)=> {
-// this.state.width = window.innerWidth;
-// this.state.height = window.innerHeight;
-// tempCanvas = new Konva.Layer();
-// requestAnimationFrame(this.loop.bind(this));
 return this.renderFreqDomain();
 
 }
 
 renderFreqDomain = ()=> {
-    // if(this.state.currentRectangles){
-    //   this.state.currentRectangles.forEach((rect)=>{
-    //
-    //   })
-  //}
-
-  // this.mainGroup.toImage({
-  //   callback: (img)=>{
-  //     this.setState({
-  //       image: img
-  //     });
-  //   }
-  // });
-    // this.setState({rectangles: [this.state.currentRectangles,...this.state.rectangles]});
-var tempCtx = tempCanvas.getContext('2d');
-
-
-  let freq = new Uint8Array(analyser.frequencyBinCount);
+    let freq = new Uint8Array(analyser.frequencyBinCount);
   analyser.getByteFrequencyData(freq);
 
   // var ctx = this.ctx;
   // Copy the current canvas onto the temp canvas.
-  this.state.tempCanvas.width = this.state.width;
-  this.state.tempCanvas.height = this.state.height;
   //
   // let mainCanvas = this.mainLayer.getCanvas()._canvas;
   // let ctx = mainCanvas.getContext('2d');
@@ -194,7 +152,7 @@ var tempCtx = tempCanvas.getContext('2d');
       {
       x:this.state.width - this.state.speed,
       y:this.state.height - y,
-      width:this.state.speed,
+      width:this.state.speed*2,
       height:this.state.speed,
       fill:this.getColor(value)
       }
@@ -221,64 +179,25 @@ let recs = rectangles.map((rectangle, index)=>{
       />
     )
   });
-  this.setState({
-    currentRectangles: recs
-  });
-  this.mainGroup.move({x:-this.state.speed, y:0});
+
+  this.mainLayer.move({x:-this.state.speed, y:0});
   this.imageGroup.move({x:-this.state.speed, y:0});
   this.mainLayer.toImage({
     callback: (img)=>{
       this.setState({
-        image: img
+        image: img,
+        currentRectangles: recs
       });
     }
   });
-  this.mainGroup.move({x:this.state.speed, y:0});
+  this.mainLayer.move({x:this.state.speed, y:0});
   this.imageGroup.move({x:this.state.speed, y:0});
 
-  // );
-  // if(this.state.currentPos !== 1){
-  //   this.setState({currentPos:this.state.currentPos - 0 })
-  // } else {
-  //   this.setState({currentPos:this.state.width})
-  //
-  // }
-
-  // this.setState({rectangles: [recs,...this.state.rectangles]});
-  // this.imageGroup.move({x:-this.state.speed, y:0});
-  // ctx.translate(-this.state.speed, 0);
-  //
-  // ctx.drawImage(tempCanvas, 0, 0, this.state.width, this.state.height,
-  //               0, 0, this.state.width, this.state.height);
-  //
-  // // Reset the transformation matrix.
-  // ctx.setTransform(1, 0, 0, 1, 0, 0);
-// let t = new Konva.Transform();
-// t.translate({x:1, y:1});
-// this.mainLayer.t;
-// this.mainLayer.add(new Konva.Transformer([1, 0, 0, 1, 0, 0]));
-
-// transform(this.mainLayer);
-/*
-  // Translate the canvas.
-  // Draw the copied image.
-  ctx.drawImage(this.tempCanvas, 0, 0, this.width, this.height,
-                0, 0, this.width, this.height);
-
-  // Reset the transformation matrix.
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  */
 }
 
 
 
 getColor(value) {
-    // var fromH = 200;
-    // var toH = 1;
-    // var percent = value / 255;
-    // var delta = percent * (toH - fromH);
-    // var hue = fromH + delta;
-
     // Test Max
     if(value === 255) {
       console.log("MAX!");
@@ -286,7 +205,6 @@ getColor(value) {
     var percent = (value) / 255 * 50;
 // return 'rgb(V, V, V)'.replace(/V/g, 255 - value);
    return 'hsl(H, 100%, P%)'.replace(/H/g, 255-value).replace(/P/g, percent);
-
 }
 
 newFreqAlgorithm(index) {
@@ -300,26 +218,25 @@ newFreqAlgorithm(index) {
 
   render() {
     return (
-    <div>
     <Stage ref="stage" width={window.innerWidth} height={window.innerHeight}>
       <Layer ref={node => {
           this.mainLayer = node;
         }}>
-        <Group ref={node => {
-            this.mainGroup = node;
-          }}>
+
 {this.state.currentRectangles}
-    </Group>
     <Image ref={node => {
         this.imageGroup = node;
       }}
       image={this.state.image}/>
       </Layer>
-
+<Axes
+width={this.state.width}
+height={this.state.height}
+resolutionMax={this.state.resolutionMax}
+resolutionMin={this.state.resolutionMin}
+/>
 
 </Stage>
-<canvas ref="canvas"></canvas>
-    </div>
     );
 
   }

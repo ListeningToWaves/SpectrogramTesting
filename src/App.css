@@ -8,6 +8,8 @@ body, html {
 
 .App {
   text-align: center;
+  display: flex;
+  justify-content: center;
 }
 
 .App-logo {
@@ -62,4 +64,6 @@ a:visited {
   font-family: 'Inconsolata';
   font-size: 120%;
   z-index: 1;
+position: absolute;
+
 }
