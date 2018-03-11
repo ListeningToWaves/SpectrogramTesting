@@ -4,6 +4,7 @@ import Konva from 'konva';
 import './spectrogram.css';
 
 import Axes from './axes';
+import Controls from './controls';
 
 const ReactAnimationFrame = require('react-animation-frame');
 //TODO: Resize of canvas
@@ -26,13 +27,13 @@ class Spectrogram extends Component {
     this.state = ({
       width: window.innerWidth,
       height: window.innerHeight,
-      speed: 4,
+      speed: 2,
       log: true,
       resolutionMax: 20000,
       resolutionMin: 20,
       currentPos: window.innerWidth,
       currentRectangles: [],
-      image: null,
+      image: new window.Image(),
       tempCanvas: null
     });
 
@@ -50,11 +51,15 @@ componentDidMount(){
     }
 
     const mainLayer = this.mainLayer;
-    let updatedProps = {clearBeforeDraw: false};
+    let updatedProps = {clearBeforeDraw: false, hitGraphEnabled:false};
     mainLayer.setAttrs(updatedProps);
+    this.imageGroup.setAttrs({transformsEnabled: 'position', hitGraphEnabled:false})
+}
+componentWillUpdate(){
+  this.mainLayer.batchDraw();
+
 }
 componentDidUpdate(){
-
 }
 
 onStream(stream) {
@@ -82,48 +87,6 @@ renderFreqDomain = ()=> {
     let freq = new Uint8Array(analyser.frequencyBinCount);
   analyser.getByteFrequencyData(freq);
 
-  // var ctx = this.ctx;
-  // Copy the current canvas onto the temp canvas.
-  //
-  // let mainCanvas = this.mainLayer.getCanvas()._canvas;
-  // let ctx = mainCanvas.getContext('2d');
-  // tempCtx.drawImage(mainCanvas, 0, 0, this.width, this.height);
-  //
-  //
-  //     const image = new window.Image();
-  //   image.src = "http://konvajs.github.io/assets/yoda.jpg";
-  //   // image.src = this.mainLayer.canvas._canvas;
-  //   image.onload = () => {
-  //     // setState will redraw layer
-  //     // because "image" property is changed
-  //     this.setState({
-  //       image: image
-  //     });
-  //   };
-
-     // console.log(this.mainLayer);
-  // calling set state here will do nothing
-  // because properties of Konva.Image are not changed
-  // so we need to update layer manually
-  // this.imageNode.getL  ayer().batchDraw();
-  // tempCanvas.batchDraw();
-  // var imageObj = new window.Image();
-  // var tempImage = new Konva.Image({
-  //       x: 0,
-  //       y: 0,
-  //       image: this.mainLayer,
-  //       width: this.state.width,
-  //       height: this.state.height
-  //     });
-
-      // add the shape to the layer
-      // tempCanvas.add(tempImage);
-
-
-  // this.tempCanvas.width = this.width;
-  // this.tempCanvas.height = this.height;
-  // var tempCtx = this.tempCanvas.getContext('2d');
-  // tempCtx.drawImage(this.$.canvas, 0, 0, this.width, this.height);
   // Iterate over the frequencies.
 
   rectangles = [];
@@ -152,7 +115,7 @@ renderFreqDomain = ()=> {
       {
       x:this.state.width - this.state.speed,
       y:this.state.height - y,
-      width:this.state.speed*2,
+      width:this.state.speed,
       height:this.state.speed,
       fill:this.getColor(value)
       }
@@ -179,8 +142,8 @@ let recs = rectangles.map((rectangle, index)=>{
       />
     )
   });
+  // this.mainLayer.move({x:-this.state.speed, y:0});
 
-  this.mainLayer.move({x:-this.state.speed, y:0});
   this.imageGroup.move({x:-this.state.speed, y:0});
   this.mainLayer.toImage({
     callback: (img)=>{
@@ -188,11 +151,12 @@ let recs = rectangles.map((rectangle, index)=>{
         image: img,
         currentRectangles: recs
       });
+
     }
   });
-  this.mainLayer.move({x:this.state.speed, y:0});
-  this.imageGroup.move({x:this.state.speed, y:0});
-
+  // this.mainLayer.position({x:0, y:0});
+  this.imageGroup.position({x:0, y:0});
+  //console.log(this.imageGroup.getTransform());
 }
 
 
@@ -218,6 +182,8 @@ newFreqAlgorithm(index) {
 
   render() {
     return (
+      <div>
+      <Controls />
     <Stage ref="stage" width={window.innerWidth} height={window.innerHeight}>
       <Layer ref={node => {
           this.mainLayer = node;
@@ -237,6 +203,7 @@ resolutionMin={this.state.resolutionMin}
 />
 
 </Stage>
+</div>
     );
 
   }

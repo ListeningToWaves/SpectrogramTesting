@@ -17,11 +17,11 @@ class App extends Component {
 
       <div id="about">
         <h4 id="about-text">Based on the Spectrogram by {' '}
-          <a href="https://github.com/borismus" target="_blank">Boris Smus</a>
+          <a href="https://github.com/borismus" target="_blank" rel="noopener noreferrer" >Boris Smus</a>
           <br></br>
           while he was working at Google
         </h4>
-        <a href="http://smus.com/spectrogram-and-oscillator/" target="_blank">about</a>
+        <a href="http://smus.com/spectrogram-and-oscillator/" target="_blank" rel="noopener noreferrer" >about</a>
       </div>
 
 
