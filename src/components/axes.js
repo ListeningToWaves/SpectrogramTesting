@@ -15,9 +15,8 @@ componentDidMount(){
   this.ctx = this.canvas.getContext('2d');
   this.renderAxesLabels();
 }
-componentDidUpdate(){
-  this.renderAxesLabels();
-}
+
+
 
 renderAxesLabels() {
 let {height, width} = this.props;

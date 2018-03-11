@@ -3,9 +3,11 @@ import '../styles/spectrogram.css';
 
 import Axes from './axes';
 import Controls from './controls';
+import Oscillator from './oscillator';
 
 const ReactAnimationFrame = require('react-animation-frame');
 //TODO: Resize of canvas
+//TODO: Fix axes labels on load bug
 
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const analyser = audioContext.createAnalyser();
@@ -28,6 +30,7 @@ class Spectrogram extends Component {
       log: true,
       resolutionMax: 20000,
       resolutionMin: 20,
+      x:0
     });
     this.renderFreqDomain = this.renderFreqDomain.bind(this);
 
@@ -116,6 +119,7 @@ renderFreqDomain = ()=> {
   this.ctx.drawImage(this.tempCanvas, 0, 0, this.state.width, this.state.height,
                 0, 0, this.state.width, this.state.height);
 this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+this.setState({x: Math.random()});
 
 }
 
@@ -155,6 +159,13 @@ newFreqAlgorithm(index) {
       height={this.state.height}
       resolutionMax={this.state.resolutionMax}
       resolutionMin={this.state.resolutionMin}
+      />
+      <Oscillator
+      width={this.state.width}
+      height={this.state.height}
+      resolutionMax={this.state.resolutionMax}
+      resolutionMin={this.state.resolutionMin}
+      context = {audioContext}
       />
 
 
