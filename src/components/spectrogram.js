@@ -139,7 +139,6 @@ newFreqAlgorithm(index) {
   let logResolution = Math.log(this.state.resolutionMax/this.state.resolutionMin);
   let freq = this.state.resolutionMin * Math.pow(Math.E, index*logResolution);
   return Math.round(freq);
-
 }
 
 
