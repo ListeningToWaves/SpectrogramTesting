@@ -1,5 +1,5 @@
 import React,{Component}  from 'react';
-import "./controls.css";
+import "../styles/controls.css";
 
 class Controls extends Component {
   constructor(){
@@ -90,7 +90,7 @@ Vertical Scale&nbsp;
   <div class="config contain">
       <label for="ticks">Output Volume&nbsp;</label>
       <input type="range" id="fadeIn"  min="1" max="100" />
-      
+
       </div>
 
       <template if="}">

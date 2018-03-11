@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
-import { Stage, Layer, Rect, Image } from 'react-konva';
-import Konva from 'konva';
-import './spectrogram.css';
+import '../styles/spectrogram.css';
 
 import Axes from './axes';
 import Controls from './controls';
 
 const ReactAnimationFrame = require('react-animation-frame');
 //TODO: Resize of canvas
-//TODO: Make it look better
 
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const analyser = audioContext.createAnalyser();
@@ -31,11 +28,8 @@ class Spectrogram extends Component {
       log: true,
       resolutionMax: 20000,
       resolutionMin: 20,
-      currentPos: window.innerWidth,
-      currentRectangles: [],
-      image: new window.Image(),
-      tempCanvas: null
     });
+    this.renderFreqDomain = this.renderFreqDomain.bind(this);
 
   }
 
@@ -50,17 +44,17 @@ componentDidMount(){
                                 this.onStreamError.bind(this));
     }
 
-    const mainLayer = this.mainLayer;
-    let updatedProps = {clearBeforeDraw: false, hitGraphEnabled:false};
-    mainLayer.setAttrs(updatedProps);
-    this.imageGroup.setAttrs({transformsEnabled: 'position', hitGraphEnabled:false})
-}
-componentWillUpdate(){
-  this.mainLayer.batchDraw();
+this.ctx = this.canvas.getContext('2d');
+this.tempCanvas = document.createElement('canvas');
+this.tempCtx = this.tempCanvas.getContext('2d');
+this.tempCanvas.width = this.state.width;
+this.tempCanvas.height = this.state.height;
+this.renderFreqDomain();
+
 
 }
-componentDidUpdate(){
-}
+
+
 
 onStream(stream) {
   let input = audioContext.createMediaStreamSource(stream);
@@ -79,7 +73,8 @@ onStreamError(e) {
 }
 
 onAnimationFrame = (time)=> {
-return this.renderFreqDomain();
+this.renderFreqDomain();
+
 
 }
 
@@ -87,9 +82,9 @@ renderFreqDomain = ()=> {
     let freq = new Uint8Array(analyser.frequencyBinCount);
   analyser.getByteFrequencyData(freq);
 
-  // Iterate over the frequencies.
+  this.tempCtx.drawImage(this.canvas, 0, 0, this.state.width, this.state.height);
 
-  rectangles = [];
+  // Iterate over the frequencies.
   for (var i = 0; i < this.state.height; i++) {
     var value;
     // Draw each pixel with the specific color.
@@ -108,55 +103,20 @@ renderFreqDomain = ()=> {
       value = freq[logIndex];
     }
 
-
+    this.ctx.fillStyle = this.getColor(value);
     var percent = i / this.state.height;
     var y = Math.round(percent *this.state.height);
-    rectangles.push(
-      {
-      x:this.state.width - this.state.speed,
-      y:this.state.height - y,
-      width:this.state.speed,
-      height:this.state.speed,
-      fill:this.getColor(value)
-      }
-    );
+    this.ctx.fillRect(this.state.width - this.state.speed, this.state.height - y,
+                 this.state.speed, this.state.speed);
 
-  // this.setState({
-  //   currentPos: this.state.currentPos - 1
-  // });
-    // draw the line at the right side of the canvas
-    // ctx.fillRect(this.width - this.speed, this.height - y,
-    //              this.speed, this.speed);
+
+
   }
+  this.ctx.translate(-this.state.speed, 0);
+  this.ctx.drawImage(this.tempCanvas, 0, 0, this.state.width, this.state.height,
+                0, 0, this.state.width, this.state.height);
+this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-  // this.mainGroup.
-  // return (
-let recs = rectangles.map((rectangle, index)=>{
-      return (<Rect
-      x={rectangle.x}
-      y={rectangle.y}
-      width={rectangle.width}
-      height={rectangle.height}
-      fill={rectangle.fill}
-      key = {index}
-      />
-    )
-  });
-  // this.mainLayer.move({x:-this.state.speed, y:0});
-
-  this.imageGroup.move({x:-this.state.speed, y:0});
-  this.mainLayer.toImage({
-    callback: (img)=>{
-      this.setState({
-        image: img,
-        currentRectangles: recs
-      });
-
-    }
-  });
-  // this.mainLayer.position({x:0, y:0});
-  this.imageGroup.position({x:0, y:0});
-  //console.log(this.imageGroup.getTransform());
 }
 
 
@@ -179,30 +139,26 @@ newFreqAlgorithm(index) {
 }
 
 
+// <Controls />
+
 
   render() {
     return (
       <div>
-      <Controls />
-    <Stage ref="stage" width={window.innerWidth} height={window.innerHeight}>
-      <Layer ref={node => {
-          this.mainLayer = node;
-        }}>
+      <canvas
+        width={this.state.width}
+         height={this.state.height}
+         ref={(c) => { this.canvas = c; }}
+      />
+      <Axes
+      width={this.state.width}
+      height={this.state.height}
+      resolutionMax={this.state.resolutionMax}
+      resolutionMin={this.state.resolutionMin}
+      />
 
-{this.state.currentRectangles}
-    <Image ref={node => {
-        this.imageGroup = node;
-      }}
-      image={this.state.image}/>
-      </Layer>
-<Axes
-width={this.state.width}
-height={this.state.height}
-resolutionMax={this.state.resolutionMax}
-resolutionMin={this.state.resolutionMin}
-/>
 
-</Stage>
+
 </div>
     );
 

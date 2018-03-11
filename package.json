@@ -8,7 +8,8 @@
     "react-animation-frame": "^1.0.1",
     "react-dom": "^16.2.0",
     "react-konva": "^1.6.6",
-    "react-scripts": "1.1.1"
+    "react-scripts": "1.1.1",
+    "tone": "^0.11.11"
   },
   "scripts": {
     "start": "react-scripts start",
