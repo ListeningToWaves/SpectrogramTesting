@@ -5,4 +5,5 @@ canvas {
   z-index: 10;
   flex: 1;
   left: 0%;
+  touch-action: pan-x pan-y;
 }

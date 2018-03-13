@@ -7,6 +7,7 @@ canvas {
     height: 100%;
     z-index: 10;
     flex: 1;
+    touch-action: none;
   }
   .canvas-container {
   }
