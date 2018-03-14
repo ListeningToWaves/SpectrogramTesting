@@ -1,0 +1,21 @@
+.menu-container {
+  z-index: 20;
+  position: absolute;
+  left: 0%;
+  display: flex;
+  /* border: 2px solid red; */
+  width: 100%;
+  height: 15vh;
+}
+.menu-tab {
+  flex: 1;
+  width: 100%;
+  align-self: flex-start;
+}
+.menu-tab-panes {
+  border: 5px solid green!important;
+  background-color: blue!important;
+}
+.menu-button {
+  align-self: center;
+}

@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import '../styles/spectrogram.css';
 
 import Axes from './axes';
-import Controls from './controls';
+// import Controls from './controls';
 import Oscillator from './oscillator';
+import Menu from './menu';
 
 const ReactAnimationFrame = require('react-animation-frame');
 //TODO: Resize of canvas
@@ -19,7 +20,6 @@ analyser.maxDecibels = -20;
 analyser.smoothingTimeConstant = 0;
 analyser.fftSize = fftSize;
 
-let rectangles = [];
 class Spectrogram extends Component {
   constructor(){
     super();
@@ -148,6 +148,7 @@ newFreqAlgorithm(index) {
   render() {
     return (
       <div>
+      <Menu />
       <canvas
         width={this.state.width}
          height={this.state.height}
@@ -165,6 +166,7 @@ newFreqAlgorithm(index) {
       resolutionMax={this.state.resolutionMax}
       resolutionMin={this.state.resolutionMin}
       context = {audioContext}
+      analyser = {analyser}
       />
 
 
