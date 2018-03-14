@@ -20,10 +20,13 @@ class Oscillator extends Component {
       mouseDown: false,
       touch: false,
       currentVoice: -1,
-      voices: 0 //voices started with on event
+      voices: 0, //voices started with on event
+      height: window.innerHeight,
+      width: window.innerWidth
     }
-
+    this.handleResize = this.handleResize.bind(this);
   }
+
   componentDidMount() {
     Tone.context = this.props.context;
     this.synth = new Tone.PolySynth(NUM_VOICES, Tone.Synth);
@@ -32,17 +35,22 @@ class Oscillator extends Component {
     });
     this.volume = new Tone.Volume(-30);
     this.synth.chain(this.volume, Tone.Master);
-    if(true){
+    if (true) {
       this.volume.connect(this.props.analyser);
     }
+    window.addEventListener("resize", this.handleResize);
 
   }
-
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.handleResize);
+  }
   onMouseDown(e) {
     e.preventDefault();
     let percent = (1 - e.pageY / this.props.height);
     let freq = this.newFreqAlgorithm(percent);
-    let newFreq = [freq,...this.state.lastFreq.slice(1)];
+    let newFreq = [
+      freq, ...this.state.lastFreq.slice(1)
+    ];
     let newVoice = (this.state.currentVoice + 1) % NUM_VOICES;
     this.synth.triggerAttack(freq);
 
@@ -78,20 +86,14 @@ class Oscillator extends Component {
   onMouseUp(e) {
     e.preventDefault();
     this.synth.releaseAll();
-    this.setState({
-      mouseDown: false,
-      voices: 0
-    });
+    this.setState({mouseDown: false, voices: 0});
 
   }
   onMouseOut(e) {
     e.preventDefault();
     e.preventDefault();
     this.synth.releaseAll();
-    this.setState({
-      mouseDown: false,
-      lastFreq: new Array(NUM_VOICES)
-    });
+    this.setState({mouseDown: false, lastFreq: new Array(NUM_VOICES)});
 
   }
   onTouchStart(e) {
@@ -122,14 +124,14 @@ class Oscillator extends Component {
     e.preventDefault();
     if (this.state.touch) {
       // for (let i = 0; i < e.changedTouches.length; i++){
-        //let percent = (1 - e.changedTouches[i].pageY / this.props.height);
-        let percent = (1 - e.changedTouches[0].pageY / this.props.height);
-        let freq = this.newFreqAlgorithm(percent);
-        let newFreq = [
-          ...this.state.lastFreq.slice(0, this.state.currentVoice),
-          freq,
-          ...this.state.lastFreq.slice(this.state.currentVoice)
-        ];
+      //let percent = (1 - e.changedTouches[i].pageY / this.props.height);
+      let percent = (1 - e.changedTouches[0].pageY / this.props.height);
+      let freq = this.newFreqAlgorithm(percent);
+      let newFreq = [
+        ...this.state.lastFreq.slice(0, this.state.currentVoice),
+        freq,
+        ...this.state.lastFreq.slice(this.state.currentVoice)
+      ];
       //   let index = ((this.state.currentVoice - (this.state.voices - 1)) +
       //   e.changedTouches[i].identifier) % NUM_VOICES;
       //   if (index < 0) {
@@ -140,15 +142,15 @@ class Oscillator extends Component {
       //     freq,
       //     ...this.state.lastFreq.slice(index)
       //   ];
-        // this.synth.triggerRelease(this.state.lastFreq[index]);
-        this.synth.voices[this.state.currentVoice].frequency.value = freq;
-        // console.log(this.state.lastFreq);
-        this.setState({
-          lastX: e.pageX,
-          lastY: e.pageY,
-          lastFreq: newFreq.slice(0, NUM_VOICES),
-          voices: this.state.voices + 1
-        });
+      // this.synth.triggerRelease(this.state.lastFreq[index]);
+      this.synth.voices[this.state.currentVoice].frequency.value = freq;
+      // console.log(this.state.lastFreq);
+      this.setState({
+        lastX: e.pageX,
+        lastY: e.pageY,
+        lastFreq: newFreq.slice(0, NUM_VOICES),
+        voices: this.state.voices + 1
+      });
       // }
     }
 
@@ -158,19 +160,14 @@ class Oscillator extends Component {
     if (e.changedTouches.length === e.touches.length + 1) {
       this.synth.releaseAll();
       this.synth._triggers = new Array(NUM_VOICES);
-      for (var i = 0; i < NUM_VOICES; i++){
+      for (var i = 0; i < NUM_VOICES; i++) {
         this.synth._triggers[i] = {
-				release : -1,
-				note : null,
-				voice : this.synth.voices[i]
-			   };
+          release: -1,
+          note: null,
+          voice: this.synth.voices[i]
+        };
       }
-      this.setState({
-        lastFreq: new Array(NUM_VOICES),
-        voices: 0,
-        currentVoice: -1,
-        touch: false,
-      });
+      this.setState({lastFreq: new Array(NUM_VOICES), voices: 0, currentVoice: -1, touch: false});
     } else {
       for (let i = 0; i < e.changedTouches.length; i++) {
 
@@ -198,8 +195,13 @@ class Oscillator extends Component {
     let freq = this.props.resolutionMin * Math.pow(Math.E, index * logResolution);
     return Math.round(freq);
   }
+
+  handleResize() {
+    this.setState({width: window.innerWidth, height: window.innerHeight});
+
+  }
   render() {
-    return (<canvas onContextMenu={(e) => e.preventDefault()} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp} onMouseMove={this.onMouseMove} onMouseOut={this.onMouseOut} onTouchStart={this.onTouchStart} onTouchEnd={this.onTouchEnd} onTouchMove={this.onTouchMove} width={this.props.width} height={this.props.height} ref={(c) => {
+    return (<canvas onContextMenu={(e) => e.preventDefault()} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp} onMouseMove={this.onMouseMove} onMouseOut={this.onMouseOut} onTouchStart={this.onTouchStart} onTouchEnd={this.onTouchEnd} onTouchMove={this.onTouchMove} width={this.state.width} height={this.state.height} ref={(c) => {
       this.canvas = c;
     }}/>);
   }
