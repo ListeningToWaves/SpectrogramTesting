@@ -29,8 +29,6 @@ class Axes extends Component {
   }
 
   renderAxesLabels() {
-    console.log("H");
-
     let {height, width} = this.state;
     this.ctx.clearRect(0, 0, this.state.width, this.state.height);
     // Render the vertical frequency axis.
@@ -41,7 +39,12 @@ class Axes extends Component {
       // Get the y coordinate from the current label.
       var percent = i / (this.state.ticks);
       var y = (1 - percent) * height;
-
+      if(i===0){
+        y-=10;
+      }
+      if(i===this.state.ticks){
+        y+=10;
+      }
       var x = width - 60;
       // Get the value for the current y coordinate.
 

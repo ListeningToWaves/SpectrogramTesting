@@ -8,6 +8,8 @@ canvas {
     z-index: 10;
     flex: 1;
     touch-action: none;
+    margin:0;
+    padding:0;
   }
   .canvas-container {
   }

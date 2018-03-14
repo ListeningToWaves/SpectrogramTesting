@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
-import {Button, Tab} from 'semantic-ui-react';
+import {Button, Tab, Menu} from 'semantic-ui-react';
 import "../styles/menu.css";
 
-class Menu extends Component {
-  // <Button inverted color='violet'>Oscilloscope</Button>
+class MyMenu extends Component {
   constructor() {
     super();
     this.state = {
@@ -15,6 +14,7 @@ class Menu extends Component {
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.handleMouseOver = this.handleMouseOver.bind(this);
   }
 
   handleChange(e, data) {
@@ -64,6 +64,9 @@ class Menu extends Component {
       this.setState({pane1: null, pane2: null, pane3: null, point: false});
     }
   }
+  handleMouseOver(e){
+    console.log("Hi");
+  }
 
   render() {
     const color = "violet";
@@ -74,7 +77,7 @@ class Menu extends Component {
       }, {
         menuItem: 'Graph',
         render: () => this.state.pane1,
-        key: "2"
+        key: "2",
       }, {
         menuItem: 'Timbre',
         render: () => this.state.pane2,
@@ -83,20 +86,34 @@ class Menu extends Component {
         menuItem: 'Scale',
         render: () => this.state.pane3,
         key: "4"
+      }, {
+        menuItem: <Menu.Header className="menu-title" key="6" active="false" >Spectrogram</Menu.Header>,
+        render: ()=>false,
+        key: "5"
       }
     ];
     return (
       <div className="menu-container">
-        <Tab className="menu-tab" menu={{
+
+        <Tab
+        className="menu-tab"
+        menu={{
           color,
           inverted: true,
           attached: true,
           pointing: this.state.point
-        }} panes={panes} defaultActiveIndex={1} onTabChange={this.handleChange} onClick={this.handleClick}/>
+        }}
+        panes={panes}
+        defaultActiveIndex={1}
+        onTabChange={this.handleChange}
+        onClick={this.handleClick}
+        key="0"
+        >
+        </Tab>
       </div>
 
     );
   }
 }
 
-export default Menu;
+export default MyMenu;
