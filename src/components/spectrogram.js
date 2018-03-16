@@ -7,8 +7,7 @@ import Oscillator from './oscillator';
 import Menu from './menu';
 
 const ReactAnimationFrame = require('react-animation-frame');
-//TODO: Resize of canvas
-//TODO: Fix axes labels on load bug
+//TODO: Resize of canvas bugs
 
 const audioContext = new(window.AudioContext || window.webkitAudioContext)();
 const analyser = audioContext.createAnalyser();
