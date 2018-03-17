@@ -4,6 +4,8 @@ body, html {
   margin: 0;
   padding: 0;
   user-select: none;
+  touch-action: pan-x pan-y;
+  
 }
 
 .App {

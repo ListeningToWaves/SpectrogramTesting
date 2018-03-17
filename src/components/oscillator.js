@@ -28,8 +28,7 @@ class Oscillator extends Component {
   componentDidMount() {
     Tone.context = this.props.context;
     this.synths = new Array(NUM_VOICES);
-    this.volumes = new Array(NUM_VOICES);
-    this.masterVolume = new Tone.Volume(0);
+    this.masterVolume = new Tone.Volume(-30);
     let options = {
       oscillator  : {
         type  : "sine"
@@ -37,8 +36,7 @@ class Oscillator extends Component {
     };
     for(let i=0; i<NUM_VOICES; i++){
       this.synths[i] = new Tone.Synth(options);
-      this.volumes[i] = new Tone.Volume(-30);
-      this.synths[i].chain(this.volumes[i], this.masterVolume, Tone.Master);
+      this.synths[i].chain(this.masterVolume, Tone.Master);
     }
     if(true){
       this.masterVolume.connect(this.props.analyser);
@@ -52,12 +50,17 @@ class Oscillator extends Component {
   }
   onMouseDown(e) {
     e.preventDefault();
-    let percent = (1 - e.pageY / this.state.height);
-    let freq = this.newFreqAlgorithm(percent);
+    // let canvasHeight = e.pageY - e.currentTarget.offsetTop;
+    // let totalHeight = this.state.height
+    let yPercent = (1 - ((e.pageY - e.currentTarget.offsetTop) / this.state.height));
+    let xPercent = 1 - e.pageX / this.state.width;
+    let freq = this.newFreqAlgorithm(yPercent);
+    let gain = this.getGain(xPercent);
     let newVoice = (this.state.currentVoice + 1) % NUM_VOICES;
 
     this.synths[newVoice].triggerAttack(freq);
-
+    console.log(gain);
+    this.synths[newVoice].volume.value = gain;
     this.setState({
       mouseDown: true,
       currentVoice: newVoice,
@@ -68,21 +71,27 @@ class Oscillator extends Component {
   onMouseMove(e) {
     e.preventDefault();
     if (this.state.mouseDown) {
-      let percent = (1 - e.pageY / this.state.height);
-      let freq = this.newFreqAlgorithm(percent);
+      let yPercent = (1 - ((e.pageY - e.currentTarget.offsetTop) / this.state.height));
+      let xPercent = 1 - e.pageX / this.state.width;
+      let gain = this.getGain(xPercent);
+      let freq = this.newFreqAlgorithm(yPercent);
       this.synths[this.state.currentVoice].frequency.value = freq;
+      this.synths[this.state.currentVoice].volume.value = gain;
     }
 
   }
   onMouseUp(e) {
     e.preventDefault();
+    if(this.state.mouseDown){
+
     this.synths[this.state.currentVoice].triggerRelease();
     this.setState({mouseDown: false, voices: 0});
+    }
 
   }
   onMouseOut(e) {
     e.preventDefault();
-    if(this.currentVoice > -1){
+    if(this.state.mouseDown){
     this.synths[this.state.currentVoice].triggerRelease();
     this.setState({mouseDown: false, voices: 0});
     }
@@ -91,28 +100,33 @@ class Oscillator extends Component {
   onTouchStart(e) {
     e.preventDefault();
     for (let i = 0; i < e.touches.length; i++) {
-      let percent = (1 - e.touches[i].pageY / this.state.height);
-      let freq = this.newFreqAlgorithm(percent);
+      let yPercent = (1 - ((e.touches[i].pageY - e.currentTarget.offsetTop) / this.state.height));
+      let xPercent = 1 - e.touches[i].pageX / this.state.width;
+      let gain = this.getGain(xPercent);
+      let freq = this.newFreqAlgorithm(yPercent);
       let newVoice = (this.state.currentVoice + 1) % NUM_VOICES;
       this.setState({
         touch: true,
         currentVoice: newVoice,
         voices: this.state.voices + 1,
       });
-
-      // console.log(newVoice);
       this.synths[newVoice].triggerAttack(freq);
+      this.synths[newVoice].volume.value = gain;
     }
   }
   onTouchMove(e) {
     e.preventDefault();
     if (this.state.touch) {
       for (let i = 0; i < e.changedTouches.length; i++){
-        let percent = (1 - e.changedTouches[i].pageY / this.state.height);
-        let freq = this.newFreqAlgorithm(percent);
+        let yPercent = (1 - ((e.changedTouches[i].pageY - e.currentTarget.offsetTop) / this.state.height));
+        let xPercent = 1 - e.touches[i].pageX / this.state.width;
+        let gain = this.getGain(xPercent);
+        let freq = this.newFreqAlgorithm(yPercent);
         let index = ((this.state.currentVoice - (this.state.voices - 1)) + e.changedTouches[i].identifier) % NUM_VOICES;
         index = (index < 0)? (NUM_VOICES+index):index;
-        this.synths[index].frequency.value = freq;
+        this.synths[index].frequency.setTargetAtTime(freq);
+        this.synths[index].volume.value = gain;
+
         }
     }
 
@@ -148,6 +162,10 @@ class Oscillator extends Component {
     let logResolution = Math.log(this.props.resolutionMax / this.props.resolutionMin);
     let freq = this.props.resolutionMin * Math.pow(Math.E, index * logResolution);
     return Math.round(freq);
+  }
+  getGain(index){
+    //-80 to 0dB
+    return -1*(index*60);
   }
 
   handleResize() {
