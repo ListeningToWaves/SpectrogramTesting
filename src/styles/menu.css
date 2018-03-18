@@ -4,7 +4,7 @@
   left: 0%;
   display: flex;
   width: 100%;
-  border: 1px solid #a67cff;
+  border-bottom: 1px solid #a67cff;
 }
 
 .menu-tab {

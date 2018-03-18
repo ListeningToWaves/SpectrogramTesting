@@ -47,6 +47,7 @@ class Spectrogram extends Component {
       }, this.onStream.bind(this), this.onStreamError.bind(this));
     }
     window.addEventListener("resize", this.handleResize);
+
     this.ctx = this.canvas.getContext('2d');
     this.tempCanvas = document.createElement('canvas');
     this.renderFreqDomain();

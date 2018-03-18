@@ -3,7 +3,7 @@ import Tone from 'tone';
 
 const NUM_VOICES = 6;
 class Oscillator extends Component {
-  // TODO: Volume
+  // TODO: Volume bug with new finger
   constructor(props) {
     super();
     this.onMouseDown = this.onMouseDown.bind(this);
@@ -20,6 +20,8 @@ class Oscillator extends Component {
       voices: 0, //voices started with on event
       height: window.innerHeight,
       width: window.innerWidth,
+      xPos: null,
+      yPos: null
 
     }
     this.handleResize = this.handleResize.bind(this);
@@ -28,7 +30,7 @@ class Oscillator extends Component {
   componentDidMount() {
     Tone.context = this.props.context;
     this.synths = new Array(NUM_VOICES);
-    this.masterVolume = new Tone.Volume(-30);
+    this.masterVolume = new Tone.Volume(0);
     let options = {
       oscillator  : {
         type  : "sine"
@@ -50,8 +52,6 @@ class Oscillator extends Component {
   }
   onMouseDown(e) {
     e.preventDefault();
-    // let canvasHeight = e.pageY - e.currentTarget.offsetTop;
-    // let totalHeight = this.state.height
     let yPercent = (1 - ((e.pageY - e.currentTarget.offsetTop) / this.state.height));
     let xPercent = 1 - e.pageX / this.state.width;
     let freq = this.newFreqAlgorithm(yPercent);
@@ -59,7 +59,6 @@ class Oscillator extends Component {
     let newVoice = (this.state.currentVoice + 1) % NUM_VOICES;
 
     this.synths[newVoice].triggerAttack(freq);
-    console.log(gain);
     this.synths[newVoice].volume.value = gain;
     this.setState({
       mouseDown: true,
@@ -116,20 +115,21 @@ class Oscillator extends Component {
   }
   onTouchMove(e) {
     e.preventDefault();
+
     if (this.state.touch) {
+      let voiceToChange = this.state.currentVoice - (this.state.voices -1);
       for (let i = 0; i < e.changedTouches.length; i++){
         let yPercent = (1 - ((e.changedTouches[i].pageY - e.currentTarget.offsetTop) / this.state.height));
         let xPercent = 1 - e.touches[i].pageX / this.state.width;
         let gain = this.getGain(xPercent);
         let freq = this.newFreqAlgorithm(yPercent);
-        let index = ((this.state.currentVoice - (this.state.voices - 1)) + e.changedTouches[i].identifier) % NUM_VOICES;
+        let index = (voiceToChange + e.changedTouches[i].identifier) % NUM_VOICES;
         index = (index < 0)? (NUM_VOICES+index):index;
-        this.synths[index].frequency.setTargetAtTime(freq);
+        this.synths[index].frequency.value = freq;
         this.synths[index].volume.value = gain;
 
         }
     }
-
   }
   onTouchEnd(e) {
     e.preventDefault();
@@ -141,7 +141,6 @@ class Oscillator extends Component {
     } else {
       let voiceToRemoveFrom = this.state.currentVoice - (this.state.voices -1);
       for (let i = 0; i < e.changedTouches.length; i++) {
-        // console.log(e.changedTouches[i].identifier);
         let index = (voiceToRemoveFrom + e.changedTouches[i].identifier) % NUM_VOICES;
         index = (index < 0)? (NUM_VOICES+index):index;
           this.synths[index].triggerRelease();
@@ -172,8 +171,21 @@ class Oscillator extends Component {
     this.setState({width: window.innerWidth, height: window.innerHeight});
 
   }
+
   render() {
-    return (<canvas onContextMenu={(e) => e.preventDefault()} onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp} onMouseMove={this.onMouseMove} onMouseOut={this.onMouseOut} onTouchStart={this.onTouchStart} onTouchEnd={this.onTouchEnd} onTouchMove={this.onTouchMove} width={this.state.width} height={this.state.height} ref={(c) => {
+    return (
+      <canvas
+      onContextMenu={(e) => e.preventDefault()}
+      onMouseDown={this.onMouseDown}
+      onMouseUp={this.onMouseUp}
+      onMouseMove={this.onMouseMove}
+      onMouseOut={this.onMouseOut}
+      onTouchStart={this.onTouchStart}
+      onTouchEnd={this.onTouchEnd}
+      onTouchMove={this.onTouchMove}
+      width={this.state.width}
+      height={this.state.height}
+      ref={(c) => {
       this.canvas = c;
     }}/>);
   }

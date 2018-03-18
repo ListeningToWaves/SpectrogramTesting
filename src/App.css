@@ -3,9 +3,9 @@
 body, html {
   margin: 0;
   padding: 0;
-  user-select: none;
-  touch-action: pan-x pan-y;
-  
+  /* user-select: none; */
+  margin: 0;
+  height: 100%;
 }
 
 .App {
@@ -76,5 +76,7 @@ canvas {
   top: 8vh;
   z-index: 10;
   flex: 1;
+  touch-action: none;
   left: 0%;
+  overflow: hidden
 }
