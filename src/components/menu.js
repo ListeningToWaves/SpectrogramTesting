@@ -1,7 +1,19 @@
 import React, {Component} from 'react';
 import {Button, Tab, Menu} from 'semantic-ui-react';
 import "../styles/menu.css";
+import { Slider } from 'react-semantic-ui-range';
 
+const settings = {
+     start:2,
+     min:0,
+     max:10,
+     step:1,
+   }
+const pane1 = (
+<Tab.Pane>
+<Slider color="red" inverted={false} settings={settings}/>
+</Tab.Pane>
+)
 class MyMenu extends Component {
   constructor() {
     super();
@@ -14,7 +26,6 @@ class MyMenu extends Component {
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
-    this.handleMouseOver = this.handleMouseOver.bind(this);
   }
 
   handleChange(e, data) {
@@ -24,7 +35,7 @@ class MyMenu extends Component {
           this.setState({pane1: null, point: false});
         } else {
           this.setState({
-            pane1: <Tab.Pane>Tab 1 Content</Tab.Pane>,
+            pane1: pane1,
             pane2: null,
             pane3: null,
             point: true
@@ -36,7 +47,8 @@ class MyMenu extends Component {
           this.setState({pane2: null, point: false});
         } else {
           this.setState({
-            pane1: null, pane2: <Tab.Pane>Tab 2 Content</Tab.Pane>,
+            pane1: null,
+            pane2: <Tab.Pane>Tab 2 Content</Tab.Pane>,
             pane3: null,
             point: true
           });
@@ -64,9 +76,7 @@ class MyMenu extends Component {
       this.setState({pane1: null, pane2: null, pane3: null, point: false});
     }
   }
-  handleMouseOver(e){
-    console.log("Hi");
-  }
+
 
   render() {
     const color = "violet";
@@ -75,15 +85,15 @@ class MyMenu extends Component {
         menuItem: <Button className="menu-button" inverted color='violet' key="5">Oscilloscope</Button>,
         key: "1"
       }, {
-        menuItem: 'Graph',
+        menuItem: 'Tuning',
         render: () => this.state.pane1,
         key: "2",
       }, {
-        menuItem: 'Timbre',
+        menuItem: 'Sound',
         render: () => this.state.pane2,
         key: "3"
       }, {
-        menuItem: 'Scale',
+        menuItem: 'Advanced',
         render: () => this.state.pane3,
         key: "4"
       }, {

@@ -1,0 +1,436 @@
+<link rel="import" href="./bower_components/polymer/polymer.html">
+
+<polymer-element name="g-spectrogram-controls" attributes="log labels ticks speed color resolutionMax resolutionMin pause gain square scale fadeInTime fadeOutTime sound timbre outputVolume currentScale currentMode headphoneMode softSnap">
+  <template>
+    <link rel="stylesheet" href="./bower_components/css-toggle-switch/dist/toggle-switch.css">
+    <style>
+      :host {
+        display: block;
+          padding: 1em;
+        background: rgba(255, 255, 255, 0.5);
+        margin: 1em;
+        border: rgba(0, 0, 0, 0.3);
+        border-width: 1px;
+        border-style: solid;
+        font-family: 'Inconsolata', sans-serif;
+        z-index: 10;
+        overflow-y: auto;
+        resize: both;
+        max-height: 75vh;
+        user-select: none;
+        min-width: 400px;
+        min-height: 100px;
+        }
+      h1 {
+        font-size: 20px;
+        margin: 0;
+        margin-bottom: 20px;
+      }
+      .config {
+        font-size: 14px;
+        margin-top: 0.5em;
+      }
+
+      .color-map {
+        width: 100%;
+        height: 20px;
+        border: 2px solid gold;
+        background: linear-gradient(to right, black 15%,blue 30%, green,red)
+      }
+      .color-map-labels {
+        display: flex;
+        justify-content: space-between;
+      }
+      .section-container {
+        display: flex;
+        flex-direction: column;
+        /*align-items: center;*/
+        width: 100%;
+        margin-top: 0.5em;
+      }
+      .section-title {
+        align-self: center;
+        margin-bottom: 0;
+      }
+
+      .down {
+          transform: rotate(45deg);
+          -webkit-transform: rotate(45deg);
+          margin-bottom: 2px;
+
+      }
+      .up {
+        transform: rotate(-135deg);
+        -webkit-transform: rotate(-135deg);
+        margin-top: 2px;
+      }
+
+      i {
+        border: solid black;
+        border-width: 0 3px 3px 0;
+        display: inline-block;
+        padding: 3px;
+      }
+      .advanced {
+        margin-top: 0.5em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .advanced-button {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0.75;
+      }
+      #graph {
+        background-color: #89b6ff;
+      }
+      #sound {
+        background-color: #66ffcc;
+        margin-top: 0!important;
+      }
+      .sound-button {
+        padding: 0.75em;
+        background-color: red;
+        border-radius: 50%;
+        border-width: 1px;
+      }
+      button:focus {
+        outline: none;
+      }
+      input:focus {
+        outline:none;
+      }
+      .green {
+        background-color: green!important;
+      }
+      .timbre-image {
+        height: 30px;
+        width: 30px;
+        padding: 0.25em;
+        background-color: gray;
+        border: 2px solid gray;
+      }
+      .timbre-container {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+      }
+      .img-span{
+        display: flex;
+        flex-direction: column;
+        margin: 0.5em;
+      }
+      .timbre-title{
+        align-self: baseline;
+        margin: 0;
+        padding: 0;
+      }
+
+      .contain {
+        display: flex;
+        align-items: center;
+        /*justify-content: space-around;*/
+        margin: 0.25em;
+      }
+      .scale-choice {
+        width: 25%;
+      }
+      .scale-container {
+        display: flex;
+        justify-content: flex-start;
+        margin: 0.25em;
+
+      }
+      .scale-label {
+        display: flex;
+        font-size: 14px;
+        align-items: center;
+        align-self: baseline;
+
+      }
+      .selected {
+        border: 2px solid blue;
+      }
+      .graph-scale {
+        width: 40%;
+      }
+      .title-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      #softSnap {
+
+        -webkit-transform:rotate(-90deg);
+           -moz-transform:rotate(-90deg);
+             -o-transform:rotate(-90deg);
+                transform:rotate(-90deg);
+      }
+
+
+    </style>
+    <div class="title-container">
+    <h1>Spectrogram Controls</h1>
+    <button on-tap="{{reset}}">Reset</button>
+  </div>
+
+    <div class = "config">
+      <div class="container">
+      <div class="color-map" id="cool">
+      </div>
+      <div class="color-map-labels" >
+    Soft<span>Loud</span>
+    </div>
+
+      </div>
+
+      <div class="section-container"id="graph">
+
+      <h1 class="section-title" >
+      Graph
+    </h1>
+    <div class="config contain">
+      <label for="speed">Microphone Sensitivity&nbsp;</label>
+      <input type="range" id="speed" value="{{gain}}" min="1" max="10" />
+    </div>
+    <div class="config contain">
+    <label for="ticks">Max Frequency&nbsp;</label>
+    <input type="range" id="resolution" value="{{resolutionMax}}" min="20" max="20000" />
+    {{resolutionMax}}
+    </div>
+    <template if="{{show1}}">
+    <div class="config contain">
+    <label for="ticks">Minimum Frequency&nbsp;</label>
+    <input type="range" id="resolution" value="{{resolutionMin}}" min="1" max="1000" />
+    {{resolutionMin}}
+    </div>
+    <div class="config contain">
+      <label for="speed">Speed&nbsp;</label>
+      <input type="range" id="speed" value="{{speed}}" min="1" max="5" />
+    </div>
+    <div class="config contain">
+    <label>Pause&nbsp;</label>
+    <input type="checkbox" id="resolution" checked="{{pause}}" />
+    </div>
+    <!-- <div class="config contain">
+      <label for="log">Log scale&nbsp;</label>
+      <input type="checkbox" id="log" >
+    </div> -->
+    <div class="config">
+    <label class="switch-light switch-candy contain" onclick="">
+  <input type="checkbox" checked="{{log}}">
+
+  <strong>
+    Vertical Scale&nbsp;
+  </strong>
+
+  <span class="graph-scale">
+    <span>Linear</span>
+    <span>Log</span>
+    <a></a>
+  </span>
+</label>
+</div>
+    <!-- <div class="config">
+      <label for="color">Full color</label>
+      <input type="checkbox" id="color" checked="{{color}}">
+    </div> -->
+  </template>
+  <div class="advanced" on-tap="{{clickAction1}}">
+    <button class="advanced-button">Advanced &nbsp; <i class="arrow down"></i> </button>
+  </div>
+  </div>
+
+  </div>
+
+  <div class="section-container" id="sound">
+
+    <h1 class="section-title">
+        Sound
+      </h1>
+
+    <div class="config contain">
+      <label for="speed">Sound&nbsp;</label>
+      <button class="sound-button" on-tap="{{soundToggle}}"></button>
+
+    </div>
+
+    <div class="config contain">
+    <label for="ticks">Output Volume&nbsp;</label>
+    <input type="range" id="fadeIn" value="{{outputVolume}}" min="1" max="100" />
+    {{outputVolume}}
+    </div>
+
+
+    <!-- <div class="config">
+    <label for="labels">Show labels</label>
+    <input type="checkbox" id="labels" checked="{{labels}}">
+    </div> -->
+    <!-- <template if="{{labels}}">
+      <div class="config">
+      <label for="ticks">Number of ticks</label>
+      <input type="range" id="ticks" value="{{ticks}}" min="2" max="10" />
+    </div>
+    </template> -->
+
+    <!-- <div class="config">
+    <label for="labels">Show Advanced Controls</label>
+    <input type="checkbox" id="labels" checked="{{advanced}}">
+    </div> -->
+    <template if="{{show2}}">
+      <div class="config contain">
+      <label for="ticks">Attack&nbsp;</label>
+      <input type="range" id="fadeIn" value="{{fadeInTime}}" min="10" max="2000" />
+      {{fadeInTime}} ms
+      </div>
+      <div class="config contain">
+      <label for="ticks">Decay&nbsp;</label>
+      <input type="range" id="fadeOut" value="{{fadeOutTime}}" min="10" max="2000" />
+      {{fadeOutTime}} ms
+      </div>
+      <!-- <div class="config contain">
+        <label for="speed">Square Wave&nbsp;</label>
+        <input type="checkbox" id="labels" checked="{{square}}">
+      </div> -->
+      <div class="config contain">
+        <div class="timbre-container">
+          <div class="timbre-title">
+        Timbre:
+      </div>
+        <span class="img-span" on-tap={{timbreSelect}}>
+        <img src="./images/sine.png" class="timbre-image selected"></img>
+        <label for="speed">Sine</label>
+      </span>
+      <span class="img-span" on-tap={{timbreSelect}}>
+    <img src="./images/saw.png" class="timbre-image"></img>
+    <label for="speed">Saw</label>
+  </span>
+  <span class="img-span" on-tap={{timbreSelect}}>
+    <img src="./images/square.png" class="timbre-image"></img>
+    <label for="speed">Square</label>
+  </span>
+  <span class="img-span" on-tap={{timbreSelect}}>
+    <img src="./images/triangle.png" class="timbre-image"></img>
+    <label for="speed">Triangle</label>
+  </span>
+
+
+        </span>
+      </div>
+      </div>
+      <div class="config contain">
+        <label for="speed">Snap to Scale&nbsp;</label>
+        <input type="checkbox" id="labels" checked="{{scale}}">
+      </div>
+        <template if="{{scale}}">
+          <div class="scale-container">
+          <label for="speed" class="scale-label">Scale:&nbsp;</label>
+          <select name="scaleChoice" size="3" selectedIndex="{{currentScale}}" class="scale-choice" >
+            <option value="3" selected="selected">C</option>
+            <option value="4">C#/Db</option>
+            <option value="5">D</option>
+            <option value="6">D#/Eb</option>
+            <option value="7">E</option>
+            <option value="8">F</option>
+            <option value="9">F#/Gb</option>
+            <option value="10">G</option>
+            <option value="11">G#/Ab</option>
+            <option value="0">A</option>
+            <option value="1">A#/Bb</option>
+            <option value="12">B</option>
+          </select>
+
+          <span>
+            <select name="mode" size = "3" selectedIndex="{{currentMode}}" >
+              <option value="major" selected="selected">Major</option>
+              <option value="minor">Minor</option>
+              <option value="pentaM">Major Pentatonic</option>
+              <option value="chromatic">Chromatic</option>
+              <option value="blues">Blues</option>
+              <option value="harmonic-major">Harmonic Major</option>
+              <option value="hungarian-minor">Hungarian Minor</option>
+              <option value="heptatonic-1">Heptatonic 1</option>
+              <option value="heptatonic-2">Heptatonic 2</option>
+              <option value="heptatonic-3">Heptatonic 3</option>
+              <option value="heptatonic-4">Heptatonic 4</option>
+              <option value="heptatonic-5">Heptatonic 5</option>
+              <option value="heptatonic-6">Heptatonic 6</option>
+              <option value="hexatonic-1">Hexatonic 1</option>
+              <option value="hexatonic-2">Hexatonic 2</option>
+              <option value="hexatonic-3">Hexatonic 3</option>
+              <option value="hexatonic-4">Hexatonic 4</option>
+              <option value="hexatonic-5">Hexatonic 5</option>
+              <option value="hexatonic-6">Hexatonic 6</option>
+              <option value="pentatonic-1">Pentatonic 1</option>
+              <option value="pentatonic-2">Pentatonic 2</option>
+              <option value="pentatonic-3">Pentatonic 3</option>
+              <option value="mondongo">Mondongo </option>
+
+
+
+
+            </select>
+          </span>
+
+</div>
+<!-- <div class="config contain">
+  <label for="ticks">Vibrato&nbsp;</label>
+  <input type="range" id="softSnap" value="{{softSnap}}" min="-10" max="10" />
+{{softSnap}}
+</div> -->
+    </template>
+
+    </select>
+    <div class="config contain">
+      <label for="speed">Headphone Mode&nbsp;</label>
+      <input type="checkbox" id="labels" checked="{{headphoneMode}}">
+    </div>
+
+    </template>
+    <div class="advanced" on-tap="{{clickAction2}}">
+      <button class="advanced-button">Advanced &nbsp; <i class="arrow down"></i> </button>
+    </div>
+    </template>
+
+
+    <script src="g-spectrogram-controls.js"></script>
+    <script>
+      // function changeScale(obj) {
+      //   var choice = obj.value;
+      //   localStorage.setItem('scaleChoice', choice);
+      // }
+      //
+      // function changeMode(obj) {
+      //   var choice = obj.value;
+      //   // var mode = (choice=='minor')? 1:0;
+      //   // console.log(mode)
+      //   localStorage.setItem('modeChoice', choice);
+      // }
+
+
+      addEventListener('template-bound', function(e) {
+        e.target.clickAction1 = clickAction1;
+      });
+
+      addEventListener('template-bound', function(e) {
+        e.target.clickAction2 = clickAction2;
+      });
+
+      addEventListener('template-bound', function(e) {
+        e.target.soundToggle = soundToggle;
+      });
+
+      addEventListener('template-bound', function(e) {
+        e.target.timbreSelect = timbreSelect;
+      });
+
+      addEventListener('template-bound', function(e) {
+        e.target.reset = reset;
+      });
+
+    </script>
+
+</polymer-element>
