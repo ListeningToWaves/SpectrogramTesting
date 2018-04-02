@@ -4,7 +4,8 @@
   left: 0%;
   display: flex;
   width: 100%;
-  border-bottom: 1px solid #a67cff;
+  flex-direction: column;
+  /* border-bottom: 1px solid #a67cff; */
 }
 
 .menu-tab {
@@ -12,19 +13,33 @@
   /* width: 100%; */
   align-self: flex-start;
 }
-.menu-button {
-  align-self: center;
-}
+
 .menu-title{
   font-size: 20px;
-  color: white;
+  /* color: white; */
   align-self: center;
   text-align: left;
   transform:translateX(-50%);
   left: 50%;
   position: absolute;
 }
-.menu {
-  height: 8vh;
 
+.menu-menu {
+  height: 10vh;
+  margin: 0!important;
+  border-bottom: 1px solid black!important;
+}
+.menu-pane {
+  padding: 0;
+  margin: 0!important;
+  border: 0!important;
+}
+.tab-item:hover {
+  background-color: #d7dde5!important;
+}
+.rangeslider__handle{
+  outline: none;
+}
+.gain-slider {
+  width: 100px;
 }

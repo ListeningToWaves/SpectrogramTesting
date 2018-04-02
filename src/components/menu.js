@@ -1,125 +1,83 @@
 import React, {Component} from 'react';
-import {Button, Tab, Menu} from 'semantic-ui-react';
+import {Button, Menu} from 'semantic-ui-react';
 import "../styles/menu.css";
-import { Slider } from 'react-semantic-ui-range';
+import Tuning from './tuning-controls.js';
+import Slider from 'react-rangeslider';
 
-const settings = {
-     start:2,
-     min:0,
-     max:10,
-     step:1,
-   }
-const pane1 = (
-<Tab.Pane>
-<Slider color="red" inverted={false} settings={settings}/>
-</Tab.Pane>
-)
+// To include the default styles
+import 'react-rangeslider/lib/index.css';
+
 class MyMenu extends Component {
-  constructor() {
-    super();
-    this.state = {
-      pane1: null,
-      pane2: null,
-      pane3: null,
-      point: false
+    state = { activeItem: null, pane: null, value: 50 }
+    handleItemClick = (e, { name }) => {
+      let pane = null;
+      switch (name) {
+        case "tuning":
+            if(name !== this.state.activeItem){
+              pane = <Tuning />
+            } else {
+              name = null;
+            }
+          break;
+        case "sound":
+            if(name !== this.state.activeItem){
+              pane = <Tuning />
+            } else {
+              name = null;
+            }
+          break;
+        case "advanced":
+            if(name !== this.state.activeItem){
+              pane = <Tuning />
+            } else {
+              name = null;
+            }
+          break;
+        default:
+          pane = null;
 
-    }
-    this.handleChange = this.handleChange.bind(this);
-    this.handleClick = this.handleClick.bind(this);
-  }
-
-  handleChange(e, data) {
-    switch (data.activeIndex) {
-      case 1:
-        if (this.state.pane1) {
-          this.setState({pane1: null, point: false});
-        } else {
-          this.setState({
-            pane1: pane1,
-            pane2: null,
-            pane3: null,
-            point: true
-          });
-        }
-        break;
-      case 2:
-        if (this.state.pane2) {
-          this.setState({pane2: null, point: false});
-        } else {
-          this.setState({
-            pane1: null,
-            pane2: <Tab.Pane>Tab 2 Content</Tab.Pane>,
-            pane3: null,
-            point: true
-          });
-        }
-        break;
-      case 3:
-        if (this.state.pane3) {
-          this.setState({pane3: null, point: false});
-        } else {
-          this.setState({
-            pane1: null, pane2: null, pane3: <Tab.Pane>Tab 3 Content</Tab.Pane>,
-            point: true
-          });
-        }
-        break;
-      default:
-        this.setState({pane1: null, pane2: null, pane3: null, point: false});
-        break;
+      }
+      this.setState({ activeItem: name, pane: pane });
     }
 
-  }
-
-  handleClick(e) {
-    if (e._dispatchListeners.length === 1) {
-      this.setState({pane1: null, pane2: null, pane3: null, point: false});
+    switchToOscilloscope = () =>{
+      console.log("SWITCH");
     }
-  }
 
+handleGainChange = (value) =>{
+  this.setState({
+    value: value
+  });
+}
 
   render() {
     const color = "violet";
-    const panes = [
-      {
-        menuItem: <Button className="menu-button" inverted color='violet' key="5">Oscilloscope</Button>,
-        key: "1"
-      }, {
-        menuItem: 'Tuning',
-        render: () => this.state.pane1,
-        key: "2",
-      }, {
-        menuItem: 'Sound',
-        render: () => this.state.pane2,
-        key: "3"
-      }, {
-        menuItem: 'Advanced',
-        render: () => this.state.pane3,
-        key: "4"
-      }, {
-        menuItem: <Menu.Header className="menu-title" key="6" active="false" >Spectrogram</Menu.Header>,
-        render: ()=>false,
-        key: "5"
-      }
-    ];
+    const { activeItem } = this.state;
+
+
+
     return (
       <div className="menu-container">
+        <Menu color={color} tabular pointing className="menu-menu" attached="bottom">
+          <Menu.Item><Button className="menu-button" inverted color='violet' onClick={this.switchToOscilloscope}>Oscilloscope</Button></Menu.Item>
+          <Menu.Item name='tuning' active={activeItem === 'tuning'} onClick={this.handleItemClick} className="tab-item"></Menu.Item>
+          <Menu.Item name='sound' active={activeItem === 'sound'} onClick={this.handleItemClick} className="tab-item"/>
+          <Menu.Item name='advanced' active={activeItem === 'advanced'} onClick={this.handleItemClick} className="tab-item"/>
+          <Menu.Item position="right">
 
-        <Tab
-        className="menu-tab"
-        menu={{
-          color,
-          inverted: true,
-          attached: true,
-          pointing: this.state.point
-        }}
-        panes={panes}
-        defaultActiveIndex={1}
-        onTabChange={this.handleChange}
-        onClick={this.handleClick}
-        key="0"
-        >
-        </Tab>
+          Microphone Gain&nbsp;&nbsp;
+            <Slider
+                    min={0}
+                    max={100}
+                    value={this.state.value}
+                    onChange={this.handleGainChange}
+                    className="gain-slider"
+            />
+            <Menu.Item position="right"><Button inverted color="red">Reset</Button></Menu.Item>
+            </Menu.Item>
+          <Menu.Header className="menu-title" active="false" >Spectrogram</Menu.Header>
+        </Menu>
+        {this.state.pane}
       </div>
 
     );

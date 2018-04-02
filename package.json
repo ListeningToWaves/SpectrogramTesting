@@ -3,11 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "konva": "^1.7.6",
     "react": "^16.2.0",
     "react-animation-frame": "^1.0.1",
     "react-dom": "^16.2.0",
-    "react-konva": "^1.6.6",
+    "react-rangeslider": "^2.2.0",
     "react-scripts": "1.1.1",
     "react-semantic-ui-range": "^0.4.0",
     "semantic-ui-css": "^2.3.0",
