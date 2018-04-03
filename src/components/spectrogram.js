@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import '../styles/spectrogram.css';
 
 import Axes from './axes';
-// import Controls from './controls';
 import Oscillator from './oscillator';
 import Menu from './menu';
 

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Button, Menu} from 'semantic-ui-react';
 import "../styles/menu.css";
 import Tuning from './tuning-controls.js';
+import Sound from './sound-controls.js';
 import Slider from 'react-rangeslider';
 
 // To include the default styles
@@ -21,7 +22,7 @@ class MyMenu extends Component {
           break;
         case "sound":
             if(name !== this.state.activeItem){
-              pane = <Tuning />
+              pane = <Sound />
             } else {
               name = null;
             }
@@ -64,15 +65,17 @@ handleGainChange = (value) =>{
           <Menu.Item name='sound' active={activeItem === 'sound'} onClick={this.handleItemClick} className="tab-item"/>
           <Menu.Item name='advanced' active={activeItem === 'advanced'} onClick={this.handleItemClick} className="tab-item"/>
           <Menu.Item position="right">
-
           Microphone Gain&nbsp;&nbsp;
+          <div className="gain-container">
             <Slider
                     min={0}
                     max={100}
                     value={this.state.value}
                     onChange={this.handleGainChange}
+                    tooltip={false}
                     className="gain-slider"
-            />
+            /> {this.state.value}
+            </div>
             <Menu.Item position="right"><Button inverted color="red">Reset</Button></Menu.Item>
             </Menu.Item>
           <Menu.Header className="menu-title" active="false" >Spectrogram</Menu.Header>

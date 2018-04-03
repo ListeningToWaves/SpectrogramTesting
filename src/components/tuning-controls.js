@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Button, Segment, Menu} from 'semantic-ui-react';
-import "../styles/menu.css";
+import "../styles/tuning.css";
 // Using an ES6 transpiler like Babel
 import Slider from 'react-rangeslider';
 
@@ -30,6 +30,7 @@ class Tuning extends Component {
               value={value}
               onChange={this.handleChange}
               className="slider"
+
     />
       </Segment>
 
