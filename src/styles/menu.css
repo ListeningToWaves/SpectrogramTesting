@@ -41,3 +41,7 @@
   margin-bottom: 10%!important;
 
 }
+.flex {
+  display: flex;
+  flex-direction: column;
+}
