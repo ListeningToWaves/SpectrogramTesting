@@ -6,17 +6,15 @@ import Oscillator from './oscillator';
 import Menu from './menu';
 
 const ReactAnimationFrame = require('react-animation-frame');
-//TODO: Resize of canvas bugs
+// TODO: Resize of canvas bugs
+// TODO: Tap anywhere to start (ipad bug)
 
-const audioContext = new(window.AudioContext || window.webkitAudioContext)();
-const analyser = audioContext.createAnalyser();
-const gainNode = audioContext.createGain();
+let audioContext = null;
+let analyser = null;
+let gainNode = null;
 
 const fftSize = 8192;
-analyser.minDecibels = -100;
-analyser.maxDecibels = -20;
-analyser.smoothingTimeConstant = 0;
-analyser.fftSize = fftSize;
+
 
 class Spectrogram extends Component {
   constructor() {
@@ -28,7 +26,7 @@ class Spectrogram extends Component {
       log: true,
       resolutionMax: 20000,
       resolutionMin: 20,
-      x: 0
+      isStarted: false
     });
     this.renderFreqDomain = this.renderFreqDomain.bind(this);
     this.handleResize = this.handleResize.bind(this);
@@ -36,20 +34,12 @@ class Spectrogram extends Component {
   }
 
   componentDidMount() {
-    if (navigator.mozGetUserMedia) {
-      navigator.mozGetUserMedia({
-        audio: true
-      }, this.onStream.bind(this), this.onStreamError.bind(this));
-    } else if (navigator.webkitGetUserMedia) {
-      navigator.webkitGetUserMedia({
-        audio: true
-      }, this.onStream.bind(this), this.onStreamError.bind(this));
-    }
+
     window.addEventListener("resize", this.handleResize);
 
     this.ctx = this.canvas.getContext('2d');
     this.tempCanvas = document.createElement('canvas');
-    this.renderFreqDomain();
+    // this.renderFreqDomain();
 
   }
   componentWillUnmount() {
@@ -69,7 +59,10 @@ class Spectrogram extends Component {
   }
 
   onAnimationFrame = (time) => {
-    this.renderFreqDomain();
+    if(this.state.isStarted){
+      this.renderFreqDomain();
+
+    }
   }
 
   renderFreqDomain = () => {
@@ -131,18 +124,56 @@ class Spectrogram extends Component {
     this.setState({width: window.innerWidth, height: window.innerHeight});
   }
 
+  startSpectrogram = ()=>{
+    if(!this.state.isStarted){
+    audioContext = new(window.AudioContext || window.webkitAudioContext)();
+    analyser = audioContext.createAnalyser();
+    gainNode = audioContext.createGain();
+    analyser.minDecibels = -100;
+    analyser.maxDecibels = -20;
+    analyser.smoothingTimeConstant = 0;
+    analyser.fftSize = fftSize;
+    if (navigator.mozGetUserMedia) {
+      navigator.mozGetUserMedia({
+        audio: true
+      }, this.onStream.bind(this), this.onStreamError.bind(this));
+    } else if (navigator.webkitGetUserMedia) {
+      navigator.webkitGetUserMedia({
+        audio: true
+      }, this.onStream.bind(this), this.onStreamError.bind(this));
+    }
+      this.setState({isStarted: true});
+      this.renderFreqDomain();
+    }
+  }
   // <Controls />
 
   render() {
     return (
-      <div>
+      <div onClick={this.startSpectrogram}>
         <Menu/>
+
         <canvas width={this.state.width} height={this.state.height} ref={(c) => {
           this.canvas = c;
         }}/>
         <Axes resolutionMax={this.state.resolutionMax} resolutionMin={this.state.resolutionMin}/>
+        {this.state.isStarted &&
         <Oscillator width={this.state.width} height={this.state.height} resolutionMax={this.state.resolutionMax} resolutionMin={this.state.resolutionMin} context={audioContext} analyser={analyser}/>
+        }
+        <div className="instructions">
+          {/*<h2>Spectrogram</h2>*/}
+          {/*<ol>
+          <li>^ Allow use of your microphone ^</li>
+          */}
+          {!this.state.isStarted ?
+            <div className="flashing">Click or tap anywhere on the canvas to start the spectrogram</div>:
+            <div className="normal">Great! Be sure to allow use of your microphone. You can draw on the canvas to make sound!</div>
 
+
+          }
+
+        {/*</ol>*/}
+        </div>
       </div>
     );
 

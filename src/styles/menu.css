@@ -45,3 +45,23 @@
   display: flex;
   flex-direction: column;
 }
+.color-map-container {
+  width: 20%;
+  position: relative;
+  left: 0%;
+  top: 5%;
+  padding: 2px;
+  color: white;
+}
+.color-map {
+  border: 2px solid gold;
+  background: linear-gradient(to right, black 15%,blue 30%, green,red);
+  width: 100%;
+  height: 20px;
+
+}
+.color-map-labels {
+  color: white;
+  display: flex;
+  justify-content: space-between;
+}

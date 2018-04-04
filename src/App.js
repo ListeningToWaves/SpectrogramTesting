@@ -6,14 +6,8 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-      <Spectrogram />
-      <div id="instructions">
-        <h2>Spectrogram & Oscillator</h2>
-        <ol>
-        <li>^ Allow use of your microphone ^</li>
-        <li>Click or tap anywhere canvas to generate a tone</li>
-      </ol>
-      </div>
+      <Spectrogram/>
+      
 
       <div id="about">
         <h4 id="about-text">Based on the Spectrogram by {' '}

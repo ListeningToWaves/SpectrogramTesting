@@ -41,7 +41,7 @@ class MyMenu extends Component {
       this.setState({ activeItem: name, pane: pane });
     }
 
-    switchToOscilloscope = () =>{
+    switchToSignalGenerator = () =>{
       console.log("SWITCH");
     }
 
@@ -60,7 +60,7 @@ handleGainChange = (value) =>{
     return (
       <div className="menu-container">
         <Menu color={color} tabular pointing className="menu-menu" attached="bottom">
-          <Menu.Item><Button className="menu-button" inverted color='violet' onClick={this.switchToOscilloscope}>Oscilloscope</Button></Menu.Item>
+          <Menu.Item><Button className="menu-button" inverted color='violet' onClick={this.switchToSignalGenerator}>Signal Generator</Button></Menu.Item>
           <Menu.Item name='tuning' active={activeItem === 'tuning'} onClick={this.handleItemClick} className="tab-item"></Menu.Item>
           <Menu.Item name='sound' active={activeItem === 'sound'} onClick={this.handleItemClick} className="tab-item"/>
           <Menu.Item name='advanced' active={activeItem === 'advanced'} onClick={this.handleItemClick} className="tab-item"/>
@@ -81,7 +81,16 @@ handleGainChange = (value) =>{
           <Menu.Header className="menu-title" active="false" >Spectrogram</Menu.Header>
         </Menu>
         {this.state.pane}
+        <div className="color-map-container">
+        Graph Scale
+        <div className="color-map">
+        </div>
+        <div className="color-map-labels">
+        Soft<span>Loud</span>
       </div>
+      </div>
+      </div>
+
 
     );
   }

@@ -3,3 +3,21 @@
   margin: 0!important;
   border: 0!important;
 }
+.multi-slider-container {
+  width: 200px;
+  height: 125px; 
+
+}
+.multi-slider {
+  width: 80%!important;
+  /* height: 50px; */
+  /* color: black; */
+  /* background-color: black; */
+}
+.graph-limit-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content:space-around;
+  padding: 5px!important;
+}

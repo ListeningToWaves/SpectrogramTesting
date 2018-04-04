@@ -59,16 +59,7 @@ a:visited {
   padding: 0;
 }
 
-#instructions {
-  margin: 0 auto;
-  padding-top: 100px;
-  width: 500px;
-  font-family: 'Inconsolata';
-  font-size: 120%;
-  z-index: 1;
-position: absolute;
 
-}
 canvas {
   position: absolute;
   width: 100%;
