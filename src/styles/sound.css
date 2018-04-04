@@ -1,0 +1,70 @@
+.menu-pane {
+  padding: 0;
+  margin: 0!important;
+  border: 0!important;
+}
+.volume-slider {
+  width: 100px;
+}
+.sub-menu-box {
+  padding: 0!important;
+  height: 100%;
+}
+.sub-menu-box::before {
+display: none;
+}
+.adsr-container {
+  padding: 5px!important;
+}
+.extra-margin {
+  margin: 10px!important;
+}
+.ui.toggle.checkbox input:focus:checked~label:before {
+  background-color: green!important;
+}
+.ui.toggle.checkbox input:checked~label:before {
+  background-color: green!important;
+
+}
+.sound-on {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+}
+.no-top-margin {
+
+}
+.item {
+  text-align: center!important;
+}
+.adsr-slider {
+  width: 100px;
+
+}
+.height1 {
+  height: 100%;
+
+}
+.scales-container {
+    padding: 5px!important;
+}
+.scales-settings {
+
+  align-self: center;
+}
+.scales-grid {
+  display: grid;
+  justify-content: center;
+  grid-template-rows: 10px auto;
+}
+.scales-checkbox {
+  margin: 10px 0px 20px 0px;
+}
+.scales-sub-menu {
+  padding: 0!important;
+}
+.scales-sub-menu::before {
+display: none;
+}
