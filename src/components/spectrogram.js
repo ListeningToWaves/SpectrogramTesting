@@ -26,7 +26,7 @@ class Spectrogram extends Component {
       log: true,
       resolutionMax: 20000,
       resolutionMin: 20,
-      isStarted: false
+      isStarted: false,
     });
     this.renderFreqDomain = this.renderFreqDomain.bind(this);
     this.handleResize = this.handleResize.bind(this);
@@ -149,30 +149,31 @@ class Spectrogram extends Component {
   // <Controls />
 
   render() {
+    let {width, height} = this.state;
     return (
       <div onClick={this.startSpectrogram}>
-        <Menu/>
-
         <canvas width={this.state.width} height={this.state.height} ref={(c) => {
           this.canvas = c;
         }}/>
         <Axes resolutionMax={this.state.resolutionMax} resolutionMin={this.state.resolutionMin}/>
         {this.state.isStarted &&
-        <Oscillator width={this.state.width} height={this.state.height} resolutionMax={this.state.resolutionMax} resolutionMin={this.state.resolutionMin} context={audioContext} analyser={analyser}/>
+        <Oscillator
+        width={width}
+        height={height}
+        resolutionMax={this.state.resolutionMax}
+        resolutionMin={this.state.resolutionMin}
+        context={audioContext}
+        analyser={analyser}
+        soundOn={this.props.soundOn}
+      />
         }
         <div className="instructions">
-          {/*<h2>Spectrogram</h2>*/}
-          {/*<ol>
-          <li>^ Allow use of your microphone ^</li>
-          */}
+
           {!this.state.isStarted ?
             <div className="flashing">Click or tap anywhere on the canvas to start the spectrogram</div>:
             <div className="normal">Great! Be sure to allow use of your microphone. You can draw on the canvas to make sound!</div>
-
-
           }
 
-        {/*</ol>*/}
         </div>
       </div>
     );

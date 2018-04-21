@@ -14,7 +14,7 @@ class Sound extends Component {
     super(props)
     this.state = {
       value: 50,
-      soundChecked: false
+      soundOn: true,
     }
   }
   handleChange = value => {
@@ -25,12 +25,13 @@ class Sound extends Component {
 
   handleSoundToggle = () =>{
     this.setState({
-      soundChecked: !this.state.soundChecked
-    })
+      soundOn: !this.state.soundOn
+    });
+    this.props.handleSoundToggle();
   }
-  
+
   render(){
-    const { value, soundChecked } = this.state
+    const { value, soundOn } = this.state
 
     return (
     <Segment className="menu-pane">
@@ -42,9 +43,9 @@ class Sound extends Component {
       <Menu.Item className="sub-menu-box">
       <Menu.Menu vertical="true" className="extra-margin">
 
-      <Checkbox toggle checked={soundChecked} onChange={this.handleSoundToggle} className="extra-margin" />
+      <Checkbox toggle checked={this.state.soundOn} onChange={this.handleSoundToggle} className="extra-margin" />
       <div>
-      {soundChecked ? 'On!': "Off" }
+      {soundOn ? 'On!': "Off" }
       </div>
       </Menu.Menu>
       </Menu.Item>

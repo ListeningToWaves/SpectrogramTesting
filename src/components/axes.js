@@ -11,6 +11,7 @@ class Axes extends Component {
       height: window.innerHeight,
       width: window.innerWidth
     }
+
     this.handleResize = this.handleResize.bind(this);
   }
 
@@ -78,10 +79,13 @@ class Axes extends Component {
 
   }
 
+
   render() {
-    return (<canvas width={this.state.width} height={this.state.height} ref={(c) => {
-      this.canvas = c;
-    }}/>)
+    return (
+      <canvas width={this.state.width} height={this.state.height}
+      ref={(c) => {this.canvas = c;}}
+    />
+  );
   }
 }
 export default Axes;
