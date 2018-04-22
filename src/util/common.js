@@ -42,31 +42,38 @@ const scaleOptions = [
 const keyOptions = [
   {
     text: "C",
-    value: 0
+    value: 0,
+    index: 0
   },
   {
     text: "D",
-    value: 1
+    value: 1,
+    index: 2
   },
   {
     text: "E",
-    value: 2
+    value: 2,
+    index: 4
   },
   {
     text: "F",
-    value: 3
+    value: 3,
+    index: 5
   },
   {
     text: "G",
-    value: 4
+    value: 4,
+    index: 7
   },
   {
     text: "A",
-    value: 5
+    value: 5,
+    index: 9
   },
   {
     text: "B",
-    value: 6
+    value: 6,
+    index: 11
   },
 ]
 const accidentalOptions = [

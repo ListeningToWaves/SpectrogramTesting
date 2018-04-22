@@ -43,6 +43,7 @@ class Sound extends Component {
   handleScaleToggle = () =>{
     this.setState({scaleOn: !this.state.scaleOn});
       this.props.handleScaleToggle();
+      console.log(this.state.scaleOn);
   }
   handleTimbreChange = (e, data) => {
     let newTimbre = data.options[data.value].text;
@@ -52,7 +53,7 @@ class Sound extends Component {
   handleKeyChange = (e,data) =>{
     let newKey = data.options[data.value].text;
     this.setState({musicKey: newKey});
-    this.props.handleKeyChange(data.value);
+    this.props.handleKeyChange(data.options[data.value].index);
   }
   handleAccidentalChange = (e,data) =>{
     let newAccidental = data.options[data.value].text;

@@ -10,7 +10,7 @@ export default function generateScale(startFreq, type) {
   var tuning_ = tuning / 32;
   var notes = ['A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab'];
   // Formate Key so that 'C' is first key instead of 'A'
-  startFreq = startFreq + 3;
+  startFreq = (startFreq + 3)%12;
   switch (type) {
     case 0:
       // Major

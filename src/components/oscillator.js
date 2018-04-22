@@ -219,21 +219,22 @@ class Oscillator extends Component {
     let freq = this.props.resolutionMin * Math.pow(Math.E, index * logResolution);
     if(this.props.scaleOn){
     //  Maps to one of the 12 keys of the piano
-      let newIndexedKey = (this.props.musicKey*2);
+      let newIndexedKey = this.props.musicKey;
       // Edge cases
       if(newIndexedKey === 0 && this.props.accidental === 2){
         // Cb->B
-        newIndexedKey = 12;
-      } else if(newIndexedKey === 12 && this.props.accidental === 1){
+        newIndexedKey = 11;
+      } else if(newIndexedKey === 11 && this.props.accidental === 1){
         // B#->C
         newIndexedKey = 0;
       } else {
         newIndexedKey = (this.props.accidental === 1)? newIndexedKey + 1:
         (this.props.accidental === 2)? newIndexedKey - 1: newIndexedKey;
       }
-
+      console.log(newIndexedKey);
       let s = generateScale(newIndexedKey, this.props.scale);
       let name = s.scale[0];
+      console.log(s);
       let note = 0;
       let dist = 20000;
       let harmonic = 0;
