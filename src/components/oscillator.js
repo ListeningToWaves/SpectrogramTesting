@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Tone from 'tone';
 import "../styles/oscillator.css"
-
+import generateScale from '../util/generateScale';
 const NUM_VOICES = 6;
 
 class Oscillator extends Component {
@@ -23,8 +23,9 @@ class Oscillator extends Component {
       height: window.innerHeight,
       width: window.innerWidth,
       xPos: null,
-      yPos: null
-
+      yPos: null,
+      outputVolume: 5,
+      timbre: 0
     }
     this.handleResize = this.handleResize.bind(this);
   }
@@ -32,7 +33,8 @@ class Oscillator extends Component {
   componentDidMount() {
     Tone.context = this.props.context;
     this.synths = new Array(NUM_VOICES);
-    this.masterVolume = new Tone.Volume(0);
+    this.masterVolume = new Tone.Volume(-20);
+    this.ctx = this.canvas.getContext('2d');
     let options = {
       oscillator  : {
         type  : "sine"
@@ -49,10 +51,39 @@ class Oscillator extends Component {
     window.addEventListener("resize", this.handleResize);
 
   }
+  componentWillReceiveProps(nextProps, prevState){
+    if(nextProps.soundOn === false){
+      this.masterVolume.mute = true;
+    } else {
+      this.masterVolume.mute = false;
+    }
+    if(nextProps.outputVolume && nextProps.outputVolume !== this.state.outputVolume){
+
+      this.masterVolume.volume.value = this.getGain(1-(nextProps.outputVolume)/100);
+
+      this.setState({outputVolume: nextProps.outputVolume });
+    }
+    if(nextProps.timbre !== this.state.timbre){
+      let newTimbre = 'sine';
+      switch (nextProps.timbre) {
+        case 0: newTimbre = 'sine'; break;
+        case 1: newTimbre = 'square'; break;
+        case 2: newTimbre = 'sawtooth'; break;
+        case 3: newTimbre = 'triangle'; break;
+        default: newTimbre = 'sine';
+      }
+      for(let i=0; i<NUM_VOICES; i++){
+        this.synths[i].oscillator.type = newTimbre;
+      }
+
+      this.setState({timbre: nextProps.timbre})
+    }
+  }
   componentWillUnmount() {
     window.removeEventListener("resize", this.handleResize);
   }
 
+  to
   getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect(), // abs. size of element
         scaleX = canvas.width / rect.width,    // relationship bitmap vs. element for X
@@ -74,6 +105,7 @@ class Oscillator extends Component {
 
     this.synths[newVoice].triggerAttack(freq);
     this.synths[newVoice].volume.value = gain;
+    this.label(freq, pos.x,pos.y);
     this.setState({
       mouseDown: true,
       currentVoice: newVoice,
@@ -91,6 +123,9 @@ class Oscillator extends Component {
       let freq = this.newFreqAlgorithm(yPercent);
       this.synths[this.state.currentVoice].frequency.value = freq;
       this.synths[this.state.currentVoice].volume.value = gain;
+      this.ctx.clearRect(0, 0, this.state.width, this.state.height);
+      this.label(freq, pos.x,pos.y);
+
     }
 
   }
@@ -100,6 +135,8 @@ class Oscillator extends Component {
 
     this.synths[this.state.currentVoice].triggerRelease();
     this.setState({mouseDown: false, voices: 0});
+    this.ctx.clearRect(0, 0, this.state.width, this.state.height);
+
     }
 
   }
@@ -108,6 +145,8 @@ class Oscillator extends Component {
     if(this.state.mouseDown){
     this.synths[this.state.currentVoice].triggerRelease();
     this.setState({mouseDown: false, voices: 0});
+    this.ctx.clearRect(0, 0, this.state.width, this.state.height);
+
     }
   }
 
@@ -178,12 +217,63 @@ class Oscillator extends Component {
   newFreqAlgorithm(index) {
     let logResolution = Math.log(this.props.resolutionMax / this.props.resolutionMin);
     let freq = this.props.resolutionMin * Math.pow(Math.E, index * logResolution);
+    if(this.props.scaleOn){
+    //  Maps to one of the 12 keys of the piano
+      let newIndexedKey = (this.props.musicKey*2);
+      // Edge cases
+      if(newIndexedKey === 0 && this.props.accidental === 2){
+        // Cb->B
+        newIndexedKey = 12;
+      } else if(newIndexedKey === 12 && this.props.accidental === 1){
+        // B#->C
+        newIndexedKey = 0;
+      } else {
+        newIndexedKey = (this.props.accidental === 1)? newIndexedKey + 1:
+        (this.props.accidental === 2)? newIndexedKey - 1: newIndexedKey;
+      }
+
+      let s = generateScale(newIndexedKey, this.props.scale);
+      let name = s.scale[0];
+      let note = 0;
+      let dist = 20000;
+      let harmonic = 0;
+      //Sweeps through scale object and plays correct frequency
+      for (var j = 1; j < 1500; j = j * 2) {
+
+        for (var k = 0; k < s.scale.length; k++) {
+
+          var check = j * s.scale[k];
+          var checkDist = Math.abs(freq - check);
+          if (checkDist < dist) {
+            dist = checkDist;
+            note = check;
+            name = s.scaleNames[k];
+            harmonic = Math.round(Math.log2(j) - 1);
+          } else {
+            break;
+          }
+        }
+      }
+      freq = note;
+      let textLabel = name + '' + harmonic;
+      this.scaleLabel = textLabel;
+
+    }
     return Math.round(freq);
   }
 
   getGain(index){
     //-80 to 0dB
     return -1*(index*60);
+  }
+  label(freq, x, y){
+    this.ctx.font = '20px Inconsolata';
+    this.ctx.fillStyle = 'white';
+    if(!this.props.scaleOn){
+      this.ctx.fillText(freq + ' Hz', x, y);
+    } else {
+      this.ctx.fillText(this.scaleLabel, x,y);
+    }
   }
 
   handleResize() {

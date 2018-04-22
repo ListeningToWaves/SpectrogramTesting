@@ -165,6 +165,12 @@ class Spectrogram extends Component {
         context={audioContext}
         analyser={analyser}
         soundOn={this.props.soundOn}
+        outputVolume={this.props.outputVolume}
+        timbre={this.props.timbre}
+        scaleOn={this.props.scaleOn}
+        musicKey={this.props.musicKey}
+        accidental={this.props.accidental}
+        scale={this.props.scale}
       />
         }
         <div className="instructions">

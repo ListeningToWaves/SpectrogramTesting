@@ -2,12 +2,15 @@
 * name: generateScale
 * params: startFreq: currentFreq to snap, type: which scale
 */
-function generateScale(startFreq, type) {
+export default function generateScale(startFreq, type) {
   var scaleNames = [];
   var scale = [];
   var scalePattern = [];
   var tuning = 440;
   var tuning_ = tuning / 32;
+  var notes = ['A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab'];
+  // Formate Key so that 'C' is first key instead of 'A'
+  startFreq = startFreq + 3;
   switch (type) {
     case 0:
       // Major
@@ -108,9 +111,9 @@ function generateScale(startFreq, type) {
   for (var i = 0; i < scalePattern.length; i++) {
     var currentF = Number(startFreq) + scalePattern[i];
     scale.push(tuning_ * Math.pow(Math.pow(2, 1 / 12), currentF));
-    scaleNames.push(this.notes[currentF % 12]);
+    scaleNames.push(notes[currentF % 12]);
   }
-  s = {
+  let s = {
     scale: scale,
     scaleNames: scaleNames
   }

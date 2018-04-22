@@ -1,5 +1,5 @@
 .menu-container {
-  z-index: 10;
+  /* z-index: 10; */
   position: absolute;
   left: 0%;
   display: flex;

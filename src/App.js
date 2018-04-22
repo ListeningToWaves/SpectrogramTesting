@@ -7,21 +7,45 @@ class App extends Component {
     super();
     this.state = {
       soundOn: true,
+      value: 50,
+      timbre: 'sine',
+      scaleOn: false,
+      musicKey: 0,
+      accidental: 0,
+      scale: 0
     }
   }
 
-  handleSoundToggle = () => {
-    this.setState({
-      soundOn: !this.state.soundOn
-    });
+  handleSoundToggle = () => this.setState({soundOn: !this.state.soundOn});
+  handleScaleToggle = () => this.setState({scaleOn: !this.state.scaleOn});
+  handleOutputVolumeChange = value => this.setState({outputVolume:value});
+  handleTimbreChange = value => this.setState({timbre: value});
+  handleKeyChange = value => this.setState({musicKey: value});
+  handleAccidentalChange = value => this.setState({accidental: value});
+  handleScaleChange = value => this.setState({scale: value})
 
-  }
   render() {
-    let {soundOn} = this.state;
+    let {soundOn, scaleOn, outputVolume, timbre, musicKey, accidental, scale} = this.state;
     return (
       <div className="App">
-      <Menu handleSoundToggle={this.handleSoundToggle}/>
-      <Spectrogram soundOn={soundOn}/>
+      <Menu
+      handleSoundToggle={this.handleSoundToggle}
+      handleOutputVolumeChange={this.handleOutputVolumeChange}
+      handleTimbreChange={this.handleTimbreChange}
+      handleScaleToggle={this.handleScaleToggle}
+      handleKeyChange={this.handleKeyChange}
+      handleAccidentalChange={this.handleAccidentalChange}
+      handleScaleChange={this.handleScaleChange}
+      />
+      <Spectrogram
+      soundOn={soundOn}
+      scaleOn={scaleOn}
+      outputVolume={outputVolume}
+      timbre={timbre}
+      musicKey={musicKey}
+      accidental={accidental}
+      scale={scale}
+      />
 
 
       <div id="about">
