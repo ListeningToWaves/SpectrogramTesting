@@ -50,9 +50,7 @@ class Oscillator extends Component {
 
   }
   componentWillReceiveProps(nextProps, prevState){
-    console.log(nextProps.soundOn);
     if(nextProps.soundOn === false){
-      console.log("Hi");
       this.masterVolume.mute = true;
     } else {
       this.masterVolume.mute = false;
@@ -68,8 +66,19 @@ class Oscillator extends Component {
       for(let i=0; i<NUM_VOICES; i++){
         this.synths[i].oscillator.type = newTimbre;
       }
-
-      this.setState({timbre: nextProps.timbre})
+      this.setState({timbre: nextProps.timbre});
+    }
+    if(nextProps.attack !== this.state.attack){
+      for(let i=0; i<NUM_VOICES; i++){
+        this.synths[i].envelope.attack = nextProps.attack;
+      }
+      this.setState({attack: nextProps.attack});
+    }
+    if(nextProps.release !== this.state.release){
+      for(let i=0; i<NUM_VOICES; i++){
+        this.synths[i].envelope.release = nextProps.release;
+      }
+      this.setState({attack: nextProps.release});
     }
   }
   componentWillUnmount() {
@@ -224,10 +233,8 @@ class Oscillator extends Component {
         newIndexedKey = (this.props.accidental.value === 1)? newIndexedKey + 1:
         (this.props.accidental.value === 2)? newIndexedKey - 1: newIndexedKey;
       }
-      console.log(newIndexedKey);
       let s = generateScale(newIndexedKey, this.props.scale.value);
       let name = s.scale[0];
-      console.log(s);
       let note = 0;
       let dist = 20000;
       let harmonic = 0;

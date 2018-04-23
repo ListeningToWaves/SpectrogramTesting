@@ -149,6 +149,8 @@ class Spectrogram extends Component {
         musicKey={this.props.musicKey}
         accidental={this.props.accidental}
         scale={this.props.scale}
+        attack={this.props.attack}
+        release={this.props.release}
       />
         }
         <div className="instructions">
