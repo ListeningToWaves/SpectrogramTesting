@@ -1,11 +1,11 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import { MyContext } from '../app.js';
+
 import {
-  Button,
   Segment,
   Menu,
   Dropdown,
   Checkbox,
-  Label
 } from 'semantic-ui-react';
 import "../styles/sound.css";
 // Using an ES6 transpiler like Babel
@@ -15,71 +15,23 @@ import Slider from 'react-rangeslider';
 import 'react-rangeslider/lib/index.css';
 import {timbreOptions, scaleOptions, keyOptions, accidentalOptions} from '../util/common.js';
 
+//Disable Controls if not started
 class Sound extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      outputVolume: 50,
-      value: 40,
-      soundOn: true,
-      musicKey: 'C',
-      accidental: ' ',
-      scale: 'Major',
-      timbre: 'Sine',
-      scaleOn: false
-
-    }
-  }
-
-  handleOutputVolumeChange = value  =>  {
-    this.setState({outputVolume: value});
-    this.props.handleOutputVolumeChange(value);
-  }
-
-  handleSoundToggle = () => {
-    this.setState({soundOn: !this.state.soundOn});
-    this.props.handleSoundToggle();
-  }
-  handleScaleToggle = () =>{
-    this.setState({scaleOn: !this.state.scaleOn});
-      this.props.handleScaleToggle();
-      console.log(this.state.scaleOn);
-  }
-  handleTimbreChange = (e, data) => {
-    let newTimbre = data.options[data.value].text;
-    this.setState({timbre: newTimbre});
-    this.props.handleTimbreChange(data.value);
-  }
-  handleKeyChange = (e,data) =>{
-    let newKey = data.options[data.value].text;
-    this.setState({musicKey: newKey});
-    this.props.handleKeyChange(data.options[data.value].index);
-  }
-  handleAccidentalChange = (e,data) =>{
-    let newAccidental = data.options[data.value].text;
-    this.setState({accidental: newAccidental});
-    this.props.handleAccidentalChange(data.value);
-  }
-  handleScaleChange = (e,data) =>{
-    let newScale = data.options[data.value].text;
-    this.setState({scale: newScale});
-      this.props.handleScaleChange(data.value);
-  }
-
 
   render() {
-    const {outputVolume, soundOn, value} = this.state
-
     return (
+      <MyContext.Consumer>
+      {(context) => (
+      <React.Fragment>
       <Segment className="menu-pane">
         <Menu>
           {/** Sound Toggle **/}
           <Menu.Item className="vert">
             <div>Sound</div>
             <br></br>
-            <Checkbox toggle checked={this.state.soundOn} onChange={this.handleSoundToggle} className="extra-margin"/>
+            <Checkbox toggle checked={context.state.soundOn} onChange={context.handleSoundToggle} className="extra-margin"/>
             <div>
-              {soundOn
+              {context.state.soundOn
                 ? 'On!'
                 : "Off"}
             </div>
@@ -89,19 +41,19 @@ class Sound extends Component {
           <Menu.Item className="vert">
             <div>Output Volume</div>
             <br></br>
-            <Slider min={1} max={100} value={outputVolume} onChange={this.handleOutputVolumeChange} className="slider"/>
+            <Slider min={1} max={100} value={context.state.outputVolume} onChange={context.handleOutputVolumeChange} className="slider"/>
             <div>
-              {outputVolume}
+              {context.state.outputVolume}
             </div>
           </Menu.Item>
 
           {/** Timbre **/}
           <Menu.Item>
           <div>
-            <Dropdown text='Timbre' fluid options={timbreOptions} onChange={this.handleTimbreChange}></Dropdown>
+            <Dropdown text='Timbre' fluid options={timbreOptions} onChange={context.handleTimbreChange}></Dropdown>
             <br></br>
             <div className="timbre-text">
-            {this.state.timbre}
+            {context.state.timbre}
             </div>
             </div>
           </Menu.Item>
@@ -112,12 +64,14 @@ class Sound extends Component {
             <br></br>
             <div className="horiz">
               <div className="adsr-slider">
-                Attack
-                <Slider min={0} max={100} value={value} onChange={this.handleChange} className="slider"/> {value}
+                Attack Time (s)
+                <Slider min={0} max={5} step={0.1} value={context.state.attack} onChange={context.handleAttackChange} className="slider"/>
+                {context.state.attack}
               </div>
               <div>
-                Release
-                <Slider min={0} max={100} value={value} onChange={this.handleChange} className="slider"/> {value}
+                Release Time (s)
+                <Slider min={0} max={5} step={0.1} value={context.state.release} onChange={context.handleReleaseChange} className="slider"/>
+                {context.state.release}
               </div>
             </div>
           </Menu.Item>
@@ -128,23 +82,26 @@ class Sound extends Component {
             <Menu.Menu className="horiz">
               <Menu.Item className="vert no-line">
                 <div>Scale Mode</div>
-                <Checkbox toggle className="scales-checkbox" checked={this.state.scaleOn} onChange={this.handleScaleToggle}/>
+                <Checkbox toggle className="scales-checkbox" checked={context.state.scaleOn} onChange={context.handleScaleToggle}/>
               </Menu.Item>
               <Menu.Item>
-                <Dropdown fluid text='Key' options={keyOptions} onChange={this.handleKeyChange}></Dropdown>
+                <Dropdown fluid text='Key' options={keyOptions} onChange={context.handleKeyChange}></Dropdown>
               </Menu.Item>
               <Menu.Item>
-                <Dropdown text='#/b' compact options={accidentalOptions} onChange={this.handleAccidentalChange}></Dropdown>
+                <Dropdown text='#/b' compact options={accidentalOptions} onChange={context.handleAccidentalChange}></Dropdown>
               </Menu.Item>
               <Menu.Item>
-                <Dropdown text='Scale' compact options={scaleOptions} onChange={this.handleScaleChange}></Dropdown>
+                <Dropdown text='Scale' compact options={scaleOptions} onChange={context.handleScaleChange}></Dropdown>
               </Menu.Item>
             </Menu.Menu>
-            {this.state.musicKey}{this.state.accidental}{this.state.scale}
+            {context.state.musicKey.name}{context.state.accidental.name}{context.state.scale.name}
           </Menu.Item>
 
         </Menu>
       </Segment>
+      </React.Fragment>
+      )}
+      </MyContext.Consumer>
     );
   }
 }

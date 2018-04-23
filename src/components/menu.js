@@ -22,15 +22,7 @@ class MyMenu extends Component {
           break;
         case "sound":
             if(name !== this.state.activeItem){
-              pane = <Sound
-              handleSoundToggle={this.props.handleSoundToggle}
-              handleOutputVolumeChange={this.props.handleOutputVolumeChange}
-              handleTimbreChange={this.props.handleTimbreChange}
-              handleScaleToggle={this.props.handleScaleToggle}
-              handleKeyChange={this.props.handleKeyChange}
-              handleAccidentalChange={this.props.handleAccidentalChange}
-              handleScaleChange={this.props.handleScaleChange}
-              />
+              pane = <Sound/>
             } else {
               name = null;
             }

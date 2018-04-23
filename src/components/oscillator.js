@@ -20,8 +20,6 @@ class Oscillator extends Component {
       touch: false,
       currentVoice: -1,
       voices: 0, //voices started with on event
-      height: window.innerHeight,
-      width: window.innerWidth,
       xPos: null,
       yPos: null,
       outputVolume: 5,
@@ -52,7 +50,9 @@ class Oscillator extends Component {
 
   }
   componentWillReceiveProps(nextProps, prevState){
+    console.log(nextProps.soundOn);
     if(nextProps.soundOn === false){
+      console.log("Hi");
       this.masterVolume.mute = true;
     } else {
       this.masterVolume.mute = false;
@@ -64,14 +64,7 @@ class Oscillator extends Component {
       this.setState({outputVolume: nextProps.outputVolume });
     }
     if(nextProps.timbre !== this.state.timbre){
-      let newTimbre = 'sine';
-      switch (nextProps.timbre) {
-        case 0: newTimbre = 'sine'; break;
-        case 1: newTimbre = 'square'; break;
-        case 2: newTimbre = 'sawtooth'; break;
-        case 3: newTimbre = 'triangle'; break;
-        default: newTimbre = 'sine';
-      }
+      let newTimbre = nextProps.timbre.toLowerCase();
       for(let i=0; i<NUM_VOICES; i++){
         this.synths[i].oscillator.type = newTimbre;
       }
@@ -97,8 +90,8 @@ class Oscillator extends Component {
   onMouseDown(e) {
     e.preventDefault();
     let pos = this.getMousePos(this.canvas, e);
-    let yPercent = 1 - pos.y / this.state.height;
-    let xPercent = 1 - pos.x / this.state.width;
+    let yPercent = 1 - pos.y / this.props.height;
+    let xPercent = 1 - pos.x / this.props.width;
     let freq = this.newFreqAlgorithm(yPercent);
     let gain = this.getGain(xPercent);
     let newVoice = (this.state.currentVoice + 1) % NUM_VOICES;
@@ -117,13 +110,13 @@ class Oscillator extends Component {
     e.preventDefault();
     if (this.state.mouseDown) {
       let pos = this.getMousePos(this.canvas, e);
-      let yPercent = 1 - pos.y / this.state.height;
-      let xPercent = 1 - pos.x / this.state.width;
+      let yPercent = 1 - pos.y / this.props.height;
+      let xPercent = 1 - pos.x / this.props.width;
       let gain = this.getGain(xPercent);
       let freq = this.newFreqAlgorithm(yPercent);
       this.synths[this.state.currentVoice].frequency.value = freq;
       this.synths[this.state.currentVoice].volume.value = gain;
-      this.ctx.clearRect(0, 0, this.state.width, this.state.height);
+      this.ctx.clearRect(0, 0, this.props.width, this.props.height);
       this.label(freq, pos.x,pos.y);
 
     }
@@ -135,7 +128,7 @@ class Oscillator extends Component {
 
     this.synths[this.state.currentVoice].triggerRelease();
     this.setState({mouseDown: false, voices: 0});
-    this.ctx.clearRect(0, 0, this.state.width, this.state.height);
+    this.ctx.clearRect(0, 0, this.props.width, this.props.height);
 
     }
 
@@ -145,7 +138,7 @@ class Oscillator extends Component {
     if(this.state.mouseDown){
     this.synths[this.state.currentVoice].triggerRelease();
     this.setState({mouseDown: false, voices: 0});
-    this.ctx.clearRect(0, 0, this.state.width, this.state.height);
+    this.ctx.clearRect(0, 0, this.props.width, this.props.height);
 
     }
   }
@@ -154,8 +147,8 @@ class Oscillator extends Component {
     e.preventDefault();
     for (let i = 0; i < e.touches.length; i++) {
       let pos = this.getMousePos(this.canvas, e.touches[i]);
-      let yPercent = 1 - pos.y / this.state.height;
-      let xPercent = 1 - pos.x / this.state.width;
+      let yPercent = 1 - pos.y / this.props.height;
+      let xPercent = 1 - pos.x / this.props.width;
 
       let gain = this.getGain(xPercent);
       let freq = this.newFreqAlgorithm(yPercent);
@@ -176,8 +169,8 @@ class Oscillator extends Component {
       let voiceToChange = this.state.currentVoice - (this.state.voices -1);
       for (let i = 0; i < e.changedTouches.length; i++){
         let pos = this.getMousePos(this.canvas, e.touches[i]);
-        let yPercent = 1 - pos.y / this.state.height;
-        let xPercent = 1 - pos.x / this.state.width;
+        let yPercent = 1 - pos.y / this.props.height;
+        let xPercent = 1 - pos.x / this.props.width;
         let gain = this.getGain(xPercent);
         let freq = this.newFreqAlgorithm(yPercent);
         let index = (voiceToChange + e.changedTouches[i].identifier) % NUM_VOICES;
@@ -219,20 +212,20 @@ class Oscillator extends Component {
     let freq = this.props.resolutionMin * Math.pow(Math.E, index * logResolution);
     if(this.props.scaleOn){
     //  Maps to one of the 12 keys of the piano
-      let newIndexedKey = this.props.musicKey;
+      let newIndexedKey = this.props.musicKey.value;
       // Edge cases
-      if(newIndexedKey === 0 && this.props.accidental === 2){
+      if(newIndexedKey === 0 && this.props.accidental.value === 2){
         // Cb->B
         newIndexedKey = 11;
-      } else if(newIndexedKey === 11 && this.props.accidental === 1){
+      } else if(newIndexedKey === 11 && this.props.accidental.value === 1){
         // B#->C
         newIndexedKey = 0;
       } else {
-        newIndexedKey = (this.props.accidental === 1)? newIndexedKey + 1:
-        (this.props.accidental === 2)? newIndexedKey - 1: newIndexedKey;
+        newIndexedKey = (this.props.accidental.value === 1)? newIndexedKey + 1:
+        (this.props.accidental.value === 2)? newIndexedKey - 1: newIndexedKey;
       }
       console.log(newIndexedKey);
-      let s = generateScale(newIndexedKey, this.props.scale);
+      let s = generateScale(newIndexedKey, this.props.scale.value);
       let name = s.scale[0];
       console.log(s);
       let note = 0;
@@ -293,8 +286,8 @@ class Oscillator extends Component {
       onTouchStart={this.onTouchStart}
       onTouchEnd={this.onTouchEnd}
       onTouchMove={this.onTouchMove}
-      width={this.state.width}
-      height={this.state.height}
+      width={this.props.width}
+      height={this.props.height}
       ref={(c) => {
       this.canvas = c;
       }}

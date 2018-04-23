@@ -3,7 +3,6 @@ import '../styles/spectrogram.css';
 
 import Axes from './axes';
 import Oscillator from './oscillator';
-import Menu from './menu';
 
 const ReactAnimationFrame = require('react-animation-frame');
 // TODO: Resize of canvas bugs
@@ -17,33 +16,14 @@ const fftSize = 8192;
 
 
 class Spectrogram extends Component {
-  constructor() {
-    super();
-    this.state = ({
-      width: window.innerWidth,
-      height: window.innerHeight,
-      speed: 2,
-      log: true,
-      resolutionMax: 20000,
-      resolutionMin: 20,
-      isStarted: false,
-    });
-    this.renderFreqDomain = this.renderFreqDomain.bind(this);
-    this.handleResize = this.handleResize.bind(this);
-
-  }
 
   componentDidMount() {
-
-    window.addEventListener("resize", this.handleResize);
-
+    window.addEventListener("resize", this.props.handleResize);
     this.ctx = this.canvas.getContext('2d');
     this.tempCanvas = document.createElement('canvas');
-    // this.renderFreqDomain();
-
   }
   componentWillUnmount() {
-    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("resize", this.props.handleResize);
   }
 
   onStream(stream) {
@@ -59,7 +39,7 @@ class Spectrogram extends Component {
   }
 
   onAnimationFrame = (time) => {
-    if(this.state.isStarted){
+    if(this.props.isStarted){
       this.renderFreqDomain();
 
     }
@@ -69,37 +49,37 @@ class Spectrogram extends Component {
     let freq = new Uint8Array(analyser.frequencyBinCount);
     analyser.getByteFrequencyData(freq);
     this.tempCtx = this.tempCanvas.getContext('2d');
-    this.tempCanvas.width = this.state.width;
-    this.tempCanvas.height = this.state.height;
-    this.tempCtx.drawImage(this.canvas, 0, 0, this.state.width, this.state.height);
+    this.tempCanvas.width = this.props.width;
+    this.tempCanvas.height = this.props.height;
+    this.tempCtx.drawImage(this.canvas, 0, 0, this.props.width, this.props.height);
 
     // Iterate over the frequencies.
-    for (var i = 0; i < this.state.height; i++) {
+    for (var i = 0; i < this.props.height; i++) {
       var value;
       // Draw each pixel with the specific color.
 
       // Gets the height and creates a log scale of the index
-      if (this.state.log) {
-        let myPercent = (i / this.state.height);
+      if (this.props.log) {
+        let myPercent = (i / this.props.height);
         var logPercent = this.newFreqAlgorithm(myPercent);
         let logIndex = Math.round(logPercent * freq.length / (audioContext.sampleRate / 2));
         value = freq[logIndex];
 
       } else {
-        let myPercent = (i / this.state.height);
-        var xx = Math.floor(myPercent * (this.state.resolutionMax - this.state.resolutionMin) + this.state.resolutionMin) + 1;
+        let myPercent = (i / this.props.height);
+        var xx = Math.floor(myPercent * (this.props.resolutionMax - this.props.resolutionMin) + this.props.resolutionMin) + 1;
         let logIndex = Math.round(xx * freq.length / (audioContext.sampleRate / 2));
         value = freq[logIndex];
       }
 
       this.ctx.fillStyle = this.getColor(value);
-      var percent = i / this.state.height;
-      var y = Math.round(percent * this.state.height);
-      this.ctx.fillRect(this.state.width - this.state.speed, this.state.height - y, this.state.speed, this.state.speed);
+      var percent = i / this.props.height;
+      var y = Math.round(percent * this.props.height);
+      this.ctx.fillRect(this.props.width - this.props.speed, this.props.height - y, this.props.speed, this.props.speed);
 
     }
-    this.ctx.translate(-this.state.speed, 0);
-    this.ctx.drawImage(this.tempCanvas, 0, 0, this.state.width, this.state.height, 0, 0, this.state.width, this.state.height);
+    this.ctx.translate(-this.props.speed, 0);
+    this.ctx.drawImage(this.tempCanvas, 0, 0, this.props.width, this.props.height, 0, 0, this.props.width, this.props.height);
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 
   }
@@ -115,17 +95,17 @@ class Spectrogram extends Component {
   }
 
   newFreqAlgorithm(index) {
-    let logResolution = Math.log(this.state.resolutionMax / this.state.resolutionMin);
-    let freq = this.state.resolutionMin * Math.pow(Math.E, index * logResolution);
+    let logResolution = Math.log(this.props.resolutionMax / this.props.resolutionMin);
+    let freq = this.props.resolutionMin * Math.pow(Math.E, index * logResolution);
     return Math.round(freq);
   }
 
-  handleResize() {
-    this.setState({width: window.innerWidth, height: window.innerHeight});
-  }
+  // handleResize() {
+  //   this.setState({width: window.innerWidth, height: window.innerHeight});
+  // }
 
   startSpectrogram = ()=>{
-    if(!this.state.isStarted){
+    if(!this.props.isStarted){
     audioContext = new(window.AudioContext || window.webkitAudioContext)();
     analyser = audioContext.createAnalyser();
     gainNode = audioContext.createGain();
@@ -142,26 +122,24 @@ class Spectrogram extends Component {
         audio: true
       }, this.onStream.bind(this), this.onStreamError.bind(this));
     }
-      this.setState({isStarted: true});
+      this.props.start();
       this.renderFreqDomain();
     }
   }
-  // <Controls />
 
   render() {
-    let {width, height} = this.state;
     return (
       <div onClick={this.startSpectrogram}>
-        <canvas width={this.state.width} height={this.state.height} ref={(c) => {
+        <canvas width={this.props.width} height={this.props.height} ref={(c) => {
           this.canvas = c;
         }}/>
-        <Axes resolutionMax={this.state.resolutionMax} resolutionMin={this.state.resolutionMin}/>
-        {this.state.isStarted &&
+        <Axes resolutionMax={this.props.resolutionMax} resolutionMin={this.props.resolutionMin}/>
+        {this.props.isStarted &&
         <Oscillator
-        width={width}
-        height={height}
-        resolutionMax={this.state.resolutionMax}
-        resolutionMin={this.state.resolutionMin}
+        width={this.props.width}
+        height={this.props.height}
+        resolutionMax={this.props.resolutionMax}
+        resolutionMin={this.props.resolutionMin}
         context={audioContext}
         analyser={analyser}
         soundOn={this.props.soundOn}
@@ -175,7 +153,7 @@ class Spectrogram extends Component {
         }
         <div className="instructions">
 
-          {!this.state.isStarted ?
+          {!this.props.isStarted ?
             <div className="flashing">Click or tap anywhere on the canvas to start the spectrogram</div>:
             <div className="normal">Great! Be sure to allow use of your microphone. You can draw on the canvas to make sound!</div>
           }
