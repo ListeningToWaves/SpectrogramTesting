@@ -10,6 +10,7 @@ export const MyContext = React.createContext();
 // Then create provider component
 let defaultState = {};
 class MyProvider extends Component {
+  //All Controls
   state = {
     soundOn: true,
     microphoneGain: 1,
@@ -29,9 +30,11 @@ class MyProvider extends Component {
     resolutionMin: 20,
     isStarted: false,
   }
+  // Save state for reset
   componentDidMount(){
     defaultState = this.state;
   }
+  // Helper Function for Volume Conversion to log for outputVolume
   convertToLog(value){
     //solving y=Ae^bx
     const volumeMin = 1;
@@ -43,7 +46,7 @@ class MyProvider extends Component {
     let gain = Math.round(a *Math.pow(Math.E, b*value)*100)/100;
     return gain;
   }
-
+  //Functions that setState based on Controls
   render() {
     return (
       <MyContext.Provider value={{
@@ -102,8 +105,8 @@ class MyProvider extends Component {
 
 }
 
+// Main Class that Renders Menu and Spectrogram Components
 class App extends Component {
-
 
   render() {
     return (

@@ -4,8 +4,9 @@ import "../styles/oscillator.css"
 import generateScale from '../util/generateScale';
 const NUM_VOICES = 6;
 
+// Main sound-making class. Can handle click and touch inputs
 class Oscillator extends Component {
-  // TODO: Volume bug with new finger
+  // TODO: Sometimes strange sounds
   constructor(props) {
     super();
     this.onMouseDown = this.onMouseDown.bind(this);
@@ -25,9 +26,11 @@ class Oscillator extends Component {
     }
   }
 
+  // Setup Tone and all of its needed dependencies
   componentDidMount() {
     Tone.context = this.props.context;
     this.synths = new Array(NUM_VOICES);
+    // Start master volume at -20 dB
     this.masterVolume = new Tone.Volume(-20);
     this.ctx = this.canvas.getContext('2d');
     let options = {
@@ -35,17 +38,20 @@ class Oscillator extends Component {
         type: "sine"
       }
     };
+    // For each voice, create a synth and connect it to the master volume
     for (let i = 0; i < NUM_VOICES; i++) {
       this.synths[i] = new Tone.Synth(options);
-      this.synths[i].chain(this.masterVolume, Tone.Master);
+      this.synths[i].connect(this.masterVolume);
     }
+    this.masterVolume.connect(Tone.Master);
+    // If Headphone Mode, connect the masterVolume to the graph
     if (true) {
       this.masterVolume.connect(this.props.analyser);
     }
-
     window.addEventListener("resize", this.props.handleResize);
-
   }
+
+  // Sets up what will happen on controls changes
   componentWillReceiveProps(nextProps, prevState) {
     if (nextProps.soundOn === false) {
       this.masterVolume.mute = true;
@@ -81,6 +87,8 @@ class Oscillator extends Component {
   // componentDidUpdate(){
   //   console.log("UPDATE");
   // }
+
+  // Helper Function that gets the Mouse position based on the rescaled canvas
   getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect(), // abs. size of element
       scaleX = canvas.width / rect.width, // relationship bitmap vs. element for X
@@ -91,6 +99,9 @@ class Oscillator extends Component {
       y: (evt.clientY - rect.top) * scaleY // been adjusted to be relative to element
     }
   }
+  /**
+  This Section controls how the Oscillator(s) react to user input
+  */
   onMouseDown(e) {
     e.preventDefault();
     let pos = this.getMousePos(this.canvas, e);
@@ -120,18 +131,18 @@ class Oscillator extends Component {
       let freq = this.newFreqAlgorithm(yPercent);
       this.synths[this.state.currentVoice].frequency.value = freq;
       this.synths[this.state.currentVoice].volume.value = gain;
+      // Clears the label
       this.ctx.clearRect(0, 0, this.props.width, this.props.height);
       this.label(freq, pos.x, pos.y);
-
     }
 
   }
   onMouseUp(e) {
     e.preventDefault();
     if (this.state.mouseDown) {
-
       this.synths[this.state.currentVoice].triggerRelease();
       this.setState({mouseDown: false, voices: 0});
+      // Clears the label
       this.ctx.clearRect(0, 0, this.props.width, this.props.height);
 
     }
@@ -142,11 +153,16 @@ class Oscillator extends Component {
     if (this.state.mouseDown) {
       this.synths[this.state.currentVoice].triggerRelease();
       this.setState({mouseDown: false, voices: 0});
+      // Clears the label
       this.ctx.clearRect(0, 0, this.props.width, this.props.height);
-
     }
   }
 
+  /*The touch section is the same as the mouse section with the added feature of
+  multitouch and vibrato. For each finger down, this function places a frequency
+  and volume value into the next available position in the synth array
+  (implmented as a circular array).
+  */
   onTouchStart(e) {
     e.preventDefault();
     for (let i = 0; i < e.touches.length; i++) {
@@ -164,6 +180,7 @@ class Oscillator extends Component {
       });
       this.synths[newVoice].triggerAttack(freq);
       this.synths[newVoice].volume.value = gain;
+      this.label(freq, pos.x, pos.y);
     }
   }
   onTouchMove(e) {
@@ -178,12 +195,15 @@ class Oscillator extends Component {
         let gain = this.getGain(xPercent);
         let freq = this.newFreqAlgorithm(yPercent);
         let index = (voiceToChange + e.changedTouches[i].identifier) % NUM_VOICES;
+        // Wraps the array
         index = (index < 0)
           ? (NUM_VOICES + index)
           : index;
         this.synths[index].frequency.value = freq;
         this.synths[index].volume.value = gain;
-
+        // Clears the canvas on touch move
+        this.ctx.clearRect(0, 0, this.props.width, this.props.height);
+        this.label(freq, pos.x, pos.y);
       }
     }
   }
@@ -198,6 +218,7 @@ class Oscillator extends Component {
       let voiceToRemoveFrom = this.state.currentVoice - (this.state.voices - 1);
       for (let i = 0; i < e.changedTouches.length; i++) {
         let index = (voiceToRemoveFrom + e.changedTouches[i].identifier) % NUM_VOICES;
+        // Wraps the array
         index = (index < 0)
           ? (NUM_VOICES + index)
           : index;
@@ -212,13 +233,17 @@ class Oscillator extends Component {
         : newVoice;
       this.setState({currentVoice: newVoice});
     }
+    // Clears the label
+    this.ctx.clearRect(0, 0, this.props.width, this.props.height);
   }
 
+  // Helper function that determines the frequency to play based on the mouse/finger position
+  // Also deals with snapping it to a scale if scale mode is on
   newFreqAlgorithm(index) {
     let logResolution = Math.log(this.props.resolutionMax / this.props.resolutionMin);
     let freq = this.props.resolutionMin * Math.pow(Math.E, index * logResolution);
     if (this.props.scaleOn) {
-      //  Maps to one of the 12 keys of the piano
+      //  Maps to one of the 12 keys of the piano based on note and accidental
       let newIndexedKey = this.props.musicKey.value;
       // Edge cases
       if (newIndexedKey === 0 && this.props.accidental.value === 2) {
@@ -234,6 +259,7 @@ class Oscillator extends Component {
             ? newIndexedKey - 1
             : newIndexedKey;
       }
+      // Uses generateScale helper method to generate base frequency values
       let s = generateScale(newIndexedKey, this.props.scale.value);
       let name = s.scale[0];
       let note = 0;
@@ -264,10 +290,13 @@ class Oscillator extends Component {
     return Math.round(freq);
   }
 
+  // Helper function that turns the x-pos into a decibel value for the volume
   getGain(index) {
-    //-80 to 0dB
+    //-60 to 0dB
     return -1 * (index * 60);
   }
+
+  // Helper method that generates a label for the frequency or the scale note
   label(freq, x, y) {
     this.ctx.font = '20px Inconsolata';
     this.ctx.fillStyle = 'white';

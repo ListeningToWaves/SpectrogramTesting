@@ -7,8 +7,11 @@ import "../styles/sound.css";
 import Slider from 'react-rangeslider';
 // To include the default styles
 import 'react-rangeslider/lib/index.css';
-import {timbreOptions, scaleOptions, keyOptions, accidentalOptions} from '../util/common.js';
+import {timbreOptions, scaleOptions, keyOptions, accidentalOptions} from '../util/dropdownOptions.js';
 
+// Sound Controls Class that renders all of the sound controls and uses the
+// React Context API to hook up their functionality to the main state in app.js
+// Which passes the controls down to Spectrogram
 class Sound extends Component {
 
   render() {

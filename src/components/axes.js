@@ -9,7 +9,6 @@ class Axes extends Component {
       yLabelOffset: 5,
       ticks: 5
     }
-
   }
 
   componentDidMount() {
@@ -66,18 +65,17 @@ class Axes extends Component {
       // Draw a tick mark.
       this.ctx.fillRect(x + 40, y, 30, 2);
     }
-
   }
 
   newFreqAlgorithm(index) {
     let logResolution = Math.log(this.props.resolutionMax / this.props.resolutionMin);
     let freq = this.props.resolutionMin * Math.pow(Math.E, index * logResolution);
     return Math.round(freq);
-
   }
 
   render() {
-    return (<canvas width={this.props.width} height={this.props.height} ref={(c) => {
+    return (
+      <canvas width={this.props.width} height={this.props.height} ref={(c) => {
       this.canvas = c;
     }}/>);
   }

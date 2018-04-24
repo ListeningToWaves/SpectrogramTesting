@@ -31,11 +31,11 @@ const scaleOptions = [
     value: 1
   },
   {
-    text: "Pentatonic",
+    text: "Major Pentatonic",
     value: 2
   },
   {
-    text: "Harmonic Minor",
+    text: "Chromatic",
     value: 3
   },
 ];
