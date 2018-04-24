@@ -149,30 +149,33 @@ class Spectrogram extends Component {
         <canvas width={this.props.width} height={this.props.height} ref={(c) => {
           this.canvas = c;
         }}/>
-        <Axes
-        resolutionMax={this.props.resolutionMax}
-        resolutionMin={this.props.resolutionMin}
-        width={this.props.width}
-        height={this.props.height}
-        handleResize={this.props.handleResize}/>
         {this.props.isStarted &&
-          <Oscillator
-          width={this.props.width}
-          height={this.props.height}
-          resolutionMax={this.props.resolutionMax}
-          resolutionMin={this.props.resolutionMin}
-          context={audioContext}
-          analyser={analyser}
-          soundOn={this.props.soundOn}
-          outputVolume={this.props.outputVolume}
-          timbre={this.props.timbre}
-          scaleOn={this.props.scaleOn}
-          musicKey={this.props.musicKey}
-          accidental={this.props.accidental}
-          scale={this.props.scale}
-          attack={this.props.attack}
-          release={this.props.release}
-          handleResize={this.props.handleResize}/>}
+          <React.Fragment>
+            <Axes
+            resolutionMax={this.props.resolutionMax}
+            resolutionMin={this.props.resolutionMin}
+            width={this.props.width}
+            height={this.props.height}
+            handleResize={this.props.handleResize}/>
+            <Oscillator
+            width={this.props.width}
+            height={this.props.height}
+            resolutionMax={this.props.resolutionMax}
+            resolutionMin={this.props.resolutionMin}
+            context={audioContext}
+            analyser={analyser}
+            soundOn={this.props.soundOn}
+            outputVolume={this.props.outputVolume}
+            timbre={this.props.timbre}
+            scaleOn={this.props.scaleOn}
+            musicKey={this.props.musicKey}
+            accidental={this.props.accidental}
+            scale={this.props.scale}
+            attack={this.props.attack}
+            release={this.props.release}
+            handleResize={this.props.handleResize}/>
+          </React.Fragment>
+          }
           {/* Intro Instructions */}
         <div className="instructions">
           {!this.props.isStarted

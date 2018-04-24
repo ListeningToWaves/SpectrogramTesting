@@ -8,6 +8,7 @@
 .ui.toggle.checkbox input:focus:checked~label:before {
   background-color: #7CB342!important;
 }
+
 .ui.toggle.checkbox input:checked~label:before {
   background-color: #7CB342!important;
 }
@@ -19,16 +20,19 @@
 .scales-checkbox {
   margin: 10px 0px 10px 0px;
 }
+
 .extra-margin {
   margin: 15px 0px!important;
 }
+
 .slider {
   width: 100px;
-
 }
+
 .adsr-slider {
   margin-right: 10px;
 }
+
 .horiz {
   display: flex;
   height: 100%;
