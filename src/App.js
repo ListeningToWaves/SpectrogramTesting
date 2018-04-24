@@ -8,10 +8,11 @@ import Menu from './components/menu';
 export const MyContext = React.createContext();
 
 // Then create provider component
-
+let defaultState = {};
 class MyProvider extends Component {
   state = {
     soundOn: true,
+    microphoneGain: 1,
     timbre: 'Sine',
     scaleOn: false,
     musicKey: {name: 'C', value: 0 },
@@ -28,25 +29,57 @@ class MyProvider extends Component {
     resolutionMin: 20,
     isStarted: false,
   }
+  componentDidMount(){
+    defaultState = this.state;
+  }
+  convertToLog(value){
+    //solving y=Ae^bx
+    const volumeMin = 1;
+    const volumeMax = 100;
+    const gainMin = 0.01;
+    const gainMax = 100;
+    let b = Math.log(gainMax / gainMin)/(volumeMax-volumeMin);
+    let a = gainMax /  Math.pow(Math.E,  volumeMax* b);
+    let gain = Math.round(a *Math.pow(Math.E, b*value)*100)/100;
+    return gain;
+  }
+
   render() {
     return (
       <MyContext.Provider value={{
         state: this.state,
+        handleGainChange: value => {
+          if(this.state.isStarted){
+            let gain = this.convertToLog(value);
+            this.setState({microphoneGain: gain});
+          }
+        },
         handleSoundToggle: () => this.setState({soundOn: !this.state.soundOn}),
         handleScaleToggle: () => this.setState({scaleOn: !this.state.scaleOn}),
-        handleOutputVolumeChange: value => this.setState({outputVolume:value}),
+        handleOutputVolumeChange: value => {
+          if(this.state.isStarted){
+            this.setState({outputVolume:value});
+          }
+        },
         handleTimbreChange: (e, data) => {
           let newTimbre = data.options[data.value].text;
           this.setState({timbre: newTimbre});
         },
-        handleAttackChange: value => this.setState({attack: Math.round(value*10)/10}),
-        handleReleaseChange: value => this.setState({release: Math.round(value*10)/10}),
+        handleAttackChange: value => {
+          if(this.state.isStarted){
+            this.setState({attack: Math.round(value*10)/10});
+          }
+        },
+        handleReleaseChange: value => {
+          if(this.state.isStarted){
+            this.setState({release: Math.round(value*10)/10});
+          }
+        },
         handleKeyChange: (e, data) => {
           let newKeyName = data.options[data.value].text;
           let newKeyValue = data.options[data.value].index;
           this.setState({musicKey: {name: newKeyName, value: newKeyValue}});
         },
-
         handleAccidentalChange: (e, data) => {
           let newAccidentalName = data.options[data.value].text;
           let newAccidentalValue = data.value;
@@ -59,6 +92,7 @@ class MyProvider extends Component {
         },
         handleResize: () => this.setState({width: window.innerWidth, height: window.innerHeight}),
         start: ()=> this.setState({isStarted: true}),
+        reset: ()=> this.setState({ ...defaultState, isStarted: this.state.isStarted})
 
       }}>
         {this.props.children}
@@ -75,11 +109,17 @@ class App extends Component {
     return (
       <div className="App">
       <MyProvider>
-      <Menu/>
       <MyContext.Consumer>
       {(context) => (
+      <React.Fragment>
+      <Menu
+      reset={context.reset}
+      handleGainChange={context.handleGainChange}
+      gain={context.state.gain}
+      isStarted={context.state.isStarted}/>
       <Spectrogram
       soundOn={context.state.soundOn}
+      microphoneGain={context.state.microphoneGain}
       timbre={context.state.timbre}
       scaleOn={context.state.scaleOn}
       musicKey={context.state.musicKey}
@@ -95,8 +135,10 @@ class App extends Component {
       resolutionMax={context.state.resolutionMax}
       resolutionMin={context.state.resolutionMin}
       isStarted={context.state.isStarted}
+      handleResize={context.handleResize}
       start={context.start}
       />
+      </React.Fragment>
       )}
       </MyContext.Consumer>
 

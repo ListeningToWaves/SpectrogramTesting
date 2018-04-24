@@ -7,12 +7,9 @@ class Axes extends Component {
     super(props);
     this.state = {
       yLabelOffset: 5,
-      ticks: 5,
-      height: window.innerHeight,
-      width: window.innerWidth
+      ticks: 5
     }
 
-    this.handleResize = this.handleResize.bind(this);
   }
 
   componentDidMount() {
@@ -24,14 +21,14 @@ class Axes extends Component {
     window.removeEventListener("resize", this.handleResize);
   }
 
-  handleResize() {
-    this.setState({width: window.innerWidth, height: window.innerHeight});
+  handleResize = () => {
+    this.props.handleResize();
     this.renderAxesLabels();
   }
 
   renderAxesLabels() {
-    let {height, width} = this.state;
-    this.ctx.clearRect(0, 0, this.state.width, this.state.height);
+    let {height, width} = this.props;
+    this.ctx.clearRect(0, 0, width, height);
     // Render the vertical frequency axis.
     const units = 'Hz';
     // console.log("HI");
@@ -40,11 +37,11 @@ class Axes extends Component {
       // Get the y coordinate from the current label.
       var percent = i / (this.state.ticks);
       var y = (1 - percent) * height;
-      if(i===0){
-        y-=10;
+      if (i === 0) {
+        y -= 10;
       }
-      if(i===this.state.ticks){
-        y+=10;
+      if (i === this.state.ticks) {
+        y += 10;
       }
       var x = width - 60;
       // Get the value for the current y coordinate.
@@ -79,13 +76,10 @@ class Axes extends Component {
 
   }
 
-
   render() {
-    return (
-      <canvas width={this.state.width} height={this.state.height}
-      ref={(c) => {this.canvas = c;}}
-    />
-  );
+    return (<canvas width={this.props.width} height={this.props.height} ref={(c) => {
+      this.canvas = c;
+    }}/>);
   }
 }
 export default Axes;

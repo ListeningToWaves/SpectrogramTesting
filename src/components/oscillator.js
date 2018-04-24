@@ -21,11 +21,8 @@ class Oscillator extends Component {
       currentVoice: -1,
       voices: 0, //voices started with on event
       xPos: null,
-      yPos: null,
-      outputVolume: 5,
-      timbre: 0
+      yPos: null
     }
-    this.handleResize = this.handleResize.bind(this);
   }
 
   componentDidMount() {
@@ -34,66 +31,64 @@ class Oscillator extends Component {
     this.masterVolume = new Tone.Volume(-20);
     this.ctx = this.canvas.getContext('2d');
     let options = {
-      oscillator  : {
-        type  : "sine"
-      },
+      oscillator: {
+        type: "sine"
+      }
     };
-    for(let i=0; i<NUM_VOICES; i++){
+    for (let i = 0; i < NUM_VOICES; i++) {
       this.synths[i] = new Tone.Synth(options);
       this.synths[i].chain(this.masterVolume, Tone.Master);
     }
-    if(true){
+    if (true) {
       this.masterVolume.connect(this.props.analyser);
     }
 
-    window.addEventListener("resize", this.handleResize);
+    window.addEventListener("resize", this.props.handleResize);
 
   }
-  componentWillReceiveProps(nextProps, prevState){
-    if(nextProps.soundOn === false){
+  componentWillReceiveProps(nextProps, prevState) {
+    if (nextProps.soundOn === false) {
       this.masterVolume.mute = true;
     } else {
       this.masterVolume.mute = false;
     }
-    if(nextProps.outputVolume && nextProps.outputVolume !== this.state.outputVolume){
-
-      this.masterVolume.volume.value = this.getGain(1-(nextProps.outputVolume)/100);
-
-      this.setState({outputVolume: nextProps.outputVolume });
+    if (this.masterVolume.mute === false && nextProps.outputVolume && nextProps.outputVolume !== this.masterVolume.volume.value ) {
+      this.masterVolume.volume.value = this.getGain(1 - (nextProps.outputVolume) / 100);
     }
-    if(nextProps.timbre !== this.state.timbre){
+    if (nextProps.timbre !== this.synths[0].oscillator.type) {
       let newTimbre = nextProps.timbre.toLowerCase();
-      for(let i=0; i<NUM_VOICES; i++){
+      for (let i = 0; i < NUM_VOICES; i++) {
         this.synths[i].oscillator.type = newTimbre;
       }
-      this.setState({timbre: nextProps.timbre});
     }
-    if(nextProps.attack !== this.state.attack){
-      for(let i=0; i<NUM_VOICES; i++){
+    if (nextProps.attack !== this.synths[0].envelope.attack) {
+      for (let i = 0; i < NUM_VOICES; i++) {
         this.synths[i].envelope.attack = nextProps.attack;
       }
-      this.setState({attack: nextProps.attack});
     }
-    if(nextProps.release !== this.state.release){
-      for(let i=0; i<NUM_VOICES; i++){
+    if (nextProps.release !== this.synths[0].envelope.release) {
+      for (let i = 0; i < NUM_VOICES; i++) {
         this.synths[i].envelope.release = nextProps.release;
       }
-      this.setState({attack: nextProps.release});
     }
   }
   componentWillUnmount() {
-    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("resize", this.props.handleResize);
   }
-
-  to
+  // shouldComponentUpdate(nextState, nextProps){
+  //   return true;
+  // }
+  // componentDidUpdate(){
+  //   console.log("UPDATE");
+  // }
   getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect(), // abs. size of element
-        scaleX = canvas.width / rect.width,    // relationship bitmap vs. element for X
-        scaleY = canvas.height / rect.height;  // relationship bitmap vs. element for Y
+      scaleX = canvas.width / rect.width, // relationship bitmap vs. element for X
+      scaleY = canvas.height / rect.height; // relationship bitmap vs. element for Y
 
     return {
-      x: (evt.clientX - rect.left) * scaleX,   // scale mouse coordinates after they have
-      y: (evt.clientY - rect.top) * scaleY     // been adjusted to be relative to element
+      x: (evt.clientX - rect.left) * scaleX, // scale mouse coordinates after they have
+      y: (evt.clientY - rect.top) * scaleY // been adjusted to be relative to element
     }
   }
   onMouseDown(e) {
@@ -107,7 +102,7 @@ class Oscillator extends Component {
 
     this.synths[newVoice].triggerAttack(freq);
     this.synths[newVoice].volume.value = gain;
-    this.label(freq, pos.x,pos.y);
+    this.label(freq, pos.x, pos.y);
     this.setState({
       mouseDown: true,
       currentVoice: newVoice,
@@ -126,28 +121,28 @@ class Oscillator extends Component {
       this.synths[this.state.currentVoice].frequency.value = freq;
       this.synths[this.state.currentVoice].volume.value = gain;
       this.ctx.clearRect(0, 0, this.props.width, this.props.height);
-      this.label(freq, pos.x,pos.y);
+      this.label(freq, pos.x, pos.y);
 
     }
 
   }
   onMouseUp(e) {
     e.preventDefault();
-    if(this.state.mouseDown){
+    if (this.state.mouseDown) {
 
-    this.synths[this.state.currentVoice].triggerRelease();
-    this.setState({mouseDown: false, voices: 0});
-    this.ctx.clearRect(0, 0, this.props.width, this.props.height);
+      this.synths[this.state.currentVoice].triggerRelease();
+      this.setState({mouseDown: false, voices: 0});
+      this.ctx.clearRect(0, 0, this.props.width, this.props.height);
 
     }
 
   }
   onMouseOut(e) {
     e.preventDefault();
-    if(this.state.mouseDown){
-    this.synths[this.state.currentVoice].triggerRelease();
-    this.setState({mouseDown: false, voices: 0});
-    this.ctx.clearRect(0, 0, this.props.width, this.props.height);
+    if (this.state.mouseDown) {
+      this.synths[this.state.currentVoice].triggerRelease();
+      this.setState({mouseDown: false, voices: 0});
+      this.ctx.clearRect(0, 0, this.props.width, this.props.height);
 
     }
   }
@@ -165,7 +160,7 @@ class Oscillator extends Component {
       this.setState({
         touch: true,
         currentVoice: newVoice,
-        voices: this.state.voices + 1,
+        voices: this.state.voices + 1
       });
       this.synths[newVoice].triggerAttack(freq);
       this.synths[newVoice].volume.value = gain;
@@ -175,19 +170,21 @@ class Oscillator extends Component {
     e.preventDefault();
 
     if (this.state.touch) {
-      let voiceToChange = this.state.currentVoice - (this.state.voices -1);
-      for (let i = 0; i < e.changedTouches.length; i++){
+      let voiceToChange = this.state.currentVoice - (this.state.voices - 1);
+      for (let i = 0; i < e.changedTouches.length; i++) {
         let pos = this.getMousePos(this.canvas, e.touches[i]);
         let yPercent = 1 - pos.y / this.props.height;
         let xPercent = 1 - pos.x / this.props.width;
         let gain = this.getGain(xPercent);
         let freq = this.newFreqAlgorithm(yPercent);
         let index = (voiceToChange + e.changedTouches[i].identifier) % NUM_VOICES;
-        index = (index < 0)? (NUM_VOICES+index):index;
+        index = (index < 0)
+          ? (NUM_VOICES + index)
+          : index;
         this.synths[index].frequency.value = freq;
         this.synths[index].volume.value = gain;
 
-        }
+      }
     }
   }
   onTouchEnd(e) {
@@ -198,40 +195,44 @@ class Oscillator extends Component {
       }
       this.setState({voices: 0, touch: false, notAllRelease: false, currentVoice: -1});
     } else {
-      let voiceToRemoveFrom = this.state.currentVoice - (this.state.voices -1);
+      let voiceToRemoveFrom = this.state.currentVoice - (this.state.voices - 1);
       for (let i = 0; i < e.changedTouches.length; i++) {
         let index = (voiceToRemoveFrom + e.changedTouches[i].identifier) % NUM_VOICES;
-        index = (index < 0)? (NUM_VOICES+index):index;
-          this.synths[index].triggerRelease();
-          this.setState({
-            voices: this.state.voices-1
-          });
+        index = (index < 0)
+          ? (NUM_VOICES + index)
+          : index;
+        this.synths[index].triggerRelease();
+        this.setState({
+          voices: this.state.voices - 1
+        });
       }
-      let newVoice = this.state.currentVoice-e.changedTouches.length;
-      newVoice = (newVoice < 0)? (NUM_VOICES+newVoice): newVoice;
-      this.setState({
-        currentVoice: newVoice,
-
-      });
+      let newVoice = this.state.currentVoice - e.changedTouches.length;
+      newVoice = (newVoice < 0)
+        ? (NUM_VOICES + newVoice)
+        : newVoice;
+      this.setState({currentVoice: newVoice});
     }
   }
 
   newFreqAlgorithm(index) {
     let logResolution = Math.log(this.props.resolutionMax / this.props.resolutionMin);
     let freq = this.props.resolutionMin * Math.pow(Math.E, index * logResolution);
-    if(this.props.scaleOn){
-    //  Maps to one of the 12 keys of the piano
+    if (this.props.scaleOn) {
+      //  Maps to one of the 12 keys of the piano
       let newIndexedKey = this.props.musicKey.value;
       // Edge cases
-      if(newIndexedKey === 0 && this.props.accidental.value === 2){
+      if (newIndexedKey === 0 && this.props.accidental.value === 2) {
         // Cb->B
         newIndexedKey = 11;
-      } else if(newIndexedKey === 11 && this.props.accidental.value === 1){
+      } else if (newIndexedKey === 11 && this.props.accidental.value === 1) {
         // B#->C
         newIndexedKey = 0;
       } else {
-        newIndexedKey = (this.props.accidental.value === 1)? newIndexedKey + 1:
-        (this.props.accidental.value === 2)? newIndexedKey - 1: newIndexedKey;
+        newIndexedKey = (this.props.accidental.value === 1)
+          ? newIndexedKey + 1
+          : (this.props.accidental.value === 2)
+            ? newIndexedKey - 1
+            : newIndexedKey;
       }
       let s = generateScale(newIndexedKey, this.props.scale.value);
       let name = s.scale[0];
@@ -263,23 +264,18 @@ class Oscillator extends Component {
     return Math.round(freq);
   }
 
-  getGain(index){
+  getGain(index) {
     //-80 to 0dB
-    return -1*(index*60);
+    return -1 * (index * 60);
   }
-  label(freq, x, y){
+  label(freq, x, y) {
     this.ctx.font = '20px Inconsolata';
     this.ctx.fillStyle = 'white';
-    if(!this.props.scaleOn){
+    if (!this.props.scaleOn) {
       this.ctx.fillText(freq + ' Hz', x, y);
     } else {
-      this.ctx.fillText(this.scaleLabel, x,y);
+      this.ctx.fillText(this.scaleLabel, x, y);
     }
-  }
-
-  handleResize() {
-    this.setState({width: window.innerWidth, height: window.innerHeight});
-
   }
 
   render() {
@@ -297,10 +293,7 @@ class Oscillator extends Component {
       height={this.props.height}
       ref={(c) => {
       this.canvas = c;
-      }}
-      className="osc-canvas"
-    />
-    );
+    }} className="osc-canvas"/>);
   }
 }
 
