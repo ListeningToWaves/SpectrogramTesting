@@ -179,9 +179,9 @@ class Spectrogram extends Component {
           {/* Intro Instructions */}
         <div className="instructions">
           {!this.props.isStarted
-            ? <div className="flashing">Click or tap anywhere on the canvas to start the spectrogram</div>
-            : <div className="normal">Great! Be sure to allow use of your microphone.
-            You can draw on the canvas to make sound!</div>
+            ? <p className="flashing">Click or tap anywhere on the canvas to start the spectrogram</p>
+            : <p>Great! Be sure to allow use of your microphone.
+            You can draw on the canvas to make sound!</p>
           }
 
         </div>

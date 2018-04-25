@@ -53,6 +53,8 @@ a:visited {
   left: 10px;
   bottom: 10px;
   font-family: 'Inconsolata';
+  z-index: 31;
+
 }
 #about-text {
   margin: 0;
