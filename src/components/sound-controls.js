@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {MyContext} from '../app.js';
+import {MyContext} from './my-provider';
 
 import {Segment, Menu, Dropdown, Checkbox} from 'semantic-ui-react';
 import "../styles/sound.css";

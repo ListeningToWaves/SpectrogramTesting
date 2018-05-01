@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import '../styles/spectrogram.css';
 
 import Axes from './axes';
+import NoteLines from './note-lines';
 import Oscillator from './oscillator';
 
 const ReactAnimationFrame = require('react-animation-frame');
@@ -15,7 +16,15 @@ const fftSize = 8192;
 
 // Spectrogram Graph that renders itself and 2 children canvases (Oscillator and Axes)
 class Spectrogram extends Component {
-
+  constructor(props) {
+    super(props);
+    this.updateNoteLines = React.createRef();
+    this.updateAxes = React.createRef();
+    this.state = {
+      resolutionMax: 20000,
+      resolutionMin: 20
+    }
+  }
   componentDidMount() {
     window.addEventListener("resize", this.props.handleResize);
     this.ctx = this.canvas.getContext('2d');
@@ -77,6 +86,16 @@ class Spectrogram extends Component {
   onAnimationFrame = (time) => {
     if (this.props.isStarted) {
       this.renderFreqDomain();
+      if(this.props.resolutionMax !== this.state.resolutionMax || this.props.resolutionMin !== this.state.resolutionMin){
+        // Rerender if components exist
+        if(this.updateAxes.current) {
+          this.updateAxes.current.renderAxesLabels();
+        }
+        if(this.updateNoteLines.current){
+          this.updateNoteLines.current.renderNoteLines();
+        }
+        this.setState({resolutionMax: this.props.resolutionMax, resolutionMin: this.props.resolutionMin});
+      }
     }
   }
 
@@ -144,6 +163,37 @@ class Spectrogram extends Component {
 
 
   render() {
+    const soundOrTuning = this.props.noteLinesOn ? (
+      <NoteLines
+      resolutionMax={this.props.resolutionMax}
+      resolutionMin={this.props.resolutionMin}
+      width={this.props.width}
+      height={this.props.height}
+      musicKey={this.props.musicKey}
+      accidental={this.props.accidental}
+      scale={this.props.scale}
+      handleResize={this.props.handleResize}
+      ref={this.updateNoteLines}/>
+    ): (
+      <Oscillator
+      width={this.props.width}
+      height={this.props.height}
+      resolutionMax={this.props.resolutionMax}
+      resolutionMin={this.props.resolutionMin}
+      context={audioContext}
+      analyser={analyser}
+      soundOn={this.props.soundOn}
+      outputVolume={this.props.outputVolume}
+      timbre={this.props.timbre}
+      scaleOn={this.props.scaleOn}
+      musicKey={this.props.musicKey}
+      accidental={this.props.accidental}
+      scale={this.props.scale}
+      attack={this.props.attack}
+      release={this.props.release}
+      handleResize={this.props.handleResize}/>
+    );
+
     return (
       <div onClick={this.startSpectrogram}>
         <canvas width={this.props.width} height={this.props.height} ref={(c) => {
@@ -156,24 +206,9 @@ class Spectrogram extends Component {
             resolutionMin={this.props.resolutionMin}
             width={this.props.width}
             height={this.props.height}
-            handleResize={this.props.handleResize}/>
-            <Oscillator
-            width={this.props.width}
-            height={this.props.height}
-            resolutionMax={this.props.resolutionMax}
-            resolutionMin={this.props.resolutionMin}
-            context={audioContext}
-            analyser={analyser}
-            soundOn={this.props.soundOn}
-            outputVolume={this.props.outputVolume}
-            timbre={this.props.timbre}
-            scaleOn={this.props.scaleOn}
-            musicKey={this.props.musicKey}
-            accidental={this.props.accidental}
-            scale={this.props.scale}
-            attack={this.props.attack}
-            release={this.props.release}
-            handleResize={this.props.handleResize}/>
+            handleResize={this.props.handleResize}
+            ref={this.updateAxes}/>
+            {soundOrTuning}
           </React.Fragment>
           }
           {/* Intro Instructions */}

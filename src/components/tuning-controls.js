@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
-import {Button, Segment, Menu} from 'semantic-ui-react';
-import {MyContext} from '../app.js';
+import {Segment, Menu, Input, Dropdown, Checkbox} from 'semantic-ui-react';
+import {MyContext} from './my-provider';
+import {timbreOptions, scaleOptions, keyOptions, accidentalOptions} from '../util/dropdownOptions.js';
+
 
 import "../styles/tuning.css";
 // Using an ES6 transpiler like Babel
@@ -11,20 +13,8 @@ import 'rc-slider/assets/index.css';
 // import 'react-rangeslider/lib/index.css';
 import Range from 'rc-slider/lib/Range';
 class Tuning extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      value: 10
-    }
-  }
-  handleChange = value => {
-    this.setState({
-      value: value
-    });
-  };
-  render(){
-    const { value } = this.state
 
+  render(){
     return (
       <MyContext.Consumer>
         {(context) => (
@@ -32,13 +22,66 @@ class Tuning extends Component {
             <Segment className="menu-pane">
               <Menu>
                 <Menu.Item className="vert graph-limit-container">
-                <div className="multi-slider-container">
-                <div className="menu-header">
-                Graph Limits
-                </div>
-                <Range allowCross={false} defaultValue={[20, 20000]} value={[context.state.resolutionMin, context.state.resolutionMax]} className="multi-slider" onChange={context.handleRangeChange}/>
-
-                </div>
+                  <div className="multi-slider-container">
+                  <div className="menu-header">
+                  Graph Limits
+                  </div>
+                  <Range
+                  allowCross={false}
+                  defaultValue={[29, 100]}
+                  min={1}
+                  max={100}
+                  value={[context.state.limitMin, context.state.limitMax]}
+                  className="multi-slider"
+                  onChange={context.handleRangeChange}/>
+                  <div>
+                  <Input value={context.state.resolutionMin} className="resolution-input" onChange={context.handleMinChange}/>
+                  -
+                  <Input value={context.state.resolutionMax} className="resolution-input" onChange={context.handleMaxChange}/>
+                  </div>
+                  </div>
+                </Menu.Item>
+                {/** Scale Menu **/}
+                <Menu.Item className="vert">
+                  <div className="menu-header">Scales</div>
+                  <Menu.Menu className="horiz">
+                    <Menu.Item className="vert no-line">
+                      <div>Note Lines</div>
+                      <Checkbox
+                      toggle
+                      className="scales-checkbox"
+                      checked={context.state.noteLinesOn}
+                      onChange={context.handleNoteLinesToggle}
+                      disabled={!context.state.isStarted}/>
+                    </Menu.Item>
+                    <Menu.Item>
+                      <Dropdown
+                      fluid
+                      text='Key'
+                      options={keyOptions}
+                      onChange={context.handleKeyChange}
+                      disabled={!context.state.isStarted}
+                      >
+                      </Dropdown>
+                    </Menu.Item>
+                    <Menu.Item>
+                      <Dropdown
+                      text='#/b'
+                      compact
+                      options={accidentalOptions}
+                      onChange={context.handleAccidentalChange}
+                      disabled={!context.state.isStarted}/>
+                    </Menu.Item>
+                    <Menu.Item>
+                      <Dropdown
+                      text='Scale'
+                      compact
+                      options={scaleOptions}
+                      onChange={context.handleScaleChange}
+                      disabled={!context.state.isStarted}/>
+                    </Menu.Item>
+                  </Menu.Menu>
+                  {context.state.musicKey.name}{context.state.accidental.name}{context.state.scale.name}
                 </Menu.Item>
               </Menu>
             </Segment>

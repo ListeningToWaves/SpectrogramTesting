@@ -7,7 +7,7 @@ class Axes extends Component {
     super(props);
     this.state = {
       yLabelOffset: 5,
-      ticks: 5
+      ticks: 5,
     }
   }
 
@@ -20,12 +20,15 @@ class Axes extends Component {
     window.removeEventListener("resize", this.handleResize);
   }
 
+
+
+
   handleResize = () => {
     this.props.handleResize();
     this.renderAxesLabels();
   }
 
-  renderAxesLabels() {
+  renderAxesLabels = () => {
     let {height, width} = this.props;
     this.ctx.clearRect(0, 0, width, height);
     // Render the vertical frequency axis.

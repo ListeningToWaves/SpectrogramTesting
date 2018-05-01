@@ -10,6 +10,8 @@
 }
 .multi-slider {
   width: 80%!important;
+  margin: 20px 10px;
+  display: flex;
   /* height: 50px; */
   /* color: black!important; */
   /* background-color: black; */
@@ -28,4 +30,12 @@
 .rc-slider-handle {
   width: 24px!important;
   height: 24px!important;
+}
+.resolution-input {
+  width: 40%;
+  margin: 2px;
+}
+.resolution-input input {
+  padding: .5em 1em;
+
 }
