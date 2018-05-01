@@ -26,7 +26,7 @@ class MyMenu extends Component {
           name = null;
         }
         break;
-      case "sound":
+      case "play":
         if (name !== this.state.activeItem) {
           pane = <Sound/>
         } else {
@@ -77,7 +77,7 @@ class MyMenu extends Component {
             <button className="function-switch-button" onClick={this.switchToSignalGenerator}>Signal Generator</button>
           </Menu.Item>
           <Menu.Item name='tuning' active={activeItem === 'tuning'} onClick={this.handleItemClick} className="tab-item"/>
-          <Menu.Item name='sound' active={activeItem === 'sound'} onClick={this.handleItemClick} className="tab-item"/>
+          <Menu.Item name='play' active={activeItem === 'play'} onClick={this.handleItemClick} className="tab-item"/>
           <Menu.Item name='advanced' active={activeItem === 'advanced'} onClick={this.handleItemClick} className="tab-item"/>
           <Menu.Item position="right">
             Microphone Gain&nbsp;&nbsp;

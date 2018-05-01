@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
 import {Button, Segment, Menu} from 'semantic-ui-react';
+import {MyContext} from '../app.js';
+
 import "../styles/tuning.css";
 // Using an ES6 transpiler like Babel
-import Slider from 'react-rangeslider';
+// import Slider from 'react-rangeslider';
 import 'rc-slider/assets/index.css';
 
 // To include the default styles
-import 'react-rangeslider/lib/index.css';
+// import 'react-rangeslider/lib/index.css';
 import Range from 'rc-slider/lib/Range';
 class Tuning extends Component {
   constructor (props) {
@@ -24,18 +26,25 @@ class Tuning extends Component {
     const { value } = this.state
 
     return (
-    <Segment className="menu-pane">
-    <Menu className="sound-menu">
-    <Menu.Item fitted className="multi-slider-container graph-limit-container">
-<Range allowCross={false} defaultValue={[20, 100]} className="multi-slider"/>
-<div>
-Value 1
-Value 2
-</div>
-Graph Bounds
-    </Menu.Item>
-    </Menu>
-      </Segment>
+      <MyContext.Consumer>
+        {(context) => (
+          <React.Fragment>
+            <Segment className="menu-pane">
+              <Menu>
+                <Menu.Item className="vert graph-limit-container">
+                <div className="multi-slider-container">
+                <div className="menu-header">
+                Graph Limits
+                </div>
+                <Range allowCross={false} defaultValue={[20, 20000]} value={[context.state.resolutionMin, context.state.resolutionMax]} className="multi-slider" onChange={context.handleRangeChange}/>
+
+                </div>
+                </Menu.Item>
+              </Menu>
+            </Segment>
+          </React.Fragment>
+        )}
+      </MyContext.Consumer>
 
     );
   }

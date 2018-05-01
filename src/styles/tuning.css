@@ -5,13 +5,13 @@
 }
 .multi-slider-container {
   width: 200px;
-  height: 125px; 
+  min-height: 125px;
 
 }
 .multi-slider {
   width: 80%!important;
   /* height: 50px; */
-  /* color: black; */
+  /* color: black!important; */
   /* background-color: black; */
 }
 .graph-limit-container {
@@ -20,4 +20,12 @@
   align-items: center;
   justify-content:space-around;
   padding: 5px!important;
+}
+
+.multi-slider * {
+  height: 12px!important;
+}
+.rc-slider-handle {
+  width: 24px!important;
+  height: 24px!important;
 }

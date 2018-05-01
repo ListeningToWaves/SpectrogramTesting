@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Spectrogram from './components/spectrogram';
 import Menu from './components/menu';
+import { Button, Icon } from 'semantic-ui-react';
 
 // React new Context API
 // Create Context
@@ -40,7 +41,7 @@ class MyProvider extends Component {
     const volumeMin = 1;
     const volumeMax = 100;
     const gainMin = 0.01;
-    const gainMax = 100;
+    const gainMax = 500;
     let b = Math.log(gainMax / gainMin)/(volumeMax-volumeMin);
     let a = gainMax /  Math.pow(Math.E,  volumeMax* b);
     let gain = Math.round(a *Math.pow(Math.E, b*value)*100)/100;
@@ -93,6 +94,10 @@ class MyProvider extends Component {
           let newScaleValue = data.value;
           this.setState({scale: {name: newScaleName, value: newScaleValue}});
         },
+        handleRangeChange: (value) =>{
+          // console.log(value);
+          this.setState({resolutionMin: value[0], resolutionMax: value[1]});
+        },
         handleResize: () => this.setState({width: window.innerWidth, height: window.innerHeight}),
         start: ()=> this.setState({isStarted: true}),
         reset: ()=> this.setState({ ...defaultState, isStarted: this.state.isStarted})
@@ -103,11 +108,33 @@ class MyProvider extends Component {
     );
   };
 
+
 }
 
 // Main Class that Renders Menu and Spectrogram Components
 class App extends Component {
 
+  // Maximizes screen
+  toggleFullScreen = ()=> {
+    if ((document.fullScreenElement && document.fullScreenElement !== null) ||
+     (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+      if (document.documentElement.requestFullScreen) {
+        document.documentElement.requestFullScreen();
+      } else if (document.documentElement.mozRequestFullScreen) {
+        document.documentElement.mozRequestFullScreen();
+      } else if (document.documentElement.webkitRequestFullScreen) {
+        document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+      }
+    } else {
+      if (document.cancelFullScreen) {
+        document.cancelFullScreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.webkitCancelFullScreen) {
+        document.webkitCancelFullScreen();
+      }
+    }
+  }
   render() {
     return (
       <div className="App">
@@ -154,6 +181,8 @@ class App extends Component {
         </h4>*/}
         <a href="http://smus.com/spectrogram-and-oscillator/" target="_blank" rel="noopener noreferrer" >about</a>
       </p>
+      <Button icon onClick={this.toggleFullScreen} className="fullscreenbutton"><Icon fitted name="maximize"/></Button>
+
 
       </MyProvider>
       </div>

@@ -23,7 +23,7 @@ class Sound extends Component {
               <Menu>
                 {/** Sound Toggle **/}
                 <Menu.Item className="vert">
-                  <div>Sound</div>
+                  <div className="menu-header">Sound</div>
                   <br></br>
                   <Checkbox
                   toggle
@@ -40,7 +40,7 @@ class Sound extends Component {
 
                 {/** Output Volume **/}
                 <Menu.Item className="vert">
-                  <div>Output Volume</div>
+                  <div className="menu-header">Output Volume</div>
                   <br></br>
                   <Slider
                   min={1}
@@ -71,7 +71,7 @@ class Sound extends Component {
 
                 {/** ADSR **/}
                 <Menu.Item className="vert">
-                  <div>ADSR</div>
+                  <div className="menu-header">ADSR</div>
                   <br></br>
                   <div className="horiz">
                     <div className="adsr-slider">
@@ -103,7 +103,7 @@ class Sound extends Component {
 
                 {/** Scale Menu **/}
                 <Menu.Item className="vert">
-                  Scales
+                  <div className="menu-header">Scales</div>
                   <Menu.Menu className="horiz">
                     <Menu.Item className="vert no-line">
                       <div>Scale Mode</div>
@@ -120,7 +120,9 @@ class Sound extends Component {
                       text='Key'
                       options={keyOptions}
                       onChange={context.handleKeyChange}
-                      disabled={!context.state.isStarted}/>
+                      disabled={!context.state.isStarted}
+                      >
+                      </Dropdown>
                     </Menu.Item>
                     <Menu.Item>
                       <Dropdown
@@ -141,7 +143,9 @@ class Sound extends Component {
                   </Menu.Menu>
                   {context.state.musicKey.name}{context.state.accidental.name}{context.state.scale.name}
                 </Menu.Item>
-
+                <Menu.Item className="vert" >
+                <div className="menu-header effects-tab">Effects</div>
+                </Menu.Item>
               </Menu>
             </Segment>
           </React.Fragment>

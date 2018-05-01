@@ -85,8 +85,8 @@
 }
 
 .reset-button:hover {
-  background-color: #ff695e;
-  color: white;
+  /* background-color: #ff695e;
+  color: white; */
   outline: none;
   cursor: pointer;
 }
@@ -129,4 +129,8 @@
   color: white;
   outline: none;
   cursor: pointer;
+}
+
+.menu-header {
+  font-weight: 700;
 }
