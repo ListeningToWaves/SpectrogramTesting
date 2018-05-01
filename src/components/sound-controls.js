@@ -22,7 +22,7 @@ class Sound extends Component {
             <Segment className="menu-pane">
               <Menu>
                 {/** Sound Toggle **/}
-                <Menu.Item className="vert">
+              {/**  <Menu.Item className="vert">
                   <div className="menu-header">Sound</div>
                   <br></br>
                   <Checkbox
@@ -37,7 +37,7 @@ class Sound extends Component {
                       : "Off"}
                   </div>
                 </Menu.Item>
-
+              */}
                 {/** Output Volume **/}
                 <Menu.Item className="vert">
                   <div className="menu-header">Output Volume</div>

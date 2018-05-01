@@ -8,7 +8,7 @@ let defaultState = {};
 class MyProvider extends Component {
   //All Controls
   state = {
-    soundOn: true,
+    soundOn: false,
     microphoneGain: 1,
     timbre: 'Sine',
     scaleOn: false,

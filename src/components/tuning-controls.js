@@ -33,11 +33,13 @@ class Tuning extends Component {
                   max={100}
                   value={[context.state.limitMin, context.state.limitMax]}
                   className="multi-slider"
+                  disabled={!context.state.isStarted}
                   onChange={context.handleRangeChange}/>
+                  <br></br>
                   <div>
-                  <Input value={context.state.resolutionMin} className="resolution-input" onChange={context.handleMinChange}/>
+                  <Input value={context.state.resolutionMin} className="resolution-input" disabled={!context.state.isStarted} onChange={context.handleMinChange}/>
                   -
-                  <Input value={context.state.resolutionMax} className="resolution-input" onChange={context.handleMaxChange}/>
+                  <Input value={context.state.resolutionMax} className="resolution-input" disabled={!context.state.isStarted} onChange={context.handleMaxChange}/>
                   </div>
                   </div>
                 </Menu.Item>

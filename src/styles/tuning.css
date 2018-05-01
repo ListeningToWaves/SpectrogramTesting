@@ -12,6 +12,7 @@
   width: 80%!important;
   margin: 20px 10px;
   display: flex;
+  padding: 0!important;
   /* height: 50px; */
   /* color: black!important; */
   /* background-color: black; */
@@ -30,6 +31,9 @@
 .rc-slider-handle {
   width: 24px!important;
   height: 24px!important;
+}
+.rc-slider {
+  height: 0px!important;
 }
 .resolution-input {
   width: 40%;

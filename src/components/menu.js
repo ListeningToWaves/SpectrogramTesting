@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Menu} from 'semantic-ui-react';
+import {Menu, Checkbox} from 'semantic-ui-react';
 import "../styles/menu.css";
 import Tuning from './tuning-controls.js';
 import Sound from './sound-controls.js';
@@ -13,7 +13,8 @@ class MyMenu extends Component {
   state = {
     activeItem: null,
     pane: null,
-    value: 50
+    value: 50,
+    soundOn: false,
   }
   // Function that switches between Menu Panes (children components)
   handleItemClick = (e, {name}) => {
@@ -58,10 +59,15 @@ class MyMenu extends Component {
     }
   }
 
+  handleSoundToggle = () =>{
+    this.setState({soundOn: !this.state.soundOn});
+    this.props.handleSoundToggle();
+  }
+
   // Function that handles the push of the reset button
   // (resets all params except isStarted)
   handleReset = () => {
-    this.setState({value: 50});
+    this.setState({value: 50, soundOn: false});
     this.props.reset();
   }
 
@@ -80,6 +86,14 @@ class MyMenu extends Component {
           <Menu.Item name='play' active={activeItem === 'play'} onClick={this.handleItemClick} className="tab-item"/>
           <Menu.Item name='advanced' active={activeItem === 'advanced'} onClick={this.handleItemClick} className="tab-item"/>
           <Menu.Item position="right">
+            <div>Sound&nbsp;&nbsp;</div>
+            <Checkbox
+            toggle
+            checked={this.state.soundOn}
+            onChange={this.handleSoundToggle}
+            disabled={!this.props.isStarted}
+            />
+          <Menu.Item position="right">
             Microphone Gain&nbsp;&nbsp;
             <div className="gain-container">
               <Slider
@@ -93,6 +107,7 @@ class MyMenu extends Component {
             </div>
             <Menu.Item position="right">
               <button onClick={this.handleReset} className="reset-button">Reset</button>
+              </Menu.Item>
             </Menu.Item>
           </Menu.Item>
           <Menu.Header className="menu-title" active="false">Spectrogram</Menu.Header>

@@ -44,6 +44,8 @@ class Oscillator extends Component {
       this.synths[i].connect(this.masterVolume);
     }
     this.masterVolume.connect(Tone.Master);
+    //Off by default
+    this.masterVolume.mute = true;
     // If Headphone Mode, connect the masterVolume to the graph
     if (true) {
       this.masterVolume.connect(this.props.analyser);
@@ -300,10 +302,12 @@ class Oscillator extends Component {
   label(freq, x, y) {
     this.ctx.font = '20px Inconsolata';
     this.ctx.fillStyle = 'white';
-    if (!this.props.scaleOn) {
-      this.ctx.fillText(freq + ' Hz', x, y);
-    } else {
-      this.ctx.fillText(this.scaleLabel, x, y);
+    if(this.props.soundOn){        
+      if (!this.props.scaleOn) {
+        this.ctx.fillText(freq + ' Hz', x, y);
+      } else {
+        this.ctx.fillText(this.scaleLabel, x, y);
+      }
     }
   }
 

@@ -41,7 +41,9 @@ class App extends Component {
       reset={context.reset}
       handleGainChange={context.handleGainChange}
       gain={context.state.gain}
-      isStarted={context.state.isStarted}/>
+      handleSoundToggle={context.handleSoundToggle}
+      isStarted={context.state.isStarted}
+      />
       <Spectrogram
       soundOn={context.state.soundOn}
       microphoneGain={context.state.microphoneGain}
