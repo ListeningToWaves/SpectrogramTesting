@@ -55,7 +55,7 @@ a:visited {
   font-family: 'Inconsolata';
   z-index: 31;
   user-select: none;
-  
+
 
 }
 #about-text {
@@ -78,7 +78,11 @@ canvas {
   top: 10%;
   z-index: 9;
   flex: 1;
-  touch-action: none;
   left: 0%;
+  touch-action: none;
   overflow: hidden;
+}
+html {
+  touch-action: none;
+
 }
