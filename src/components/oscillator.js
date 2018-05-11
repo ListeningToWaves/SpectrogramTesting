@@ -45,7 +45,7 @@ class Oscillator extends Component {
     }
     this.masterVolume.connect(Tone.Master);
     //Off by default
-    this.masterVolume.mute = true;
+    this.masterVolume.mute = !this.props.soundOn;
     // If Headphone Mode, connect the masterVolume to the graph
     if (true) {
       this.masterVolume.connect(this.props.analyser);
@@ -81,15 +81,9 @@ class Oscillator extends Component {
     }
   }
   componentWillUnmount() {
+    this.masterVolume.mute = true;
     window.removeEventListener("resize", this.props.handleResize);
   }
-
-  // shouldComponentUpdate(nextState, nextProps){
-  //   return true;
-  // }
-  // componentDidUpdate(){
-  //   console.log("UPDATE");
-  // }
 
   // Helper Function that gets the Mouse position based on the rescaled canvas
   getMousePos(canvas, evt) {

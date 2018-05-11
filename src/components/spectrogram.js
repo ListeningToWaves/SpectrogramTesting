@@ -181,6 +181,8 @@ class Spectrogram extends Component {
       musicKey={this.props.musicKey}
       accidental={this.props.accidental}
       scale={this.props.scale}
+      soundOn={this.props.soundOn}
+      outputVolume={this.props.outputVolume}
       handleResize={this.props.handleResize}
       ref={this.updateNoteLines}/>
     ): (
