@@ -54,6 +54,8 @@ a:visited {
   bottom: 0.5%;
   font-family: 'Inconsolata';
   z-index: 31;
+  user-select: none;
+  
 
 }
 #about-text {

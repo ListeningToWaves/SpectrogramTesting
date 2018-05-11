@@ -22,7 +22,10 @@ class Spectrogram extends Component {
     this.updateAxes = React.createRef();
     this.state = {
       resolutionMax: 20000,
-      resolutionMin: 20
+      resolutionMin: 20,
+      musicKey: {name: 'C', value: 0 },
+      accidental: {name: ' ', value: 0},
+      scale: {name: 'Major', value: 0},
     }
   }
   componentDidMount() {
@@ -95,6 +98,12 @@ class Spectrogram extends Component {
           this.updateNoteLines.current.renderNoteLines();
         }
         this.setState({resolutionMax: this.props.resolutionMax, resolutionMin: this.props.resolutionMin});
+      }
+      if(this.props.scale !== this.state.scale || this.props.musicKey !== this.state.musicKey || this.props.accidental !== this.state.accidental){
+        if(this.updateNoteLines.current){
+          this.updateNoteLines.current.renderNoteLines();
+        }
+        this.setState({scale: this.props.scale, musicKey: this.props.musicKey, accidental: this.props.accidental});
       }
     }
   }

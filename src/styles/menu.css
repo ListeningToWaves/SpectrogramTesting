@@ -14,6 +14,7 @@
   transform: translateX(-50%);
   left: 50%;
   position: absolute;
+  user-select: none;
 }
 
 .menu-menu {
@@ -50,6 +51,7 @@
   padding: 2px;
   color: white;
   z-index: 12;
+  user-select: none;
 }
 
 .color-map {

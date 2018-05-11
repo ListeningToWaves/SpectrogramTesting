@@ -83,6 +83,7 @@ class Oscillator extends Component {
   componentWillUnmount() {
     window.removeEventListener("resize", this.props.handleResize);
   }
+
   // shouldComponentUpdate(nextState, nextProps){
   //   return true;
   // }
@@ -131,7 +132,7 @@ class Oscillator extends Component {
       let xPercent = 1 - pos.x / this.props.width;
       let gain = this.getGain(xPercent);
       let freq = this.newFreqAlgorithm(yPercent);
-      this.synths[this.state.currentVoice].frequency.value = freq;
+      this.synths[this.state.currentVoice].oscillator.frequency.value = freq;
       this.synths[this.state.currentVoice].volume.value = gain;
       // Clears the label
       this.ctx.clearRect(0, 0, this.props.width, this.props.height);
@@ -171,7 +172,6 @@ class Oscillator extends Component {
       let pos = this.getMousePos(this.canvas, e.touches[i]);
       let yPercent = 1 - pos.y / this.props.height;
       let xPercent = 1 - pos.x / this.props.width;
-
       let gain = this.getGain(xPercent);
       let freq = this.newFreqAlgorithm(yPercent);
       let newVoice = (this.state.currentVoice + 1) % NUM_VOICES;
@@ -187,11 +187,10 @@ class Oscillator extends Component {
   }
   onTouchMove(e) {
     e.preventDefault();
-
     if (this.state.touch) {
       let voiceToChange = this.state.currentVoice - (this.state.voices - 1);
       for (let i = 0; i < e.changedTouches.length; i++) {
-        let pos = this.getMousePos(this.canvas, e.touches[i]);
+        let pos = this.getMousePos(this.canvas, e.changedTouches[i]);
         let yPercent = 1 - pos.y / this.props.height;
         let xPercent = 1 - pos.x / this.props.width;
         let gain = this.getGain(xPercent);
@@ -201,10 +200,17 @@ class Oscillator extends Component {
         index = (index < 0)
           ? (NUM_VOICES + index)
           : index;
+
         this.synths[index].frequency.value = freq;
         this.synths[index].volume.value = gain;
         // Clears the canvas on touch move
+      }
+      //RedrawLabels
         this.ctx.clearRect(0, 0, this.props.width, this.props.height);
+      for (let i = 0; i < e.touches.length; i++) {
+        let pos = this.getMousePos(this.canvas, e.touches[i]);
+        let yPercent = 1 - pos.y / this.props.height;
+        let freq = this.newFreqAlgorithm(yPercent);
         this.label(freq, pos.x, pos.y);
       }
     }
@@ -302,7 +308,7 @@ class Oscillator extends Component {
   label(freq, x, y) {
     this.ctx.font = '20px Inconsolata';
     this.ctx.fillStyle = 'white';
-    if(this.props.soundOn){        
+    if(this.props.soundOn){
       if (!this.props.scaleOn) {
         this.ctx.fillText(freq + ' Hz', x, y);
       } else {
