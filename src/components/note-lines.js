@@ -11,6 +11,7 @@ class NoteLines extends Component {
 
   componentDidMount() {
     this.ctx = this.canvas.getContext('2d');
+    this.ctx.globalAlpha = 0.5;
     window.addEventListener("resize", this.handleResize);
     Tone.context = this.props.context;
     let options = {
@@ -60,11 +61,11 @@ class NoteLines extends Component {
               this.synth.triggerRelease();
               this.ctx.fillStyle = 'white';
               let oldIndex = this.freqToIndex(this.freq);
-              this.ctx.fillRect(0, oldIndex, width, 2);
+              this.ctx.fillRect(0, oldIndex, width, 1.5);
               this.freq = this.frequencies[j];
               let index = this.freqToIndex(this.frequencies[j]);
               this.ctx.fillStyle = 'gold';
-              this.ctx.fillRect(0, index, width, 1);
+              this.ctx.fillRect(0, index, width, 0.5);
               this.synth.triggerAttack(freq);
             }
             this.synth.volume.value = gain;
@@ -138,7 +139,7 @@ class NoteLines extends Component {
         } else {
           let index = this.freqToIndex(freq);
           this.frequencies.push(Math.round(freq));
-          this.ctx.fillRect(0, index, width, 2);
+          this.ctx.fillRect(0, index, width, 1.5);
           freq = freq * 2;
         }
       }
