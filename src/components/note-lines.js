@@ -48,13 +48,13 @@ class NoteLines extends Component {
 
   onMouseMove(e) {
     e.preventDefault();
-      let {height, width} = this.props;
+      let {height, width, soundOn} = this.props;
       let pos = this.getMousePos(this.canvas, e);
-      let yPercent = 1 - pos.y / this.props.height;
-      let xPercent = 1 - pos.x / this.props.width;
+      let yPercent = 1 - pos.y / height;
+      let xPercent = 1 - pos.x / width;
       let gain = this.getGain(xPercent);
       let freq = this.newFreqAlgorithm(yPercent);
-      if(this.props.soundOn){
+      if(soundOn){
         for(let j = 0; j < this.frequencies.length; j++){
           if(Math.abs(this.frequencies[j] - freq) < 0.01 * freq){
             if(this.frequencies[j] !== this.freq){

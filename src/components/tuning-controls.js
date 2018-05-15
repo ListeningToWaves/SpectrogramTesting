@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Segment, Menu, Input, Dropdown, Checkbox} from 'semantic-ui-react';
 import {MyContext} from './my-provider';
-import {timbreOptions, scaleOptions, keyOptions, accidentalOptions} from '../util/dropdownOptions.js';
+import {scaleOptions, keyOptions, accidentalOptions} from '../util/dropdownOptions.js';
 
 
 import "../styles/tuning.css";

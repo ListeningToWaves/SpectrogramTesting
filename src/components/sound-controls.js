@@ -38,6 +38,20 @@ class Sound extends Component {
                   </div>
                 </Menu.Item>
               */}
+
+              <Menu.Item>
+                Microphone Gain&nbsp;&nbsp;
+                <div className="gain-container">
+                  <Slider
+                  min={1}
+                  max={100}
+                  value={context.state.microphoneGain}
+                  onChange={context.handleGainChange}
+                  tooltip={false}
+                  className="gain-slider"/>
+                  {context.state.microphoneGain}
+                </div>
+                </Menu.Item>
                 {/** Output Volume **/}
                 <Menu.Item className="vert">
                   <div className="menu-header">Output Volume</div>

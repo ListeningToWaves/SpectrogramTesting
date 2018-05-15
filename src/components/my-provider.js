@@ -9,7 +9,7 @@ class MyProvider extends Component {
   //All Controls
   state = {
     soundOn: false,
-    microphoneGain: 1,
+    microphoneGain: 50,
     timbre: 'Sine',
     scaleOn: false,
     noteLinesOn: false,
@@ -29,6 +29,8 @@ class MyProvider extends Component {
     limitMin: 29,
     isStarted: false,
   }
+
+
   // Save state for reset
   componentDidMount(){
     defaultState = this.state;
@@ -56,8 +58,8 @@ class MyProvider extends Component {
         state: this.state,
         handleGainChange: value => {
           if(this.state.isStarted){
-            let gain = this.convertToLog(value, 1, 100, 0.01, 500);
-            this.setState({microphoneGain: gain});
+            // let gain = this.convertToLog(value, 1, 100, 0.01, 500);
+            this.setState({microphoneGain: value});
           }
         },
         handleSoundToggle: () => this.setState({soundOn: !this.state.soundOn}),

@@ -13,7 +13,7 @@ class MyMenu extends Component {
   state = {
     activeItem: null,
     pane: null,
-    value: 50,
+    // value: 50,
     soundOn: false,
   }
   // Function that switches between Menu Panes (children components)
@@ -52,12 +52,12 @@ class MyMenu extends Component {
     console.log("SWITCH");
   }
   // Function that handles the change of the Microphone gain
-  handleGainChange = gain => {
-    if (this.props.isStarted) {
-      this.setState({value: gain});
-      this.props.handleGainChange(gain);
-    }
-  }
+  // handleGainChange = gain => {
+  //   if (this.props.isStarted) {
+  //     this.setState({value: gain});
+  //     this.props.handleGainChange(gain);
+  //   }
+  // }
 
   handleSoundToggle = () =>{
     this.setState({soundOn: !this.state.soundOn});
@@ -94,7 +94,7 @@ class MyMenu extends Component {
             disabled={!this.props.isStarted}
             />
           <Menu.Item position="right">
-            Microphone Gain&nbsp;&nbsp;
+            {/*Microphone Gain&nbsp;&nbsp;
             <div className="gain-container">
               <Slider
               min={1}
@@ -104,7 +104,7 @@ class MyMenu extends Component {
               tooltip={false}
               className="gain-slider"/>
               {this.state.value}
-            </div>
+            </div>*/}
             <Menu.Item position="right">
               <button onClick={this.handleReset} className="reset-button">Reset</button>
               </Menu.Item>

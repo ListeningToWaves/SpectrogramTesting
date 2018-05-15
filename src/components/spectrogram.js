@@ -39,8 +39,9 @@ class Spectrogram extends Component {
   // Connects the menu microphoneGain controls to gainNode
   componentWillReceiveProps(nextProps, prevState) {
     if (nextProps.isStarted) {
-      if (nextProps.microphoneGain !== gainNode.gain.value) {
-        gainNode.gain.setTargetAtTime(nextProps.microphoneGain, audioContext.currentTime, 0.01);
+      let gain = this.convertToLog(nextProps.microphoneGain, 1, 100, 0.01, 500);
+      if (gain !== gainNode.gain.value) {
+        gainNode.gain.setTargetAtTime(gain, audioContext.currentTime, 0.01);
       }
     }
   }
@@ -170,6 +171,14 @@ class Spectrogram extends Component {
     return Math.round(freq);
   }
 
+  // Helper Function for Conversion to log for outputVolume, graph scale
+  convertToLog(value, originalMin, originalMax,newMin, newMax){
+    //solving y=Ae^bx for y
+    let b = Math.log(newMax / newMin)/(originalMax-originalMin);
+    let a = newMax /  Math.pow(Math.E,  originalMax* b);
+    let y = Math.round(a *Math.pow(Math.E, b*value)*100)/100;
+    return y;
+  }
 
   render() {
     const soundOrTuning = this.props.noteLinesOn ? (
