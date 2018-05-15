@@ -27,6 +27,7 @@ class MyProvider extends Component {
     resolutionMin: 20,
     limitMax: 100,
     limitMin: 29,
+    mode: false,
     isStarted: false,
   }
 
@@ -110,6 +111,24 @@ class MyProvider extends Component {
               resolutionMax: newMax
             });
           }
+        },
+        handleModeSwitch: () => {
+          if(this.state.mode){
+            this.setState({
+              mode: false,
+
+            });
+          } else {
+            this.setState({
+              mode: true,
+
+            })
+          }
+
+
+        },
+        menuClose: () =>{
+          this.setState({menuClose: true});
         },
         handleMinChange: (e, data) => {
           let value = Number(data.value);

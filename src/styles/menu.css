@@ -136,9 +136,20 @@
 .menu-header {
   font-weight: 700;
 }
-.gain-container {
-  /* height: 15vh; */
+
+
+.ui.slider.checkbox input:focus:checked~.box:before, .ui.slider.checkbox input:focus:checked~label:before {
+  background-color: #ABE2FB!important;
+
 }
-/* .sound-toggle-label {
-  margin-right: 2px;
-} */
+.ui.slider.checkbox input:checked~.box:before, .ui.slider.checkbox input:checked~label:before {
+  background-color: #ABE2FB!important;
+}
+.ui.slider.checkbox input:focus~.box:before, .ui.slider.checkbox input:focus~label:before {
+  background-color:#7CB342!important;
+
+}
+.ui.slider.checkbox .box:before, .ui.slider.checkbox label:before {
+  background-color:#7CB342!important;
+
+}

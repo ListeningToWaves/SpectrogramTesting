@@ -6,12 +6,18 @@ class NoteLines extends Component {
 
   constructor(props) {
     super(props);
+    this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+    this.onMouseOut = this.onMouseOut.bind(this);
+    this.onTouchStart = this.onTouchStart.bind(this);
+    this.onTouchMove = this.onTouchMove.bind(this);
+    this.onTouchEnd = this.onTouchEnd.bind(this);
   }
 
   componentDidMount() {
     this.ctx = this.canvas.getContext('2d');
-    this.ctx.globalAlpha = 0.5;
+    // this.ctx.globalAlpha = 0.5;
     window.addEventListener("resize", this.handleResize);
     Tone.context = this.props.context;
     let options = {
@@ -25,8 +31,13 @@ class NoteLines extends Component {
     this.synth.connect(this.masterVolume);
     this.masterVolume.connect(Tone.Master);
     this.masterVolume.mute = !this.props.soundOn;
+    // If Headphone Mode, connect the masterVolume to the graph
+    if (true) {
+      this.masterVolume.connect(this.props.analyser);
+    }
     this.frequencies = [];
     this.freq = 1;
+    this.goldIndex = -1;
     this.renderNoteLines();
 
   }
@@ -46,35 +57,109 @@ class NoteLines extends Component {
     }
   }
 
+  onMouseDown(e){
+    e.preventDefault();
+    this.mouseDown = true;
+    this.onMouseMove(e);
+  }
+
   onMouseMove(e) {
     e.preventDefault();
-      let {height, width, soundOn} = this.props;
-      let pos = this.getMousePos(this.canvas, e);
-      let yPercent = 1 - pos.y / height;
-      let xPercent = 1 - pos.x / width;
-      let gain = this.getGain(xPercent);
-      let freq = this.newFreqAlgorithm(yPercent);
-      if(soundOn){
-        for(let j = 0; j < this.frequencies.length; j++){
-          if(Math.abs(this.frequencies[j] - freq) < 0.01 * freq){
-            if(this.frequencies[j] !== this.freq){
-              this.synth.triggerRelease();
-              this.ctx.fillStyle = 'white';
-              let oldIndex = this.freqToIndex(this.freq);
-              this.ctx.fillRect(0, oldIndex, width, 1.5);
-              this.freq = this.frequencies[j];
-              let index = this.freqToIndex(this.frequencies[j]);
-              this.ctx.fillStyle = 'gold';
-              this.ctx.fillRect(0, index, width, 0.5);
-              this.synth.triggerAttack(freq);
+    if(this.mouseDown){
+        let {height, width, soundOn} = this.props;
+        let pos = this.getMousePos(this.canvas, e);
+        let yPercent = 1 - pos.y / height;
+        let xPercent = 1 - pos.x / width;
+        let gain = this.getGain(xPercent);
+        let freq = this.newFreqAlgorithm(yPercent);
+        if(soundOn){
+          for(let j = 0; j < this.frequencies.length; j++){
+            if(Math.abs(this.frequencies[j] - freq) < 0.01 * freq){
+              if(this.frequencies[j] !== this.freq){
+                this.synth.triggerRelease();
+                // this.ctx.fillStyle = 'white';
+                // let oldIndex = this.freqToIndex(this.freq);
+                // this.ctx.fillRect(0, oldIndex, width, 1.5);
+                this.freq = this.frequencies[j];
+                let index = this.freqToIndex(this.frequencies[j]);
+                this.goldIndex = index;
+                this.renderNoteLines();
+                // this.ctx.fillStyle = 'gold';
+                // this.ctx.fillRect(0, index, width, 0.5);
+                this.synth.triggerAttack(freq);
+              }
+              this.synth.volume.value = gain;
+              break;
             }
-            this.synth.volume.value = gain;
-            break;
           }
         }
       }
+  }
+
+  onMouseUp(e){
+    e.preventDefault();
+    this.mouseDown = false;
+    this.synth.triggerRelease();
+    this.goldIndex = -1;
+    this.renderNoteLines();
 
   }
+  onMouseOut(e){
+    e.preventDefault();
+    this.mouseDown = false;
+    this.synth.triggerRelease();
+    this.goldIndex = -1;
+    this.renderNoteLines();
+
+  }
+
+  onTouchStart(e){
+    e.preventDefault();
+    // this.touch = true;
+    this.onTouchMove(e);
+  }
+  onTouchMove(e) {
+    e.preventDefault();
+    // if(this.touch){
+        let {height, width, soundOn} = this.props;
+        let pos = this.getMousePos(this.canvas, e.changedTouches[0]);
+        let yPercent = 1 - pos.y / height;
+        let xPercent = 1 - pos.x / width;
+        let gain = this.getGain(xPercent);
+        let freq = this.newFreqAlgorithm(yPercent);
+        if(soundOn){
+          for(let j = 0; j < this.frequencies.length; j++){
+            if(Math.abs(this.frequencies[j] - freq) < 0.01 * freq){
+              if(this.frequencies[j] !== this.freq){
+                this.synth.triggerRelease();
+                // this.ctx.fillStyle = 'white';
+                // let oldIndex = this.freqToIndex(this.freq);
+                // this.ctx.fillRect(0, oldIndex, width, 1.5);
+                this.freq = this.frequencies[j];
+                let index = this.freqToIndex(this.frequencies[j]);
+                this.goldIndex = index;
+                this.renderNoteLines();
+                // this.ctx.fillStyle = 'gold';
+                // this.ctx.fillRect(0, index, width, 0.5);
+                this.synth.triggerAttack(freq);
+              }
+              this.synth.volume.value = gain;
+              break;
+            }
+          }
+        }
+      // }
+    }
+
+  onTouchEnd(e){
+    e.preventDefault();
+    this.synth.triggerRelease();
+    this.renderNoteLines();
+    this.goldIndex = -1;
+    // this.touch = false;
+  }
+
+
 
   getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect(), // abs. size of element
@@ -106,7 +191,7 @@ class NoteLines extends Component {
   renderNoteLines = () => {
     let {height, width} = this.props;
     this.ctx.clearRect(0, 0, width, height);
-    this.ctx.fillStyle = 'white';
+    // this.ctx.fillStyle = 'white';
 
     //  Maps to one of the 12 keys of the piano based on note and accidental
     let newIndexedKey = this.props.musicKey.value;
@@ -138,8 +223,14 @@ class NoteLines extends Component {
           break;
         } else {
           let index = this.freqToIndex(freq);
-          this.frequencies.push(Math.round(freq));
-          this.ctx.fillRect(0, index, width, 1.5);
+          this.frequencies.push(freq);
+          if(index === this.goldIndex){
+            this.ctx.fillStyle = 'gold';
+            this.ctx.fillRect(0, index, width, 1.5);
+          } else {
+            this.ctx.fillStyle = 'white';
+            this.ctx.fillRect(0, index, width, 1.5);
+          }
           freq = freq * 2;
         }
       }
@@ -163,7 +254,13 @@ class NoteLines extends Component {
     return (<canvas
       width={this.props.width}
       height={this.props.height}
+      onMouseDown={this.onMouseDown}
       onMouseMove={this.onMouseMove}
+      onMouseUp={this.onMouseUp}
+      onMouseOut={this.onMouseOut}
+      onTouchStart={this.onTouchStart}
+      onTouchMove={this.onTouchMove}
+      onTouchEnd={this.onTouchEnd}
       ref={(c) => {
       this.canvas = c;
     }}/>);

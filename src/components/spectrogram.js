@@ -69,7 +69,10 @@ class Spectrogram extends Component {
       // Calls the start function which lets the controls know it has started
       this.props.start();
       this.renderFreqDomain();
+    } else {
+      this.props.menuClose();
     }
+
   }
 
 // Sets up the microphone stream after the Spectrogram is started
@@ -183,16 +186,21 @@ class Spectrogram extends Component {
   render() {
     const soundOrTuning = this.props.noteLinesOn ? (
       <NoteLines
-      resolutionMax={this.props.resolutionMax}
-      resolutionMin={this.props.resolutionMin}
       width={this.props.width}
       height={this.props.height}
+      resolutionMax={this.props.resolutionMax}
+      resolutionMin={this.props.resolutionMin}
+      context={audioContext}
+      analyser={analyser}
+      soundOn={this.props.soundOn}
+      outputVolume={this.props.outputVolume}
+      timbre={this.props.timbre}
+      scaleOn={this.props.scaleOn}
       musicKey={this.props.musicKey}
       accidental={this.props.accidental}
       scale={this.props.scale}
-      soundOn={this.props.soundOn}
-      outputVolume={this.props.outputVolume}
-      handleResize={this.props.handleResize}
+      attack={this.props.attack}
+      release={this.props.release}
       ref={this.updateNoteLines}/>
     ): (
       <Oscillator

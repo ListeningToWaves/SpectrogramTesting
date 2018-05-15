@@ -39,9 +39,9 @@ class Sound extends Component {
                 </Menu.Item>
               */}
 
-              <Menu.Item>
-                Microphone Gain&nbsp;&nbsp;
-                <div className="gain-container">
+              <Menu.Item className="vert">
+                <div className="menu-header">Microphone Gain</div>
+                <br></br>
                   <Slider
                   min={1}
                   max={100}
@@ -49,6 +49,7 @@ class Sound extends Component {
                   onChange={context.handleGainChange}
                   tooltip={false}
                   className="gain-slider"/>
+                  <div>
                   {context.state.microphoneGain}
                 </div>
                 </Menu.Item>

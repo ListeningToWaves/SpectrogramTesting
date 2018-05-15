@@ -52,6 +52,7 @@ class App extends Component {
       gain={context.state.gain}
       handleSoundToggle={context.handleSoundToggle}
       isStarted={context.state.isStarted}
+      handleModeSwitch={context.handleModeSwitch}
       />
       <Spectrogram
       soundOn={context.state.soundOn}
@@ -73,6 +74,7 @@ class App extends Component {
       resolutionMin={context.state.resolutionMin}
       isStarted={context.state.isStarted}
       handleResize={context.handleResize}
+      menuClose={context.menuClose}
       start={context.start}
       />
       </React.Fragment>

@@ -3,7 +3,7 @@ import {Menu, Checkbox} from 'semantic-ui-react';
 import "../styles/menu.css";
 import Tuning from './tuning-controls.js';
 import Sound from './sound-controls.js';
-import Slider from 'react-rangeslider';
+// import Slider from 'react-rangeslider';
 
 // To include the default styles
 import 'react-rangeslider/lib/index.css';
@@ -15,6 +15,7 @@ class MyMenu extends Component {
     pane: null,
     // value: 50,
     soundOn: false,
+    mode: false
   }
   // Function that switches between Menu Panes (children components)
   handleItemClick = (e, {name}) => {
@@ -67,8 +68,13 @@ class MyMenu extends Component {
   // Function that handles the push of the reset button
   // (resets all params except isStarted)
   handleReset = () => {
-    this.setState({value: 50, soundOn: false});
+    this.setState({value: 50, soundOn: false, mode: false});
     this.props.reset();
+  }
+
+  handleModeSwitch = () =>{
+    this.setState({mode: !this.state.mode});
+    this.props.handleModeSwitch();
   }
 
   // Renders the top Menu Bar with tabs, microphone gain, and the two menu buttons
@@ -86,6 +92,14 @@ class MyMenu extends Component {
           <Menu.Item name='play' active={activeItem === 'play'} onClick={this.handleItemClick} className="tab-item"/>
           <Menu.Item name='advanced' active={activeItem === 'advanced'} onClick={this.handleItemClick} className="tab-item"/>
           <Menu.Item position="right">
+            <div>Expressive&nbsp;&nbsp;</div>
+            <Checkbox
+            slider
+            checked={this.state.mode}
+            onChange={this.handleModeSwitch}
+            disabled={!this.props.isStarted}/>
+            <div>&nbsp;&nbsp;Tuning</div>
+          <Menu.Item position="right">
             <div>Sound&nbsp;&nbsp;</div>
             <Checkbox
             toggle
@@ -93,7 +107,9 @@ class MyMenu extends Component {
             onChange={this.handleSoundToggle}
             disabled={!this.props.isStarted}
             />
-          <Menu.Item position="right">
+
+          {/*<Menu.Item position="right">*/}
+
             {/*Microphone Gain&nbsp;&nbsp;
             <div className="gain-container">
               <Slider
@@ -105,6 +121,7 @@ class MyMenu extends Component {
               className="gain-slider"/>
               {this.state.value}
             </div>*/}
+
             <Menu.Item position="right">
               <button onClick={this.handleReset} className="reset-button">Reset</button>
               </Menu.Item>
