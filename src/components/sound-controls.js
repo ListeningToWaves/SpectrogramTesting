@@ -38,7 +38,7 @@ class Sound extends Component {
                   </div>
                 </Menu.Item>
               */}
-
+              {/*Microphone Gain*/}
               <Menu.Item className="vert">
                 <div className="menu-header">Microphone Gain</div>
                 <br></br>

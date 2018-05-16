@@ -25,9 +25,10 @@ class MyProvider extends Component {
     log: true,
     resolutionMax: 20000,
     resolutionMin: 20,
-    limitMax: 100,
-    limitMin: 29,
+    limitMax: 99,
+    limitMin: 31,
     mode: false,
+    hidePanes: false,
     isStarted: false,
   }
 
@@ -125,24 +126,21 @@ class MyProvider extends Component {
             })
           }
 
-
-        },
-        menuClose: () =>{
-          this.setState({menuClose: true});
         },
         handleMinChange: (e, data) => {
           let value = Number(data.value);
           value = (!isNaN(value) && value < this.state.resolutionMax && value > 0 && value < 20000) ? value: 1;
           let newMin = this.convertToLinear(value, 1,100, 1, 20000);
-          // console.log(newMin);
           this.setState({limitMin: newMin, resolutionMin: value});
         },
         handleMaxChange: (e, data) => {
           let value = Number(data.value);
-          value = (!isNaN(value) && value > this.state.resolutionMin && value > 0 && value <= 20000) ? value: 1;
+          value = (!isNaN(value) && value > this.state.resolutionMin && value > 0 && value <= 20000) ? value: 20000;
           let newMax = this.convertToLinear(value, 1,100, 1, 20000);
-          this.setState({limitMax: newMax, resolutionMax: Number(data.value)});
+          this.setState({limitMax: newMax, resolutionMax: value});
         },
+        menuClose: () => this.setState({hidePanes: true}),
+        handleHidePanesCompletion: ()=> this.setState({hidePanes: false}),
         handleResize: () => this.setState({width: window.innerWidth, height: window.innerHeight}),
         start: ()=> this.setState({isStarted: true}),
         reset: ()=> this.setState({ ...defaultState, isStarted: this.state.isStarted})

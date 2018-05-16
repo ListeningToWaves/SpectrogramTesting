@@ -48,6 +48,18 @@ class MyMenu extends Component {
     }
     this.setState({activeItem: name, pane: pane});
   }
+
+  componentWillReceiveProps(nextProps){
+    //Check if CLicked on Spectrogram, close menu pane, then call parent function to
+    // set as false. Without extra function, menu would close every time after 1st click
+    if(nextProps.hidePanes){
+      this.setState({
+        pane: null,
+        activeItem: null
+      });
+      this.props.handleHidePanesCompletion();
+    }
+  }
   // Function that switches to the signal generator on click
   switchToSignalGenerator = () => {
     console.log("SWITCH");
@@ -72,6 +84,7 @@ class MyMenu extends Component {
     this.props.reset();
   }
 
+  // Function that handle switch between modes
   handleModeSwitch = () =>{
     this.setState({mode: !this.state.mode});
     this.props.handleModeSwitch();

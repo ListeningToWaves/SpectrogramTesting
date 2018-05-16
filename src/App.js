@@ -53,6 +53,8 @@ class App extends Component {
       handleSoundToggle={context.handleSoundToggle}
       isStarted={context.state.isStarted}
       handleModeSwitch={context.handleModeSwitch}
+      hidePanes={context.state.hidePanes}
+      handleHidePanesCompletion={context.handleHidePanesCompletion}
       />
       <Spectrogram
       soundOn={context.state.soundOn}

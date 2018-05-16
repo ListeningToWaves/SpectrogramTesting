@@ -28,7 +28,7 @@ class Tuning extends Component {
                   </div>
                   <Range
                   allowCross={false}
-                  defaultValue={[29, 100]}
+                  defaultValue={[31, 100]}
                   min={1}
                   max={100}
                   value={[context.state.limitMin, context.state.limitMax]}
