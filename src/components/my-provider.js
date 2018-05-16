@@ -42,7 +42,8 @@ class MyProvider extends Component {
     //solving y=Ae^bx for y
     let b = Math.log(newMax / newMin)/(originalMax-originalMin);
     let a = newMax /  Math.pow(Math.E,  originalMax* b);
-    let y = Math.round(a *Math.pow(Math.E, b*value)*100)/100;
+    let y = a *Math.pow(Math.E, b*value);
+    // console.log(y);
     return y;
   }
 
@@ -50,7 +51,7 @@ class MyProvider extends Component {
     //solving y=Ae^bx for x, x=ln(y-A)/b
         let b = Math.log(newMax / newMin)/(originalMax-originalMin);
         let a = newMax /  Math.pow(Math.E,  originalMax* b);
-        let x = Math.round(Math.log(value - a)/b);
+        let x = Math.log(value - a)/b;
       return x;
   }
   //Functions that setState based on Controls
@@ -134,6 +135,7 @@ class MyProvider extends Component {
           this.setState({limitMin: newMin, resolutionMin: value});
         },
         handleMaxChange: (e, data) => {
+          console.log(e.key);
           let value = Number(data.value);
           value = (!isNaN(value) && value > this.state.resolutionMin && value > 0 && value <= 20000) ? value: 20000;
           let newMax = this.convertToLinear(value, 1,100, 1, 20000);

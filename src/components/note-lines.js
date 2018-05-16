@@ -35,7 +35,7 @@ class NoteLines extends Component {
     if (true) {
       this.masterVolume.connect(this.props.analyser);
     }
-    this.frequencies = [];
+    this.frequencies = {};
     this.freq = 1;
     this.goldIndex = -1;
     this.renderNoteLines();
@@ -73,7 +73,7 @@ class NoteLines extends Component {
         let gain = this.getGain(xPercent);
         let freq = this.newFreqAlgorithm(yPercent);
         if(soundOn){
-          for(let j = 0; j < this.frequencies.length; j++){
+          for(let j in this.frequencies){
             if(Math.abs(this.frequencies[j] - freq) < 0.01 * freq){
               if(this.frequencies[j] !== this.freq){
                 this.synth.triggerRelease();
@@ -86,7 +86,9 @@ class NoteLines extends Component {
                 this.renderNoteLines();
                 // this.ctx.fillStyle = 'gold';
                 // this.ctx.fillRect(0, index, width, 0.5);
-                this.synth.triggerAttack(freq);
+                this.synth.triggerAttack(this.frequencies[j]);
+                this.label(j, pos.x, pos.y+2);
+
               }
               this.synth.volume.value = gain;
               break;
@@ -101,6 +103,7 @@ class NoteLines extends Component {
     this.mouseDown = false;
     this.synth.triggerRelease();
     this.goldIndex = -1;
+    this.freq = -1;
     this.renderNoteLines();
 
   }
@@ -109,6 +112,7 @@ class NoteLines extends Component {
     this.mouseDown = false;
     this.synth.triggerRelease();
     this.goldIndex = -1;
+    this.freq = -1;
     this.renderNoteLines();
 
   }
@@ -128,7 +132,7 @@ class NoteLines extends Component {
         let gain = this.getGain(xPercent);
         let freq = this.newFreqAlgorithm(yPercent);
         if(soundOn){
-          for(let j = 0; j < this.frequencies.length; j++){
+          for(let j in this.frequencies){
             if(Math.abs(this.frequencies[j] - freq) < 0.01 * freq){
               if(this.frequencies[j] !== this.freq){
                 this.synth.triggerRelease();
@@ -141,7 +145,9 @@ class NoteLines extends Component {
                 this.renderNoteLines();
                 // this.ctx.fillStyle = 'gold';
                 // this.ctx.fillRect(0, index, width, 0.5);
-                this.synth.triggerAttack(freq);
+                this.synth.triggerAttack(this.frequencies[j]);
+                this.label(j, pos.x, pos.y+2);
+
               }
               this.synth.volume.value = gain;
               break;
@@ -156,6 +162,7 @@ class NoteLines extends Component {
     this.synth.triggerRelease();
     this.renderNoteLines();
     this.goldIndex = -1;
+    this.freq = -1;
     // this.touch = false;
   }
 
@@ -188,6 +195,16 @@ class NoteLines extends Component {
     this.renderNoteLines();
   }
 
+  // Helper method that generates a label for the frequency or the scale note
+  label(name, x, y) {
+    this.ctx.font = '20px Inconsolata';
+    this.ctx.fillStyle = 'white';
+
+    if(this.props.soundOn){
+        this.ctx.fillText(name, x, y);
+    }
+  }
+
   renderNoteLines = () => {
     let {height, width} = this.props;
     this.ctx.clearRect(0, 0, width, height);
@@ -210,7 +227,7 @@ class NoteLines extends Component {
           : newIndexedKey;
     }
 
-    this.frequencies = [];
+    this.frequencies = {};
     // Uses generateScale helper method to generate base frequency values
     let s = generateScale(newIndexedKey, this.props.scale.value);
     //Sweeps through scale object and draws frequency
@@ -219,11 +236,11 @@ class NoteLines extends Component {
 
       for (let j = 0; j < 15; j++) {
         if (freq > this.props.resolutionMax) {
-
           break;
         } else {
+          let name = s.scaleNames[i]+''+j;
           let index = this.freqToIndex(freq);
-          this.frequencies.push(freq);
+          this.frequencies[name] = freq;
           if(index === this.goldIndex){
             this.ctx.fillStyle = 'gold';
             this.ctx.fillRect(0, index, width, 1.5);

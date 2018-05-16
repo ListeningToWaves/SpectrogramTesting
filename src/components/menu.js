@@ -21,7 +21,7 @@ class MyMenu extends Component {
   handleItemClick = (e, {name}) => {
     let pane = null;
     switch (name) {
-      case "tuning":
+      case "graph":
         if (name !== this.state.activeItem) {
           pane = <Tuning/>
         } else {
@@ -101,7 +101,7 @@ class MyMenu extends Component {
           <Menu.Item>
             <button className="function-switch-button" onClick={this.switchToSignalGenerator}>Signal Generator</button>
           </Menu.Item>
-          <Menu.Item name='tuning' active={activeItem === 'tuning'} onClick={this.handleItemClick} className="tab-item"/>
+          <Menu.Item name='graph' active={activeItem === 'graph'} onClick={this.handleItemClick} className="tab-item"/>
           <Menu.Item name='play' active={activeItem === 'play'} onClick={this.handleItemClick} className="tab-item"/>
           <Menu.Item name='advanced' active={activeItem === 'advanced'} onClick={this.handleItemClick} className="tab-item"/>
           <Menu.Item position="right">
