@@ -1,0 +1,14 @@
+.scale-container{
+  border: 2px solid gold;
+  position: absolute;
+  width: 10%;
+  height: 90%;
+  top: 10%;
+  left: 0%;
+  z-index: 25;
+  touch-action: none;
+}
+
+.duh {
+  color: white;
+}

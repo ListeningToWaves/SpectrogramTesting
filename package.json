@@ -4,10 +4,11 @@
   "private": true,
   "homepage": "http://listeningtowaves.github.io/SpectrogramTesting",
   "dependencies": {
+    "npm": "^6.0.1",
     "rc-slider": "^8.6.1",
-    "react": "^16.3.2",
+    "react": "^16.4.0",
     "react-animation-frame": "^1.0.1",
-    "react-dom": "^16.3.2",
+    "react-dom": "^16.4.0",
     "react-rangeslider": "^2.2.0",
     "react-scripts": "1.1.1",
     "semantic-ui-css": "^2.3.0",

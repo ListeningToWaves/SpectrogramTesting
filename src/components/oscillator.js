@@ -127,7 +127,11 @@ class Oscillator extends Component {
       let gain = this.getGain(xPercent);
       let freq = this.newFreqAlgorithm(yPercent);
       this.synths[this.state.currentVoice].oscillator.frequency.value = freq;
-      this.synths[this.state.currentVoice].volume.value = gain;
+      // this.synths[this.state.currentVoice].volume.value = gain;
+      this.synths[this.state.currentVoice].volume.exponentialRampTo(gain,
+          0.1);
+      // this.synths[this.state.currentVoice].volume.linearRampToValueAtTime(this.gainAmount,
+          // context.currentTime + 0.1);
       // Clears the label
       this.ctx.clearRect(0, 0, this.props.width, this.props.height);
       this.label(freq, pos.x, pos.y);
@@ -295,7 +299,7 @@ class Oscillator extends Component {
   // Helper function that turns the x-pos into a decibel value for the volume
   getGain(index) {
     //-60 to 0dB
-    return -1 * (index * 60);
+    return -1 * (index * 40);
   }
 
   // Helper method that generates a label for the frequency or the scale note

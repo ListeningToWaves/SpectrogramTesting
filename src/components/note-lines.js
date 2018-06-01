@@ -2,6 +2,15 @@ import React, {Component} from 'react';
 import generateScale from '../util/generateScale';
 import Tone from 'tone';
 
+const release = 2;
+let options = {
+  oscillator: {
+    type: "sine"
+  },
+  envelope: {
+    release: 2
+  }
+};
 class NoteLines extends Component {
 
   constructor(props) {
@@ -20,12 +29,7 @@ class NoteLines extends Component {
     // this.ctx.globalAlpha = 0.5;
     window.addEventListener("resize", this.handleResize);
     Tone.context = this.props.context;
-    let options = {
-      oscillator: {
-        type: "sine"
-      },
 
-    };
     this.synth = new Tone.Synth(options);
     this.masterVolume = new Tone.Volume(-2);
     this.synth.connect(this.masterVolume);
@@ -77,6 +81,7 @@ class NoteLines extends Component {
             if(Math.abs(this.frequencies[j] - freq) < 0.01 * freq){
               if(this.frequencies[j] !== this.freq){
                 this.synth.triggerRelease();
+
                 // this.ctx.fillStyle = 'white';
                 // let oldIndex = this.freqToIndex(this.freq);
                 // this.ctx.fillRect(0, oldIndex, width, 1.5);
@@ -86,6 +91,15 @@ class NoteLines extends Component {
                 this.renderNoteLines();
                 // this.ctx.fillStyle = 'gold';
                 // this.ctx.fillRect(0, index, width, 0.5);
+                let endTime =  this.props.context.currentTime + release;
+                this.synth.volume.cancelAndHoldAtTime(this.props.context.currentTime);
+                this.synth.volume.exponentialRampToValueAtTime(0.0001, endTime);
+                this.synth.oscillator.stop(endTime);
+                this.synth = null;
+
+                this.synth = new Tone.Synth(options);
+
+                this.synth.connect(this.masterVolume);
                 this.synth.triggerAttack(this.frequencies[j]);
                 this.label(j, pos.x, pos.y+2);
 
@@ -102,6 +116,8 @@ class NoteLines extends Component {
     e.preventDefault();
     this.mouseDown = false;
     this.synth.triggerRelease();
+    this.synth = null;
+    this.synth = new Tone.Synth(options);
     this.goldIndex = -1;
     this.freq = -1;
     this.renderNoteLines();
@@ -143,8 +159,17 @@ class NoteLines extends Component {
                 let index = this.freqToIndex(this.frequencies[j]);
                 this.goldIndex = index;
                 this.renderNoteLines();
-                // this.ctx.fillStyle = 'gold';
-                // this.ctx.fillRect(0, index, width, 0.5);
+
+                let endTime =  this.props.context.currentTime + release;
+                this.synth.volume.cancelAndHoldAtTime(this.props.context.currentTime);
+                this.synth.volume.exponentialRampToValueAtTime(0.0001, endTime);
+                this.synth.oscillator.stop(endTime);
+                this.synth = null;
+
+                this.synth = new Tone.Synth(options);
+
+                this.synth.connect(this.masterVolume);
+
                 this.synth.triggerAttack(this.frequencies[j]);
                 this.label(j, pos.x, pos.y+2);
 
@@ -187,7 +212,7 @@ class NoteLines extends Component {
   // Helper function that turns the x-pos into a decibel value for the volume
   getGain(index) {
     //-60 to 0dB
-    return -1 * (index * 60);
+    return -1 * (index * 40);
   }
 
   handleResize = () => {

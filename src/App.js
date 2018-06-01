@@ -77,6 +77,7 @@ class App extends Component {
       isStarted={context.state.isStarted}
       handleResize={context.handleResize}
       menuClose={context.menuClose}
+      handleZoom={context.handleZoom}
       start={context.start}
       />
       </React.Fragment>

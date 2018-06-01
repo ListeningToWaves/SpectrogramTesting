@@ -144,6 +144,7 @@ class MyProvider extends Component {
         menuClose: () => this.setState({hidePanes: true}),
         handleHidePanesCompletion: ()=> this.setState({hidePanes: false}),
         handleResize: () => this.setState({width: window.innerWidth, height: window.innerHeight}),
+        handleZoom: (upper, lower) => this.setState({resolutionMax: upper, resolutionMin: lower}),
         start: ()=> this.setState({isStarted: true}),
         reset: ()=> this.setState({ ...defaultState, isStarted: this.state.isStarted})
 

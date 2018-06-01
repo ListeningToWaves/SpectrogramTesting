@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import '../styles/spectrogram.css';
 
 import Axes from './axes';
+import Scales from './scale-controls'
 import NoteLines from './note-lines';
 import Oscillator from './oscillator';
 
@@ -201,7 +202,8 @@ class Spectrogram extends Component {
       scale={this.props.scale}
       attack={this.props.attack}
       release={this.props.release}
-      ref={this.updateNoteLines}/>
+      ref={this.updateNoteLines}
+      handleResize={this.props.handleResize}/>
     ): (
       <Oscillator
       width={this.props.width}
@@ -229,6 +231,14 @@ class Spectrogram extends Component {
         }}/>
         {this.props.isStarted &&
           <React.Fragment>
+            <Scales
+            resolutionMax={this.props.resolutionMax}
+            resolutionMin={this.props.resolutionMin}
+            width={this.props.width}
+            height={this.props.height}
+            handleZoom={this.props.handleZoom}
+            handleResize={this.props.handleResize}/>
+            {soundOrTuning}
             <Axes
             resolutionMax={this.props.resolutionMax}
             resolutionMin={this.props.resolutionMin}
@@ -236,7 +246,7 @@ class Spectrogram extends Component {
             height={this.props.height}
             handleResize={this.props.handleResize}
             ref={this.updateAxes}/>
-            {soundOrTuning}
+
           </React.Fragment>
           }
           {/* Intro Instructions */}
