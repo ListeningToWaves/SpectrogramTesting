@@ -294,6 +294,7 @@ class NoteLines extends Component {
   }
   render() {
     return (<canvas
+      className="note-lines-canvas"
       width={this.props.width}
       height={this.props.height}
       onMouseDown={this.onMouseDown}

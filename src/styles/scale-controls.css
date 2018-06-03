@@ -1,14 +1,19 @@
-.scale-container{
-  border: 2px solid gold;
+.scale-container {
+  border: 2px dashed gold;
   position: absolute;
-  width: 10%;
+  width: 5%;
   height: 90%;
   top: 10%;
   left: 0%;
-  z-index: 25;
-  touch-action: none;
+  z-index: 21;
 }
 
-.duh {
+.scale-canvas {
+  height: 100%;
+  top: 0%;
+}
+
+.zoom-text {
   color: white;
+  user-select: none;
 }

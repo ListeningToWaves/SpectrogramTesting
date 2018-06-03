@@ -1,5 +1,5 @@
 .menu-pane {
-  z-index: 21;
+  z-index: 22;
 }
 
 .ui.toggle.checkbox input:focus:checked~label:before {
