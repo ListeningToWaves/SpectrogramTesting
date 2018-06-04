@@ -70,9 +70,9 @@ class Spectrogram extends Component {
       // Calls the start function which lets the controls know it has started
       this.props.start();
       this.renderFreqDomain();
-    } else {
-      this.props.menuClose();
-    }
+    } //else {
+    //   this.props.menuClose();
+    // }
 
   }
 

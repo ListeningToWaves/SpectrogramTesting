@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Segment, Menu, Input, Dropdown, Checkbox} from 'semantic-ui-react';
 import {MyContext} from './my-provider';
 import {scaleOptions, keyOptions, accidentalOptions} from '../util/dropdownOptions.js';
-
+import { Button, Icon } from 'semantic-ui-react';
 
 import "../styles/tuning.css";
 // Using an ES6 transpiler like Babel
@@ -19,8 +19,8 @@ class Tuning extends Component {
       <MyContext.Consumer>
         {(context) => (
           <React.Fragment>
-            <Segment className="menu-pane">
-              <Menu>
+            <Segment className="menu-pane-container">
+              <Menu className="menu-pane">
                 <Menu.Item className="vert graph-limit-container">
                   <div className="multi-slider-container">
                   <div className="menu-header">
@@ -86,6 +86,9 @@ class Tuning extends Component {
                   {context.state.musicKey.name}{context.state.accidental.name}{context.state.scale.name}
                 </Menu.Item>
               </Menu>
+              <Button icon onClick={this.props.closeMenu} className="close-menu">
+              <Icon fitted name="angle double up" size="large"/>
+              </Button>              
             </Segment>
           </React.Fragment>
         )}

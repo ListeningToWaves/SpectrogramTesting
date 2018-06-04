@@ -1,4 +1,4 @@
-.menu-pane {
+.menu-pane-container {
   padding: 0;
   margin: 0!important;
   border: 0!important;
@@ -42,4 +42,12 @@
 .resolution-input input {
   padding: .5em 1em;
 
+}
+
+.close-menu {
+  width: 5%;
+  float: right;
+  background: none!important;
+  padding: 0!important;
+  margin-top: 2px!important;
 }

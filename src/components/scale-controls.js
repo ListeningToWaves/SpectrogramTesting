@@ -7,6 +7,8 @@ class Scales extends Component {
     this.onPointerDown = this.onPointerDown.bind(this);
     this.onPointerUp = this.onPointerUp.bind(this);
     this.onPointerMove = this.onPointerMove.bind(this);
+    this.onPointerOut = this.onPointerOut.bind(this);
+
     this.state = {
       evCache: {},
       prevDiff: -1,
@@ -69,9 +71,9 @@ class Scales extends Component {
             // The distance between the two pointers has increased
             console.log("Pinch moving OUT -> Zoom in", e);
             let ratio = curDiff / this.props.height;
-            if (ratio > 1) 
+            if (ratio > 1)
               ratio = 1;
-            
+
             let upperChange = (this.state.zoomMax - this.state.centerFreq) * ratio;
             let lowerChange = (this.state.centerFreq - this.state.zoomMin) * ratio;
             let newUpper = this.state.zoomMax - upperChange;
@@ -87,9 +89,9 @@ class Scales extends Component {
             let lowerChange = (this.state.zoomMin + 1) * ratio;
             let newUpper = this.props.resolutionMax + upperChange;
             let newLower = this.props.resolutionMin - lowerChange;
-            if (newUpper > 20000) 
+            if (newUpper > 20000)
               newUpper = 20000;
-            if (newLower < 1) 
+            if (newLower < 1)
               newLower = 1;
             this.props.handleZoom(newUpper, newLower);
           }
@@ -114,7 +116,12 @@ class Scales extends Component {
     if (length < 2) {
       this.setState({prevDiff: -1, centerFreq: -1, zoomMax: this.props.resolutionMax, zoomMin: this.props.resolutionMin});
     }
-    // this.setState({centerFreq: -1});
+  }
+  onPointerOut(e) {
+    let {height, width} = this.props;
+    this.ctx.clearRect(0, 0, width, height);
+
+    this.setState({prevDiff: -1, centerFreq: -1, zoomMax: this.props.resolutionMax, zoomMin: this.props.resolutionMin, evCache: {} });
   }
 
   remove_event(e) {
@@ -143,7 +150,12 @@ class Scales extends Component {
         <div className="zoom-text">
           Zoom
         </div>
-        <canvas className="scale-canvas" onPointerDown={this.onPointerDown} onPointerMove={this.onPointerMove} onPointerUp={this.onPointerUp} height={this.props.height} ref={(c) => {
+        <canvas className="scale-canvas"
+        onPointerDown={this.onPointerDown}
+        onPointerMove={this.onPointerMove}
+        onPointerUp={this.onPointerUp}
+        onPointerOut={this.onPointerOut}
+        height={this.props.height} ref={(c) => {
           this.canvas = c;
         }}/>
       </div>

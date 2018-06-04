@@ -1,5 +1,9 @@
-.menu-pane {
+.menu-pane-container {
   z-index: 22;
+}
+
+.menu-pane {
+  margin: 0!important;
 }
 
 .ui.toggle.checkbox input:focus:checked~label:before {
@@ -43,4 +47,11 @@
 .timbre-text {
   color: red;
   text-align: center;
+}
+.close-menu {
+  width: 5%;
+  float: right;
+  background: none!important;
+  padding: 0!important;
+  margin-top: 2px!important;
 }

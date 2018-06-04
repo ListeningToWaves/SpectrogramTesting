@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import generateScale from '../util/generateScale';
 import Tone from 'tone';
+import '../styles/note-lines.css';
 
 const release = 2;
 let options = {
@@ -62,6 +63,7 @@ class NoteLines extends Component {
   }
 
   onMouseDown(e){
+    console.log("DOWN");
     e.preventDefault();
     this.mouseDown = true;
     this.onMouseMove(e);

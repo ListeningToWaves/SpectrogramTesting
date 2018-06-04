@@ -23,21 +23,21 @@ class MyMenu extends Component {
     switch (name) {
       case "graph":
         if (name !== this.state.activeItem) {
-          pane = <Tuning/>
+          pane = <Tuning closeMenu={this.closeMenu}/>
         } else {
           name = null;
         }
         break;
       case "play":
         if (name !== this.state.activeItem) {
-          pane = <Sound/>
+          pane = <Sound closeMenu={this.closeMenu}/>
         } else {
           name = null;
         }
         break;
       case "advanced":
         if (name !== this.state.activeItem) {
-          pane = <Tuning/>
+          pane = <Tuning closeMenu={this.closeMenu}/>
         } else {
           name = null;
         }
@@ -49,17 +49,19 @@ class MyMenu extends Component {
     this.setState({activeItem: name, pane: pane});
   }
 
-  componentWillReceiveProps(nextProps){
-    //Check if CLicked on Spectrogram, close menu pane, then call parent function to
-    // set as false. Without extra function, menu would close every time after 1st click
-    if(nextProps.hidePanes){
-      this.setState({
-        pane: null,
-        activeItem: null
-      });
-      this.props.handleHidePanesCompletion();
-    }
-  }
+  closeMenu = () => this.setState({pane: null, activeItem: null});
+
+  // componentWillReceiveProps(nextProps){
+  //   //Check if CLicked on Spectrogram, close menu pane, then call parent function to
+  //   // set as false. Without extra function, menu would close every time after 1st click
+  //   if(nextProps.hidePanes){
+  //     this.setState({
+  //       pane: null,
+  //       activeItem: null
+  //     });
+  //     this.props.handleHidePanesCompletion();
+  //   }
+  // }
   // Function that switches to the signal generator on click
   switchToSignalGenerator = () => {
     console.log("SWITCH");

@@ -8,7 +8,7 @@ import Slider from 'react-rangeslider';
 // To include the default styles
 import 'react-rangeslider/lib/index.css';
 import {timbreOptions, scaleOptions, keyOptions, accidentalOptions} from '../util/dropdownOptions.js';
-
+import { Button, Icon } from 'semantic-ui-react';
 // Sound Controls Class that renders all of the sound controls and uses the
 // React Context API to hook up their functionality to the main state in app.js
 // Which passes the controls down to Spectrogram
@@ -19,8 +19,8 @@ class Sound extends Component {
       <MyContext.Consumer>
         {(context) => (
           <React.Fragment>
-            <Segment className="menu-pane">
-              <Menu>
+            <Segment className="menu-pane-container">
+              <Menu className="menu-pane">
                 {/** Sound Toggle **/}
               {/**  <Menu.Item className="vert">
                   <div className="menu-header">Sound</div>
@@ -158,10 +158,13 @@ class Sound extends Component {
                   </Menu.Menu>
                   {context.state.musicKey.name}{context.state.accidental.name}{context.state.scale.name}
                 </Menu.Item>
-                <Menu.Item className="vert" >
+                <Menu.Item className="vert">
                 <div className="menu-header effects-tab">Effects</div>
                 </Menu.Item>
               </Menu>
+              <Button icon onClick={this.props.closeMenu} className="close-menu">
+              <Icon fitted name="angle double up" size="large"/>
+              </Button>
             </Segment>
           </React.Fragment>
         )}
