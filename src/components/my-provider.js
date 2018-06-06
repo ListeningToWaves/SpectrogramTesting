@@ -23,10 +23,12 @@ class MyProvider extends Component {
     height: window.innerHeight,
     speed: 2,
     log: true,
-    resolutionMax: 20000,
-    resolutionMin: 20,
-    limitMax: 99,
-    limitMin: 31,
+    resolutionMax: 20000,//Real Max
+    resolutionMin: 20, // Real Min
+    limitMax: 99, // Range slider max
+    limitMin: 31, // Range slider Min
+    min: 20, // Temp Min for Input
+    max: 20000, // Temp Max for Input
     mode: false,
     //hidePanes: false,
     isStarted: false,
@@ -102,11 +104,25 @@ class MyProvider extends Component {
           let newScaleValue = data.value;
           this.setState({scale: {name: newScaleName, value: newScaleValue}});
         },
+        handleModeSwitch: () => {
+          if(this.state.mode){
+            this.setState({
+              mode: false,
+            });
+          } else {
+            this.setState({
+              mode: true,
+            });
+          };
+
+        },        
         handleRangeChange: value => {
           if(value.length){
             let newMin = Math.round(this.convertToLog(value[0], 1,100, 1, 20000));
             let newMax = Math.round(this.convertToLog(value[1], 1,100, 1, 20000));
             this.setState({
+              min: newMin,
+              max: newMax,
               limitMin: value[0],
               limitMax: value[1],
               resolutionMin: newMin,
@@ -114,31 +130,22 @@ class MyProvider extends Component {
             });
           }
         },
-        handleModeSwitch: () => {
-          if(this.state.mode){
-            this.setState({
-              mode: false,
 
-            });
-          } else {
-            this.setState({
-              mode: true,
+        handleMinChange: (e, data) => this.setState({min: data.value}),
+        handleMaxChange: (e, data) => this.setState({max: data.value}),
+        handleInputChange: (e) => {
+          if(e.key === "Enter"){
+            let lowerValue = Number(this.state.min);
+            let upperValue = Number(this.state.max);
+            lowerValue = (!isNaN(lowerValue) && lowerValue < this.state.resolutionMax && lowerValue > 0 && lowerValue < 20000) ? lowerValue: 1;
+            upperValue = (!isNaN(upperValue) && upperValue > this.state.resolutionMin && upperValue > 0 && upperValue <= 20000) ? upperValue: 20000;
+            let newMin = this.convertToLinear(lowerValue, 1, 100, 1, 20000);
+            let newMax = this.convertToLinear(upperValue, 1,100, 1, 20000);
+            lowerValue = Math.round(lowerValue);
+            upperValue = Math.round(upperValue);
+            this.setState({min: lowerValue, max: upperValue, resolutionMin: lowerValue, resolutionMax: upperValue, limitMin: newMin, limitMax: newMax });
 
-            })
           }
-
-        },
-        handleMinChange: (e, data) => {
-          let value = Number(data.value);
-          value = (!isNaN(value) && value < this.state.resolutionMax && value > 0 && value < 20000) ? value: 1;
-          let newMin = this.convertToLinear(value, 1,100, 1, 20000);
-          this.setState({limitMin: newMin, resolutionMin: value});
-        },
-        handleMaxChange: (e, data) => {
-          let value = Number(data.value);
-          value = (!isNaN(value) && value > this.state.resolutionMin && value > 0 && value <= 20000) ? value: 20000;
-          let newMax = this.convertToLinear(value, 1,100, 1, 20000);
-          this.setState({limitMax: newMax, resolutionMax: value});
         },
         //menuClose: () => this.setState({hidePanes: true}),
         handleHidePanesCompletion: ()=> this.setState({hidePanes: false}),
@@ -148,7 +155,9 @@ class MyProvider extends Component {
           let lowerValue = Number(lower);
           let newMax = this.convertToLinear(upperValue, 1,100, 1, 20000);
           let newMin = this.convertToLinear(lowerValue, 1, 100, 1, 20000);
-          this.setState({resolutionMax: upper, resolutionMin: lower, limitMax: newMax, limitMin: newMin });
+          lowerValue = Math.round(lowerValue);
+          upperValue = Math.round(upperValue);
+          this.setState({min: lowerValue, max: upperValue, resolutionMin: lowerValue, resolutionMax: upperValue, limitMin: newMin, limitMax: newMax });
         },
         start: ()=> this.setState({isStarted: true}),
         reset: ()=> this.setState({ ...defaultState, isStarted: this.state.isStarted})

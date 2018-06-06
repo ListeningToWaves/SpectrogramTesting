@@ -35,14 +35,19 @@
 .rc-slider {
   height: 0px!important;
 }
+.resolution-container {
+display: flex;
+justify-content: center;
+align-items: center;
+}
 .resolution-input {
   width: 40%;
-  margin: 2px;
+  margin: 0!important;
 }
-.resolution-input input {
+/* .resolution-input input {
   padding: .5em 1em;
 
-}
+} */
 
 .close-menu {
   width: 5%;

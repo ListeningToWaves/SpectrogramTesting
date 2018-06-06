@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import {Segment, Menu, Input, Dropdown, Checkbox} from 'semantic-ui-react';
+import {Button, Icon, Form, Segment, Menu, Input, Dropdown, Checkbox} from 'semantic-ui-react';
 import {MyContext} from './my-provider';
 import {scaleOptions, keyOptions, accidentalOptions} from '../util/dropdownOptions.js';
-import { Button, Icon } from 'semantic-ui-react';
 
 import "../styles/tuning.css";
 // Using an ES6 transpiler like Babel
@@ -13,6 +12,33 @@ import 'rc-slider/assets/index.css';
 // import 'react-rangeslider/lib/index.css';
 import Range from 'rc-slider/lib/Range';
 class Tuning extends Component {
+  constructor(){
+    super();
+    this.state = {
+      min: 20,
+      max: 20000
+    }
+  }
+
+  // handleMinChange = (e, data) => this.setState({min: data.value});
+  // handleMaxChange = (e, data) => this.setState({max: data.value});
+  // handleInputChange = (e, context, min, max) =>{
+  //   if(e.key === "Enter"){
+  //     let lowerValue = Number(min);
+  //     let upperValue = Number(max);
+  //     lowerValue = (!isNaN(lowerValue) && lowerValue < this.state.max && lowerValue > 0 && lowerValue < 20000) ? lowerValue: 20;
+  //     upperValue = (!isNaN(upperValue) && upperValue > this.state.min && upperValue > 0 && upperValue <= 20000) ? upperValue: 20000;
+  //     2console.log(lowerValue);
+  //     console.log(upperValue);
+  //     let newMax = this.convertToLinear(upperValue, 1,100, 1, 20000);
+  //     let newMin = this.convertToLinear(lowerValue, 1, 100, 1, 20000);
+  //     context.handleInputChange(lowerValue, upperValue, newMin, newMax );
+  //     this.setState({min: lowerValue, max: upperValue});
+  //
+  //   }
+  //   // this.setState({resolutionMax: max, resolutionMin: min});
+  // };
+
 
   render(){
     return (
@@ -37,9 +63,15 @@ class Tuning extends Component {
                   onChange={context.handleRangeChange}/>
                   <br></br>
                   <div>
-                  <Input value={context.state.resolutionMin} className="resolution-input" disabled={!context.state.isStarted} onChange={context.handleMinChange}/>
+                  <Form onKeyPress={context.handleInputChange} className="resolution-container">
+                  <Form.Field className="resolution-input">
+                  <Input value={context.state.min} disabled={!context.state.isStarted} onChange={context.handleMinChange}/>
+                  </Form.Field>
                   -
-                  <Input value={context.state.resolutionMax} className="resolution-input" disabled={!context.state.isStarted} onChange={context.handleMaxChange}/>
+                  <Form.Field className="resolution-input">
+                  <Input value={context.state.max} disabled={!context.state.isStarted} onChange={context.handleMaxChange}/>
+                  </Form.Field>
+                  </Form>
                   </div>
                   </div>
                 </Menu.Item>
@@ -88,7 +120,7 @@ class Tuning extends Component {
               </Menu>
               <Button icon onClick={this.props.closeMenu} className="close-menu">
               <Icon fitted name="angle double up" size="large"/>
-              </Button>              
+              </Button>
             </Segment>
           </React.Fragment>
         )}
