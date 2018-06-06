@@ -26,7 +26,7 @@ class MyProvider extends Component {
     resolutionMax: 20000,//Real Max
     resolutionMin: 20, // Real Min
     limitMax: 99, // Range slider max
-    limitMin: 31, // Range slider Min
+    limitMin: 29, // Range slider Min
     min: 20, // Temp Min for Input
     max: 20000, // Temp Max for Input
     mode: false,
@@ -115,7 +115,7 @@ class MyProvider extends Component {
             });
           };
 
-        },        
+        },
         handleRangeChange: value => {
           if(value.length){
             let newMin = Math.round(this.convertToLog(value[0], 1,100, 1, 20000));
@@ -137,10 +137,17 @@ class MyProvider extends Component {
           if(e.key === "Enter"){
             let lowerValue = Number(this.state.min);
             let upperValue = Number(this.state.max);
-            lowerValue = (!isNaN(lowerValue) && lowerValue < this.state.resolutionMax && lowerValue > 0 && lowerValue < 20000) ? lowerValue: 1;
-            upperValue = (!isNaN(upperValue) && upperValue > this.state.resolutionMin && upperValue > 0 && upperValue <= 20000) ? upperValue: 20000;
-            let newMin = this.convertToLinear(lowerValue, 1, 100, 1, 20000);
-            let newMax = this.convertToLinear(upperValue, 1,100, 1, 20000);
+            if(isNaN(lowerValue) || lowerValue > this.state.resolutionMax || lowerValue > 20000) {
+              lowerValue = this.state.resolutionMin;
+            }
+            if(isNaN(upperValue) || upperValue < this.state.resolutionMin || upperValue < 0) {
+              upperValue = this.state.resolutionMax;
+            }
+            if(lowerValue < 1) lowerValue = 1;
+            if(upperValue > 20000) upperValue = 20000;
+            let newMin = Math.round(this.convertToLinear(lowerValue, 1, 100, 1, 20000));
+            // console.log(newMin);
+            let newMax = Math.round(this.convertToLinear(upperValue, 1,100, 1, 20000));
             lowerValue = Math.round(lowerValue);
             upperValue = Math.round(upperValue);
             this.setState({min: lowerValue, max: upperValue, resolutionMin: lowerValue, resolutionMax: upperValue, limitMin: newMin, limitMax: newMax });
@@ -153,8 +160,8 @@ class MyProvider extends Component {
         handleZoom: (upper, lower) => {
           let upperValue = Number(upper);
           let lowerValue = Number(lower);
-          let newMax = this.convertToLinear(upperValue, 1,100, 1, 20000);
-          let newMin = this.convertToLinear(lowerValue, 1, 100, 1, 20000);
+          let newMax = Math.round(this.convertToLinear(upperValue, 1,100, 1, 20000));
+          let newMin = Math.round(this.convertToLinear(lowerValue, 1, 100, 1, 20000));
           lowerValue = Math.round(lowerValue);
           upperValue = Math.round(upperValue);
           this.setState({min: lowerValue, max: upperValue, resolutionMin: lowerValue, resolutionMax: upperValue, limitMin: newMin, limitMax: newMax });

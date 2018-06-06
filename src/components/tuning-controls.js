@@ -12,34 +12,6 @@ import 'rc-slider/assets/index.css';
 // import 'react-rangeslider/lib/index.css';
 import Range from 'rc-slider/lib/Range';
 class Tuning extends Component {
-  constructor(){
-    super();
-    this.state = {
-      min: 20,
-      max: 20000
-    }
-  }
-
-  // handleMinChange = (e, data) => this.setState({min: data.value});
-  // handleMaxChange = (e, data) => this.setState({max: data.value});
-  // handleInputChange = (e, context, min, max) =>{
-  //   if(e.key === "Enter"){
-  //     let lowerValue = Number(min);
-  //     let upperValue = Number(max);
-  //     lowerValue = (!isNaN(lowerValue) && lowerValue < this.state.max && lowerValue > 0 && lowerValue < 20000) ? lowerValue: 20;
-  //     upperValue = (!isNaN(upperValue) && upperValue > this.state.min && upperValue > 0 && upperValue <= 20000) ? upperValue: 20000;
-  //     2console.log(lowerValue);
-  //     console.log(upperValue);
-  //     let newMax = this.convertToLinear(upperValue, 1,100, 1, 20000);
-  //     let newMin = this.convertToLinear(lowerValue, 1, 100, 1, 20000);
-  //     context.handleInputChange(lowerValue, upperValue, newMin, newMax );
-  //     this.setState({min: lowerValue, max: upperValue});
-  //
-  //   }
-  //   // this.setState({resolutionMax: max, resolutionMin: min});
-  // };
-
-
   render(){
     return (
       <MyContext.Consumer>
@@ -65,11 +37,11 @@ class Tuning extends Component {
                   <div>
                   <Form onKeyPress={context.handleInputChange} className="resolution-container">
                   <Form.Field className="resolution-input">
-                  <Input value={context.state.min} disabled={!context.state.isStarted} onChange={context.handleMinChange}/>
+                  <Input value={context.state.min} disabled={!context.state.isStarted} onChange={context.handleMinChange} maxLength="6"/>
                   </Form.Field>
                   -
                   <Form.Field className="resolution-input">
-                  <Input value={context.state.max} disabled={!context.state.isStarted} onChange={context.handleMaxChange}/>
+                  <Input value={context.state.max} disabled={!context.state.isStarted} onChange={context.handleMaxChange} maxLength="6"/>
                   </Form.Field>
                   </Form>
                   </div>

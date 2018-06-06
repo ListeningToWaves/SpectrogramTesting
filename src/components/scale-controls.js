@@ -69,7 +69,7 @@ class Scales extends Component {
         if (this.state.centerFreq > 0) {
           if (curDiff > this.state.prevDiff) {
             // The distance between the two pointers has increased
-            console.log("Pinch moving OUT -> Zoom in", e);
+            // console.log("Pinch moving OUT -> Zoom in", e);
             let ratio = curDiff / this.props.height;
             if (ratio > 1)
               ratio = 1;
@@ -82,7 +82,7 @@ class Scales extends Component {
           }
           if (curDiff < this.state.prevDiff) {
             // The distance between the two pointers has decreased
-            console.log("Pinch moving IN -> Zoom out", e);
+            // console.log("Pinch moving IN -> Zoom out", e);
             let ratio = 1 - curDiff / this.props.height;
             //if(ratio > 1) ratio = 1;
             let upperChange = (20000 - this.state.zoomMax) * ratio;
