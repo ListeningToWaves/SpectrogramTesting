@@ -9,6 +9,7 @@ let options = {
     type: "sine"
   },
   envelope: {
+    attack: 1,
     release: 2
   }
 };

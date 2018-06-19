@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Icon, Form, Segment, Menu, Input, Dropdown, Checkbox} from 'semantic-ui-react';
+import {Button, Icon, Form, Segment, Menu, Input, Dropdown, Checkbox, Radio} from 'semantic-ui-react';
 import {MyContext} from './my-provider';
 import {scaleOptions, keyOptions, accidentalOptions} from '../util/dropdownOptions.js';
 
@@ -47,6 +47,59 @@ class Tuning extends Component {
                   </div>
                   </div>
                 </Menu.Item>
+                {/** Graph Presets **/}
+                <Menu.Item className="vert">
+                <div className="menu-header">
+                Graph Presets
+                </div>
+                <br></br>
+                <div className="graph-preset-container">
+                  <Radio
+                    label='Default'
+                    name='radioGroup'
+                    value='default'
+                    checked={context.state.graphPreset === 'default'}
+                    onChange={context.handleGraphPresetChange}
+                  />
+                  <Radio
+                    label='Trumpet'
+                    name='radioGroup'
+                    value='trumpet'
+                    checked={context.state.graphPreset === 'trumpet'}
+                    onChange={context.handleGraphPresetChange}
+                  />
+                  <Radio
+                    label='Voice'
+                    name='radioGroup'
+                    value='voice'
+                    checked={context.state.graphPreset === 'voice'}
+                    onChange={context.handleGraphPresetChange}
+                  />
+                  <Radio
+                    label='Bass'
+                    name='radioGroup'
+                    value='bass'
+                    checked={context.state.graphPreset === 'bass'}
+                    onChange={context.handleGraphPresetChange}
+                  />
+                  <Radio
+                    label='Violin'
+                    name='radioGroup'
+                    value='violin'
+                    checked={context.state.graphPreset === 'violin'}
+                    onChange={context.handleGraphPresetChange}
+                  />
+                  <Radio
+                    label='Piano'
+                    name='radioGroup'
+                    value='piano'
+                    checked={context.state.graphPreset === 'piano'}
+                    onChange={context.handleGraphPresetChange}
+                  />
+
+                  </div>
+                </Menu.Item>
+
                 {/** Scale Menu **/}
                 <Menu.Item className="vert">
                   <div className="menu-header">Scales</div>
@@ -89,7 +142,9 @@ class Tuning extends Component {
                   </Menu.Menu>
                   {context.state.musicKey.name}{context.state.accidental.name}{context.state.scale.name}
                 </Menu.Item>
+
               </Menu>
+
               <Button icon onClick={this.props.closeMenu} className="close-menu">
               <Icon fitted name="angle double up" size="large"/>
               </Button>

@@ -25,11 +25,12 @@ class MyProvider extends Component {
     log: true,
     resolutionMax: 20000,//Real Max
     resolutionMin: 20, // Real Min
-    limitMax: 99, // Range slider max
+    limitMax: 100, // Range slider max
     limitMin: 29, // Range slider Min
     min: 20, // Temp Min for Input
     max: 20000, // Temp Max for Input
     mode: false,
+    graphPreset: 'default',
     //hidePanes: false,
     isStarted: false,
   }
@@ -154,6 +155,40 @@ class MyProvider extends Component {
 
           }
         },
+        handleGraphPresetChange: (e, data) => {
+            let lowerValue = 20;
+            let upperValue = 20000;
+          switch (data.value) {
+            case 'trumpet':
+              lowerValue = 1000;
+              upperValue = 8000;
+              break;
+            case 'voice':
+              lowerValue = 800;
+              upperValue = 3000;
+              break;
+            case 'bass':
+              lowerValue = 80;
+              upperValue = 1500
+              break;
+            case 'violin':
+              lowerValue = 300;
+              upperValue = 3000;
+              break;
+            case 'piano':
+              lowerValue = 200;
+              upperValue = 5000;
+              break;
+            default:
+                lowerValue = 20;
+                upperValue = 20000;
+          }
+
+
+          let newMin = Math.round(this.convertToLinear(lowerValue, 1, 100, 1, 20000));
+          let newMax = Math.round(this.convertToLinear(upperValue, 1,100, 1, 20000));
+          this.setState({resolutionMin: lowerValue, resolutionMax: upperValue, min: lowerValue, max: upperValue, limitMin: newMin, limitMax: newMax, graphPreset: data.value});
+        },
         //menuClose: () => this.setState({hidePanes: true}),
         handleHidePanesCompletion: ()=> this.setState({hidePanes: false}),
         handleResize: () => this.setState({width: window.innerWidth, height: window.innerHeight}),
@@ -166,6 +201,7 @@ class MyProvider extends Component {
           upperValue = Math.round(upperValue);
           this.setState({min: lowerValue, max: upperValue, resolutionMin: lowerValue, resolutionMax: upperValue, limitMin: newMin, limitMax: newMax });
         },
+
         start: ()=> this.setState({isStarted: true}),
         reset: ()=> this.setState({ ...defaultState, isStarted: this.state.isStarted})
 

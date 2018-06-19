@@ -1,0 +1,55 @@
+.scale-container {
+  border: 1px solid black;
+  position: absolute;
+  width: 8%;
+  height: 90%;
+  top: 10%;
+  left: 0%;
+  z-index: 21;
+  background-color: white;
+  border-radius: 1.5rem;
+}
+
+.scale-container > .rc-slider-vertical {
+  width: 100%!important;
+
+}
+.rc-slider-vertical  > .rc-slider-handle {
+  width: 40px!important;
+  height: 40px!important;
+  margin-left: 25%!important;
+
+  /* margin-left: 0!important; */
+  /* left: 25%!important; */
+  margin-bottom: -15%!important;
+}
+.rc-slider-vertical > .rc-slider-rail {
+  /* left: 0%!important; */
+  width: 100%!important;
+
+}
+.rc-slider-vertical > .rc-slider-step {
+  /* left: 0%!important; */
+  width: 100%!important;
+
+}
+.rc-slider-vertical > .rc-slider-mark {
+  left: 0%!important;
+height: 100%!important;
+}
+.rc-slider-vertical  > .rc-slider-track {
+  width: 100%!important;
+  left: 0%!important;
+}
+.scale-container > .rc-slider {
+  width: 100%!important;
+  left: 0%!important;
+}
+
+
+.scale-container > .new-multi-slider {
+  padding: 0!important;
+  top: 5%!important;
+  height: 92%!important;
+  width: 100%!important;
+}

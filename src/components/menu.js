@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import {Menu, Checkbox} from 'semantic-ui-react';
 import "../styles/menu.css";
-import Tuning from './tuning-controls.js';
-import Sound from './sound-controls.js';
+import Tuning from './tuning-controls';
+import Sound from './sound-controls';
+import AdvancedControls from './advanced-controls';
 // import Slider from 'react-rangeslider';
 
 // To include the default styles
@@ -28,7 +29,7 @@ class MyMenu extends Component {
           name = null;
         }
         break;
-      case "play":
+      case "sound-making":
         if (name !== this.state.activeItem) {
           pane = <Sound closeMenu={this.closeMenu}/>
         } else {
@@ -37,7 +38,7 @@ class MyMenu extends Component {
         break;
       case "advanced":
         if (name !== this.state.activeItem) {
-          pane = <Tuning closeMenu={this.closeMenu}/>
+          pane = <AdvancedControls closeMenu={this.closeMenu}/>
         } else {
           name = null;
         }
@@ -104,7 +105,7 @@ class MyMenu extends Component {
             <button className="function-switch-button" onClick={this.switchToSignalGenerator}>Signal Generator</button>
           </Menu.Item>
           <Menu.Item name='graph' active={activeItem === 'graph'} onClick={this.handleItemClick} className="tab-item"/>
-          <Menu.Item name='play' active={activeItem === 'play'} onClick={this.handleItemClick} className="tab-item"/>
+          <Menu.Item name='sound-making' active={activeItem === 'sound-making'} onClick={this.handleItemClick} className="tab-item"/>
           <Menu.Item name='advanced' active={activeItem === 'advanced'} onClick={this.handleItemClick} className="tab-item"/>
           <Menu.Item position="right">
             <div>Expressive&nbsp;&nbsp;</div>

@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import '../styles/spectrogram.css';
 
 import Axes from './axes';
-import Scales from './scale-controls'
+// import Scales from './scale-controls'
+import ScaleControls from'./new-scale-controls';
 import NoteLines from './note-lines';
 import Oscillator from './oscillator';
 
@@ -231,7 +232,7 @@ class Spectrogram extends Component {
         }}/>
         {this.props.isStarted &&
           <React.Fragment>
-            <Scales
+            <ScaleControls
             resolutionMax={this.props.resolutionMax}
             resolutionMin={this.props.resolutionMin}
             width={this.props.width}
