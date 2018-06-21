@@ -50,10 +50,10 @@ a:visited {
 
 #about {
   position: absolute;
-  left: 10%;
+  left: 1%;
   bottom: 0.5%;
   font-family: 'Inconsolata';
-  z-index: 31;
+  z-index: 19;
   user-select: none;
 
 

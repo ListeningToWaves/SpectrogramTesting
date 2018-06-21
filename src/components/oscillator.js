@@ -126,10 +126,12 @@ class Oscillator extends Component {
       let xPercent = 1 - pos.x / this.props.width;
       let gain = this.getGain(xPercent);
       let freq = this.newFreqAlgorithm(yPercent);
-      this.synths[this.state.currentVoice].oscillator.frequency.value = freq;
+      // this.synths[this.state.currentVoice].oscillator.frequency.value = freq;
+      this.synths[this.state.currentVoice].frequency.exponentialRampToValueAtTime(freq, this.props.context.currentTime+0.01);
+
       // this.synths[this.state.currentVoice].volume.value = gain;
-      this.synths[this.state.currentVoice].volume.exponentialRampTo(gain,
-          0.1);
+      this.synths[this.state.currentVoice].volume.exponentialRampToValueAtTime(gain,
+          this.props.context.currentTime+0.01);
       // this.synths[this.state.currentVoice].volume.linearRampToValueAtTime(this.gainAmount,
           // context.currentTime + 0.1);
       // Clears the label
@@ -198,9 +200,10 @@ class Oscillator extends Component {
         index = (index < 0)
           ? (NUM_VOICES + index)
           : index;
-
-        this.synths[index].frequency.value = freq;
-        this.synths[index].volume.value = gain;
+  this.synths[index].frequency.exponentialRampToValueAtTime(freq, this.props.context.currentTime+0.01);
+        // this.synths[index].frequency.value = freq;
+        this.synths[index].volume.exponentialRampToValueAtTime(gain,
+            this.props.context.currentTime+0.01);
         // Clears the canvas on touch move
       }
       //RedrawLabels

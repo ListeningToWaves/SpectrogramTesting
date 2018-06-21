@@ -146,13 +146,7 @@ class MyMenu extends Component {
           <Menu.Header className="menu-title" active="false">Spectrogram</Menu.Header>
         </Menu>
         {this.state.pane}
-        <div className="color-map-container">
-          Graph Scale
-          <div className="color-map"></div>
-          <div className="color-map-labels">
-            Soft<span>Loud</span>
-          </div>
-        </div>
+
       </div>
 
     );

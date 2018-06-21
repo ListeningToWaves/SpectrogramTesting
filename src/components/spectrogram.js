@@ -227,11 +227,19 @@ class Spectrogram extends Component {
 
     return (
       <div onClick={this.startSpectrogram}>
+
         <canvas width={this.props.width} height={this.props.height} ref={(c) => {
           this.canvas = c;
         }}/>
         {this.props.isStarted &&
           <React.Fragment>
+          <div className="color-map-container">
+            Graph Scale
+            <div className="color-map"></div>
+            <div className="color-map-labels">
+              Soft<span>Loud</span>
+            </div>
+          </div>
             <ScaleControls
             resolutionMax={this.props.resolutionMax}
             resolutionMin={this.props.resolutionMin}
