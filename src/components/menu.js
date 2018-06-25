@@ -4,7 +4,7 @@ import "../styles/menu.css";
 import Tuning from './tuning-controls';
 import Sound from './sound-controls';
 import AdvancedControls from './advanced-controls';
-// import Slider from 'react-rangeslider';
+import Slider from 'react-rangeslider';
 
 // To include the default styles
 import 'react-rangeslider/lib/index.css';
@@ -14,7 +14,7 @@ class MyMenu extends Component {
   state = {
     activeItem: null,
     pane: null,
-    // value: 50,
+    value: 50,
     soundOn: false,
     mode: false
   }
@@ -66,14 +66,15 @@ class MyMenu extends Component {
   // Function that switches to the signal generator on click
   switchToSignalGenerator = () => {
     console.log("SWITCH");
+    window.location = "https://listeningtowaves.github.io/OscilloscopeTesting/"
   }
   // Function that handles the change of the Microphone gain
-  // handleGainChange = gain => {
-  //   if (this.props.isStarted) {
-  //     this.setState({value: gain});
-  //     this.props.handleGainChange(gain);
-  //   }
-  // }
+  handleGainChange = gain => {
+    if (this.props.isStarted) {
+      this.setState({value: gain});
+      this.props.handleGainChange(gain);
+    }
+  }
 
   handleSoundToggle = () =>{
     this.setState({soundOn: !this.state.soundOn});
@@ -106,9 +107,9 @@ class MyMenu extends Component {
           </Menu.Item>
           <Menu.Item name='graph' active={activeItem === 'graph'} onClick={this.handleItemClick} className="tab-item"/>
           <Menu.Item name='sound-making' active={activeItem === 'sound-making'} onClick={this.handleItemClick} className="tab-item"/>
-          <Menu.Item name='advanced' active={activeItem === 'advanced'} onClick={this.handleItemClick} className="tab-item"/>
+          {/*<Menu.Item name='advanced' active={activeItem === 'advanced'} onClick={this.handleItemClick} className="tab-item"/>*/}
           <Menu.Item position="right">
-            <div>Expressive&nbsp;&nbsp;</div>
+            {/*<div>Expressive&nbsp;&nbsp;</div>
             <Checkbox
             slider
             checked={this.state.mode}
@@ -122,11 +123,11 @@ class MyMenu extends Component {
             checked={this.state.soundOn}
             onChange={this.handleSoundToggle}
             disabled={!this.props.isStarted}
-            />
+            /> */}
 
           {/*<Menu.Item position="right">*/}
 
-            {/*Microphone Gain&nbsp;&nbsp;
+            Microphone Gain&nbsp;&nbsp;
             <div className="gain-container">
               <Slider
               min={1}
@@ -135,13 +136,12 @@ class MyMenu extends Component {
               onChange={this.handleGainChange}
               tooltip={false}
               className="gain-slider"/>
-              {this.state.value}
-            </div>*/}
+            </div>
 
             <Menu.Item position="right">
               <button onClick={this.handleReset} className="reset-button">Reset</button>
               </Menu.Item>
-            </Menu.Item>
+            {/*</Menu.Item>*/}
           </Menu.Item>
           <Menu.Header className="menu-title" active="false">Spectrogram</Menu.Header>
         </Menu>

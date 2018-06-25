@@ -33,8 +33,9 @@
 
 .gain-slider {
   width: 100px;
-  margin-bottom: 10%!important;
+  /* margin-bottom: 10%!important; */
 }
+
 
 .flex {
   display: flex;

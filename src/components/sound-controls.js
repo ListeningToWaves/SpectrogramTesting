@@ -39,7 +39,7 @@ class Sound extends Component {
                 </Menu.Item>
               */}
               {/*Microphone Gain*/}
-              <Menu.Item className="vert">
+              {/*<Menu.Item className="vert">
                 <div className="menu-header">Microphone Gain</div>
                 <br></br>
                   <Slider
@@ -52,7 +52,7 @@ class Sound extends Component {
                   <div>
                   {context.state.microphoneGain}
                 </div>
-                </Menu.Item>
+                </Menu.Item>*/}
                 {/** Output Volume **/}
                 <Menu.Item className="vert">
                   <div className="menu-header">Output Volume</div>

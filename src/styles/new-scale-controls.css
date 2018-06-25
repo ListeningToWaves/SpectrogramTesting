@@ -1,7 +1,7 @@
 .scale-container {
   border: 1px solid black;
   position: absolute;
-  width: 8%;
+  width: 10%;
   height: 90%;
   top: 10%;
   left: 0%;
@@ -50,6 +50,6 @@ height: 100%!important;
 .scale-container > .new-multi-slider {
   padding: 0!important;
   top: 5%!important;
-  height: 92%!important;
-  width: 100%!important;
+  height: 88%!important;
+  width: 99.5%!important;
 }

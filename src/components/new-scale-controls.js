@@ -33,6 +33,7 @@ class ScaleControls extends Component {
           <React.Fragment>
 
       <div className="scale-container">
+      Frequency Range
         <Range
         allowCross={false}
         defaultValue={[31, 100]}
