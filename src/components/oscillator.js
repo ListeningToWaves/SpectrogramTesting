@@ -22,7 +22,8 @@ class Oscillator extends Component {
       currentVoice: -1,
       voices: 0, //voices started with on event
       xPos: null,
-      yPos: null
+      yPos: null,
+      feedback: false
     }
   }
 
@@ -46,10 +47,7 @@ class Oscillator extends Component {
     this.masterVolume.connect(Tone.Master);
     //Off by default
     this.masterVolume.mute = !this.props.soundOn;
-    // If Headphone Mode, connect the masterVolume to the graph
-    if (true) {
-      this.masterVolume.connect(this.props.analyser);
-    }
+
     window.addEventListener("resize", this.props.handleResize);
   }
 
@@ -79,6 +77,18 @@ class Oscillator extends Component {
         this.synths[i].envelope.release = nextProps.release;
       }
     }
+    if(nextProps.headphoneMode){
+      // If Headphone Mode, connect the masterVolume to the graph
+      if(!this.state.feedback){
+        this.masterVolume.connect(this.props.analyser);
+        this.setState({feedback: true});
+      }
+    } else {
+      if(this.state.feedback){
+        this.masterVolume.disconnect(this.props.analyser);
+        this.setState({feedback: false});
+      }
+    }
   }
   componentWillUnmount() {
     this.masterVolume.mute = true;
@@ -106,8 +116,8 @@ class Oscillator extends Component {
     let xPercent = 1 - pos.x / this.props.width;
     let freq = this.newFreqAlgorithm(yPercent);
     let gain = this.getGain(xPercent);
-    let newVoice = (this.state.currentVoice + 1) % NUM_VOICES;
 
+    let newVoice = (this.state.currentVoice + 1) % NUM_VOICES; // Mouse always changes to new "voice"
     this.synths[newVoice].triggerAttack(freq);
     this.synths[newVoice].volume.value = gain;
     this.label(freq, pos.x, pos.y);
@@ -127,13 +137,12 @@ class Oscillator extends Component {
       let gain = this.getGain(xPercent);
       let freq = this.newFreqAlgorithm(yPercent);
       // this.synths[this.state.currentVoice].oscillator.frequency.value = freq;
+      // Ramps to new Frequency
       this.synths[this.state.currentVoice].frequency.exponentialRampToValueAtTime(freq, this.props.context.currentTime+0.01);
-
       // this.synths[this.state.currentVoice].volume.value = gain;
+      // Ramps to new Gain
       this.synths[this.state.currentVoice].volume.exponentialRampToValueAtTime(gain,
           this.props.context.currentTime+0.01);
-      // this.synths[this.state.currentVoice].volume.linearRampToValueAtTime(this.gainAmount,
-          // context.currentTime + 0.1);
       // Clears the label
       this.ctx.clearRect(0, 0, this.props.width, this.props.height);
       this.label(freq, pos.x, pos.y);
@@ -200,8 +209,10 @@ class Oscillator extends Component {
         index = (index < 0)
           ? (NUM_VOICES + index)
           : index;
+          // Ramps to new Frequency
   this.synths[index].frequency.exponentialRampToValueAtTime(freq, this.props.context.currentTime+0.01);
         // this.synths[index].frequency.value = freq;
+        // Ramp to new Volume
         this.synths[index].volume.exponentialRampToValueAtTime(gain,
             this.props.context.currentTime+0.01);
         // Clears the canvas on touch move
@@ -307,14 +318,25 @@ class Oscillator extends Component {
 
   // Helper method that generates a label for the frequency or the scale note
   label(freq, x, y) {
+    const offset = 10;
     this.ctx.font = '20px Inconsolata';
     this.ctx.fillStyle = 'white';
     if(this.props.soundOn){
       if (!this.props.scaleOn) {
-        this.ctx.fillText(freq + ' Hz', x, y);
+        this.ctx.fillText(freq + ' Hz', x + offset, y - offset);
       } else {
-        this.ctx.fillText(this.scaleLabel, x, y);
+        this.ctx.fillText(this.scaleLabel, x + offset, y - offset);
       }
+      // Draw Circle for point
+    const startingAngle = 0;
+    const endingAngle = 2 * Math.PI;
+    const radius = 10;
+    const color = 'rgb(255, 255, 0)';
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, radius, startingAngle, endingAngle);
+    this.ctx.fillStyle = color;
+    this.ctx.fill();
+    this.ctx.stroke();
     }
   }
 

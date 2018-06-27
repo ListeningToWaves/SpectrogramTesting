@@ -78,6 +78,9 @@ class App extends Component {
       handleResize={context.handleResize}
       menuClose={context.menuClose}
       handleZoom={context.handleZoom}
+      handlePause={context.handlePause}
+      handleHeadphoneModeToggle={context.handleHeadphoneModeToggle}
+      headphoneMode={context.state.headphoneMode}
       start={context.start}
       />
       </React.Fragment>

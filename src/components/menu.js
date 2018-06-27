@@ -75,7 +75,7 @@ class MyMenu extends Component {
       this.props.handleGainChange(gain);
     }
   }
-
+// Function that toggles the sound button between the on and off states
   handleSoundToggle = () =>{
     this.setState({soundOn: !this.state.soundOn});
     this.props.handleSoundToggle();
@@ -116,14 +116,9 @@ class MyMenu extends Component {
             onChange={this.handleModeSwitch}
             disabled={!this.props.isStarted}/>
             <div>&nbsp;&nbsp;Tuning</div>
+            */}
           <Menu.Item position="right">
-            <div>Sound&nbsp;&nbsp;</div>
-            <Checkbox
-            toggle
-            checked={this.state.soundOn}
-            onChange={this.handleSoundToggle}
-            disabled={!this.props.isStarted}
-            /> */}
+
 
           {/*<Menu.Item position="right">*/}
 
@@ -138,10 +133,11 @@ class MyMenu extends Component {
               className="gain-slider"/>
             </div>
 
+
             <Menu.Item position="right">
               <button onClick={this.handleReset} className="reset-button">Reset</button>
               </Menu.Item>
-            {/*</Menu.Item>*/}
+            </Menu.Item>
           </Menu.Item>
           <Menu.Header className="menu-title" active="false">Spectrogram</Menu.Header>
         </Menu>

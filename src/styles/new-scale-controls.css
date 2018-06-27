@@ -15,9 +15,11 @@
 
 }
 .rc-slider-vertical  > .rc-slider-handle {
-  width: 40px!important;
-  height: 40px!important;
-  margin-left: 25%!important;
+  width: 2.5rem!important;
+  height: 2.5rem!important;
+  /* position?S: absolute!important; */
+  /* left: 50%!important; */
+  margin-left: 35%!important;
 
   /* margin-left: 0!important; */
   /* left: 25%!important; */

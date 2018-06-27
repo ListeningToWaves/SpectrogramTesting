@@ -69,7 +69,7 @@ class Axes extends Component {
       this.ctx.fillRect(x + 40, y, 30, 2);
     }
   }
-
+  // Logarithmic Algorithm to determine frequency
   newFreqAlgorithm(index) {
     let logResolution = Math.log(this.props.resolutionMax / this.props.resolutionMin);
     let freq = this.props.resolutionMin * Math.pow(Math.E, index * logResolution);

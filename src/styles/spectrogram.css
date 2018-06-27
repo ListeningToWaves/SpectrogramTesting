@@ -22,7 +22,7 @@
   .color-map-container {
     width: 20%;
     position: absolute;
-    left: 10%;
+    left: 18%;
     top: 10%;
     padding: 2px;
     color: white;
@@ -41,4 +41,27 @@
     color: white;
     display: flex;
     justify-content: space-between;
+  }
+  .pause-button {
+    position: absolute;
+    left: 10%;
+    top: 10%;
+    margin: 2px 2px!important;
+    min-width: 3%;
+    max-width: 4%;
+    z-index: 21;
+    opacity: 0.5;
+    border: 2px solid #ABE2FB!important;
+    border-radius: 3rem!important;
+  }
+  .headphone-mode-button {
+    position: absolute;
+    left: 14%;
+    top: 10%;
+    margin: 2px 2px!important;
+    min-width: 3%;
+    z-index: 21;
+    opacity: 0.5;
+    border: 2px solid #ABE2FB!important;
+    border-radius: 3rem!important;
   }

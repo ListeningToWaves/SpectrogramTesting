@@ -29,8 +29,9 @@ class MyProvider extends Component {
     limitMin: 29, // Range slider Min
     min: 20, // Temp Min for Input
     max: 20000, // Temp Max for Input
-    mode: false,
+    mode: false,// Mode Switcher
     graphPreset: 'default',
+    headphoneMode: false,
     //hidePanes: false,
     isStarted: false,
   }
@@ -135,6 +136,7 @@ class MyProvider extends Component {
         handleMinChange: (e, data) => this.setState({min: data.value}),
         handleMaxChange: (e, data) => this.setState({max: data.value}),
         handleInputChange: (e) => {
+          // This Handle graph scaling through the input boxes and validation of data.
           if(e.key === "Enter"){
             let lowerValue = Number(this.state.min);
             let upperValue = Number(this.state.max);
@@ -201,7 +203,20 @@ class MyProvider extends Component {
           upperValue = Math.round(upperValue);
           this.setState({min: lowerValue, max: upperValue, resolutionMin: lowerValue, resolutionMax: upperValue, limitMin: newMin, limitMax: newMax });
         },
+        handlePause: () => {
+          if(this.state.speed !== 0){
+            this.setState({prevSpeed: this.state.speed, speed: 0});
+          } else {
+            this.setState({speed: this.state.prevSpeed});
+          }
+        },
+        handleHeadphoneModeToggle: () =>{
+          if(this.state.headphoneMode){
 
+          } else {
+          }
+          this.setState({headphoneMode: !this.state.headphoneMode});
+        },
         start: ()=> this.setState({isStarted: true}),
         reset: ()=> this.setState({ ...defaultState, isStarted: this.state.isStarted})
 

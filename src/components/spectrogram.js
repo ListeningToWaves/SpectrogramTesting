@@ -7,6 +7,8 @@ import ScaleControls from'./new-scale-controls';
 import NoteLines from './note-lines';
 import Oscillator from './oscillator';
 
+import { Button, Icon } from 'semantic-ui-react';
+
 const ReactAnimationFrame = require('react-animation-frame');
 // TODO: Tap anywhere to start (ipad bug)
 
@@ -28,6 +30,7 @@ class Spectrogram extends Component {
       musicKey: {name: 'C', value: 0 },
       accidental: {name: ' ', value: 0},
       scale: {name: 'Major', value: 0},
+      headphoneMode: false
     }
   }
   componentDidMount() {
@@ -185,6 +188,12 @@ class Spectrogram extends Component {
     return y;
   }
 
+handleHeadphoneModeToggle=()=>{
+  this.setState({headphoneMode: !this.state.headphoneMode});
+  this.props.handleHeadphoneModeToggle();
+}
+
+
   render() {
     const soundOrTuning = this.props.noteLinesOn ? (
       <NoteLines
@@ -222,8 +231,13 @@ class Spectrogram extends Component {
       scale={this.props.scale}
       attack={this.props.attack}
       release={this.props.release}
+      headphoneMode={this.props.headphoneMode}
       handleResize={this.props.handleResize}/>
     );
+      let style={'backgroundColor': ''}
+    if(this.state.headphoneMode){
+      style = {'backgroundColor': '#2769d8'}
+    }
 
     return (
       <div onClick={this.startSpectrogram}>
@@ -233,6 +247,13 @@ class Spectrogram extends Component {
         }}/>
         {this.props.isStarted &&
           <React.Fragment>
+          <Button icon onClick={this.props.handlePause} className="pause-button">
+          {!this.props.speed  ?  <Icon fitted name="play" color="orange"/> :
+            <Icon fitted name="pause" color="orange"/>}
+          </Button>
+          <Button icon onClick={this.handleHeadphoneModeToggle} className="headphone-mode-button" style={style}>
+            <Icon fitted name="headphones" color="orange"/>
+          </Button>
           <div className="color-map-container">
             Graph Scale
             <div className="color-map"></div>

@@ -90,10 +90,8 @@ class NoteLines extends Component {
                 // this.ctx.fillRect(0, oldIndex, width, 1.5);
                 this.freq = this.frequencies[j];
                 let index = this.freqToIndex(this.frequencies[j]);
-                this.goldIndex = index;
+                this.goldIndex = index;// Sets the Gold Line to the new Line
                 this.renderNoteLines();
-                // this.ctx.fillStyle = 'gold';
-                // this.ctx.fillRect(0, index, width, 0.5);
                 let endTime =  this.props.context.currentTime + release;
                 this.synth.volume.cancelAndHoldAtTime(this.props.context.currentTime);
                 this.synth.volume.exponentialRampToValueAtTime(0.0001, endTime);

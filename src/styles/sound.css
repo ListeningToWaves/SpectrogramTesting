@@ -36,7 +36,8 @@
 
 .horiz {
   display: flex;
-  height: 100%;
+  /* height: 100%; */
+  margin-top: 2%;
   align-items: center;
 }
 
@@ -48,10 +49,18 @@
   color: red;
   text-align: center;
 }
+.timbre-dropdown {
+  margin-top: 8%!important;
+}
 .close-menu {
   width: 5%;
   float: right;
   background: none!important;
   padding: 0!important;
   margin-top: 2px!important;
+}
+.sound-toggle-container {
+  margin: 4% 0;
+  /* border: 2px solid red; */
+  /* height: 100%; */
 }

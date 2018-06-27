@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {MyContext} from './my-provider';
 
-import {Segment, Menu, Dropdown, Checkbox} from 'semantic-ui-react';
+import {Segment, Menu, Dropdown, Checkbox, Divider} from 'semantic-ui-react';
 import "../styles/sound.css";
 // Using an ES6 transpiler like Babel
 import Slider from 'react-rangeslider';
@@ -22,22 +22,19 @@ class Sound extends Component {
             <Segment className="menu-pane-container">
               <Menu className="menu-pane">
                 {/** Sound Toggle **/}
-              {/**  <Menu.Item className="vert">
+                <Menu.Item className="vert">
                   <div className="menu-header">Sound</div>
-                  <br></br>
+                  <div className="sound-toggle-container">
                   <Checkbox
                   toggle
                   checked={context.state.soundOn}
                   onChange={context.handleSoundToggle}
                   disabled={!context.state.isStarted}
-                  className="extra-margin"/>
-                  <div>
-                    {context.state.soundOn
-                      ? 'On!'
-                      : "Off"}
+                  />
+
                   </div>
-                </Menu.Item>
-              */}
+                {/*</Menu.Item>*/}
+
               {/*Microphone Gain*/}
               {/*<Menu.Item className="vert">
                 <div className="menu-header">Microphone Gain</div>
@@ -54,9 +51,7 @@ class Sound extends Component {
                 </div>
                 </Menu.Item>*/}
                 {/** Output Volume **/}
-                <Menu.Item className="vert">
                   <div className="menu-header">Output Volume</div>
-                  <br></br>
                   <Slider
                   min={1}
                   max={100}
@@ -70,24 +65,24 @@ class Sound extends Component {
                 </Menu.Item>
 
                 {/** Timbre **/}
-                <Menu.Item>
-                  <div>
-                    <Dropdown text='Timbre'
+                <Menu.Item className="vert">
+                <div className="menu-header">Timbre</div>
+                    <Dropdown
+                    text={context.state.timbre}
                     fluid
                     options={timbreOptions}
                     onChange={context.handleTimbreChange}
-                    disabled={!context.state.isStarted}/>
-                    <br></br>
-                    <div className="timbre-text">
+                    disabled={!context.state.isStarted}
+                    className="timbre-dropdown"/>
+                    {/*<div className="timbre-text">
                       {context.state.timbre}
-                    </div>
-                  </div>
+                    </div>*/}
+
                 </Menu.Item>
 
                 {/** ADSR **/}
                 <Menu.Item className="vert">
                   <div className="menu-header">ADSR</div>
-                  <br></br>
                   <div className="horiz">
                     <div className="adsr-slider">
                       Attack Time (s)

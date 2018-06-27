@@ -31,7 +31,7 @@ class ScaleControls extends Component {
       <MyContext.Consumer>
         {(context) => (
           <React.Fragment>
-
+        {/* Graph Limits on Left Side of screen. Same as in Menu */}
       <div className="scale-container">
       Frequency Range
         <Range
