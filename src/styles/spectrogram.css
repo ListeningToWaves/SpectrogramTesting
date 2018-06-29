@@ -65,3 +65,28 @@
     border: 2px solid #ABE2FB!important;
     border-radius: 3rem!important;
   }
+  .scales-snackbar {
+    z-index: 60;
+    position: fixed!important;
+    bottom: 0;
+    left: 50%;
+    margin: 0!important;
+    padding: 2vh!important;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    opacity: 0;
+    transform: translateX(-50%);
+
+
+  }
+  @keyframes fades {
+    50% {
+      opacity: 1;
+    }
+
+}
+  .scales-snackbar{
+    animation: fades 1s ease-in-out 0.2s alternate;
+    animation-duration: 2s;
+  }

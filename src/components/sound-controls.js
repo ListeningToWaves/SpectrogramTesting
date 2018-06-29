@@ -12,7 +12,7 @@ import { Button, Icon } from 'semantic-ui-react';
 // Sound Controls Class that renders all of the sound controls and uses the
 // React Context API to hook up their functionality to the main state in app.js
 // Which passes the controls down to Spectrogram
-class Sound extends Component {
+class SoundControls extends Component {
 
   render() {
     return (
@@ -72,7 +72,7 @@ class Sound extends Component {
                     fluid
                     options={timbreOptions}
                     onChange={context.handleTimbreChange}
-                    disabled={!context.state.isStarted}
+                    disabled={!context.state.isStarted || context.state.tuningMode}
                     className="timbre-dropdown"/>
                     {/*<div className="timbre-text">
                       {context.state.timbre}
@@ -122,7 +122,7 @@ class Sound extends Component {
                       className="scales-checkbox"
                       checked={context.state.scaleOn}
                       onChange={context.handleScaleToggle}
-                      disabled={!context.state.isStarted}/>
+                      disabled={!context.state.isStarted || context.state.tuningMode}/>
                     </Menu.Item>
                     <Menu.Item>
                       <Dropdown
@@ -168,4 +168,4 @@ class Sound extends Component {
   }
 }
 
-export default Sound;
+export default SoundControls;

@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {Menu, Checkbox} from 'semantic-ui-react';
 import "../styles/menu.css";
-import Tuning from './tuning-controls';
-import Sound from './sound-controls';
+import GraphControls from './graph-controls';
+import SoundControls from './sound-controls';
 import AdvancedControls from './advanced-controls';
 import Slider from 'react-rangeslider';
 
@@ -24,14 +24,14 @@ class MyMenu extends Component {
     switch (name) {
       case "graph":
         if (name !== this.state.activeItem) {
-          pane = <Tuning closeMenu={this.closeMenu}/>
+          pane = <GraphControls closeMenu={this.closeMenu}/>
         } else {
           name = null;
         }
         break;
       case "sound-making":
         if (name !== this.state.activeItem) {
-          pane = <Sound closeMenu={this.closeMenu}/>
+          pane = <SoundControls closeMenu={this.closeMenu}/>
         } else {
           name = null;
         }

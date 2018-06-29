@@ -11,7 +11,7 @@ import 'rc-slider/assets/index.css';
 // To include the default styles
 // import 'react-rangeslider/lib/index.css';
 import Range from 'rc-slider/lib/Range';
-class Tuning extends Component {
+class GraphControls extends Component {
   render(){
     return (
       <MyContext.Consumer>
@@ -111,7 +111,7 @@ class Tuning extends Component {
                       className="scales-checkbox"
                       checked={context.state.noteLinesOn}
                       onChange={context.handleNoteLinesToggle}
-                      disabled={!context.state.isStarted}/>
+                      disabled={!context.state.isStarted || context.state.tuningMode}/>
                     </Menu.Item>
                     <Menu.Item>
                       <Dropdown
@@ -158,4 +158,4 @@ class Tuning extends Component {
 
 }
 
-export default Tuning;
+export default GraphControls;

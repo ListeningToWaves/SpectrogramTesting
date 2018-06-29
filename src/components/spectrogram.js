@@ -7,7 +7,7 @@ import ScaleControls from'./new-scale-controls';
 import NoteLines from './note-lines';
 import Oscillator from './oscillator';
 
-import { Button, Icon } from 'semantic-ui-react';
+import { Button, Icon, Message } from 'semantic-ui-react';
 
 const ReactAnimationFrame = require('react-animation-frame');
 // TODO: Tap anywhere to start (ipad bug)
@@ -195,7 +195,8 @@ handleHeadphoneModeToggle=()=>{
 
 
   render() {
-    const soundOrTuning = this.props.noteLinesOn ? (
+    const soundOrTuning = this.props.tuningMode ? (
+      <React.Fragment>
       <NoteLines
       width={this.props.width}
       height={this.props.height}
@@ -214,6 +215,8 @@ handleHeadphoneModeToggle=()=>{
       release={this.props.release}
       ref={this.updateNoteLines}
       handleResize={this.props.handleResize}/>
+      <Message className="scales-snackbar" > Scale: {this.props.musicKey.name}{this.props.accidental.name}{this.props.scale.name} </Message>
+      </React.Fragment>
     ): (
       <Oscillator
       width={this.props.width}
@@ -239,8 +242,10 @@ handleHeadphoneModeToggle=()=>{
       style = {'backgroundColor': '#2769d8'}
     }
     let borderStyle={'border': '' }
+    // let snackbarStyle={'opacity': 0}
   if(this.props.tuningMode){
     borderStyle = {'border': '2px solid #ff8177'}
+    // snackbarStyle={'opacity': 1}
   }
     return (
       <div onClick={this.startSpectrogram} >
@@ -288,7 +293,6 @@ handleHeadphoneModeToggle=()=>{
             height={this.props.height}
             handleResize={this.props.handleResize}
             ref={this.updateAxes}/>
-
           </React.Fragment>
           }
           {/* Intro Instructions */}
@@ -300,6 +304,7 @@ handleHeadphoneModeToggle=()=>{
           }
 
         </div>
+
       </div>
     );
 

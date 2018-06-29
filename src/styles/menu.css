@@ -131,7 +131,7 @@
   transition-property: color, background-color;
 }
 .tuning-button:hover {
-  
+
   outline: none;
   cursor: pointer;
 }

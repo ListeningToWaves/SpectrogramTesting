@@ -82,12 +82,12 @@ class MyProvider extends Component {
           this.setState({timbre: newTimbre});
         },
         handleAttackChange: value => {
-          if(this.state.isStarted){
+          if(this.state.isStarted && !this.state.tuningMode){
             this.setState({attack: Math.round(value*10)/10});
           }
         },
         handleReleaseChange: value => {
-          if(this.state.isStarted){
+          if(this.state.isStarted && !this.state.tuningMode){
             this.setState({release: Math.round(value*10)/10});
           }
         },
@@ -110,10 +110,13 @@ class MyProvider extends Component {
           if(this.state.tuningMode){
             this.setState({
               tuningMode: false,
+              noteLinesOn: true
+
             });
           } else {
             this.setState({
               tuningMode: true,
+              noteLinesOn: false
             });
           };
 
