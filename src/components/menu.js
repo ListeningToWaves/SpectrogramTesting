@@ -16,7 +16,7 @@ class MyMenu extends Component {
     pane: null,
     value: 50,
     soundOn: false,
-    mode: false
+    tuningMode: false
   }
   // Function that switches between Menu Panes (children components)
   handleItemClick = (e, {name}) => {
@@ -89,16 +89,19 @@ class MyMenu extends Component {
   }
 
   // Function that handle switch between modes
-  handleModeSwitch = () =>{
-    this.setState({mode: !this.state.mode});
-    this.props.handleModeSwitch();
+  handleTuningModeToggle = () =>{
+    this.setState({tuningMode: !this.state.tuningMode});
+    this.props.handleTuningModeToggle();
   }
 
   // Renders the top Menu Bar with tabs, microphone gain, and the two menu buttons
   // as well as the graph scale and which tab to render
   render() {
     const {activeItem} = this.state;
-
+    let style={'backgroundColor': '' }
+  if(this.state.tuningMode){
+    style = {'backgroundColor': '#ff8177'}
+  }
     return (
       <div className="menu-container">
         <Menu color="violet" tabular pointing className="menu-menu" attached="bottom">
@@ -108,6 +111,8 @@ class MyMenu extends Component {
           <Menu.Item name='graph' active={activeItem === 'graph'} onClick={this.handleItemClick} className="tab-item"/>
           <Menu.Item name='sound-making' active={activeItem === 'sound-making'} onClick={this.handleItemClick} className="tab-item"/>
           {/*<Menu.Item name='advanced' active={activeItem === 'advanced'} onClick={this.handleItemClick} className="tab-item"/>*/}
+          <button onClick={this.handleTuningModeToggle} className="tuning-button" style={style}>Tuning Mode</button>
+
           <Menu.Item position="right">
             {/*<div>Expressive&nbsp;&nbsp;</div>
             <Checkbox

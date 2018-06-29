@@ -10,8 +10,8 @@
 .menu-title {
   font-size: 24px;
   align-self: center;
-  text-align: left;
-  transform: translateX(-50%);
+  /* text-align: center; */
+  /* transform: translateX(-50%); */
   left: 50%;
   position: absolute;
   user-select: none;
@@ -111,6 +111,30 @@
   cursor: pointer;
 }
 
+.tuning-button {
+  border: 2px solid #ff8177;
+  outline: none;
+  border-radius: .28571429rem;
+  padding: .5em 1.2em .5em;
+  line-height: 1em;
+  background-color: white;
+  color: black;
+  font-weight: 400;
+  line-height: 1;
+  font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+  font-size: 16px;
+  min-height: 1em;
+  vertical-align: baseline;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-property: color, background-color;
+  transition-property: color, background-color;
+}
+.tuning-button:hover {
+  
+  outline: none;
+  cursor: pointer;
+}
 .menu-header {
   font-weight: 700;
 }

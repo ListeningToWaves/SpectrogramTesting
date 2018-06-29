@@ -29,7 +29,7 @@ class MyProvider extends Component {
     limitMin: 29, // Range slider Min
     min: 20, // Temp Min for Input
     max: 20000, // Temp Max for Input
-    mode: false,// Mode Switcher
+    tuningMode: false,// Mode Switcher
     graphPreset: 'default',
     headphoneMode: false,
     //hidePanes: false,
@@ -106,14 +106,14 @@ class MyProvider extends Component {
           let newScaleValue = data.value;
           this.setState({scale: {name: newScaleName, value: newScaleValue}});
         },
-        handleModeSwitch: () => {
-          if(this.state.mode){
+        handleTuningModeToggle: () => {
+          if(this.state.tuningMode){
             this.setState({
-              mode: false,
+              tuningMode: false,
             });
           } else {
             this.setState({
-              mode: true,
+              tuningMode: true,
             });
           };
 
@@ -161,25 +161,25 @@ class MyProvider extends Component {
             let lowerValue = 20;
             let upperValue = 20000;
           switch (data.value) {
-            case 'trumpet':
-              lowerValue = 1000;
-              upperValue = 8000;
-              break;
-            case 'voice':
-              lowerValue = 800;
-              upperValue = 3000;
-              break;
             case 'bass':
               lowerValue = 80;
-              upperValue = 1500
+              upperValue = 800;
               break;
-            case 'violin':
+            case 'tenor':
+              lowerValue = 120;
+              upperValue = 1200;
+              break;
+            case 'alto':
+              lowerValue = 175;
+              upperValue = 1500;
+              break;
+            case 'soprano':
               lowerValue = 300;
               upperValue = 3000;
               break;
-            case 'piano':
-              lowerValue = 200;
-              upperValue = 5000;
+            case 'orchestra':
+              lowerValue = 80;
+              upperValue = 4000;
               break;
             default:
                 lowerValue = 20;

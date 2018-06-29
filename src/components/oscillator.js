@@ -32,7 +32,7 @@ class Oscillator extends Component {
     Tone.context = this.props.context;
     this.synths = new Array(NUM_VOICES);
     // Start master volume at -20 dB
-    this.masterVolume = new Tone.Volume(-20);
+    this.masterVolume = new Tone.Volume(0);
     this.ctx = this.canvas.getContext('2d');
     let options = {
       oscillator: {
@@ -312,8 +312,10 @@ class Oscillator extends Component {
 
   // Helper function that turns the x-pos into a decibel value for the volume
   getGain(index) {
-    //-60 to 0dB
-    return -1 * (index * 40);
+    //1 t0 0 ->
+    //-30 to 0dB
+
+    return -1 * (index * 30);
   }
 
   // Helper method that generates a label for the frequency or the scale note

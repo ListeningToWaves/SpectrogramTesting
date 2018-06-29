@@ -52,7 +52,7 @@ class App extends Component {
       gain={context.state.gain}
       handleSoundToggle={context.handleSoundToggle}
       isStarted={context.state.isStarted}
-      handleModeSwitch={context.handleModeSwitch}
+      handleTuningModeToggle={context.handleTuningModeToggle}
       hidePanes={context.state.hidePanes}
       handleHidePanesCompletion={context.handleHidePanesCompletion}
       />
@@ -81,6 +81,7 @@ class App extends Component {
       handlePause={context.handlePause}
       handleHeadphoneModeToggle={context.handleHeadphoneModeToggle}
       headphoneMode={context.state.headphoneMode}
+      tuningMode={context.state.tuningMode}
       start={context.start}
       />
       </React.Fragment>

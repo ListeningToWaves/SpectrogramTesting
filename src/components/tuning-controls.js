@@ -55,24 +55,17 @@ class Tuning extends Component {
                 <br></br>
                 <div className="graph-preset-container">
                   <Radio
-                    label='Default'
+                    label='Full Scale'
                     name='radioGroup'
                     value='default'
                     checked={context.state.graphPreset === 'default'}
                     onChange={context.handleGraphPresetChange}
                   />
                   <Radio
-                    label='Trumpet'
+                    label='Alto'
                     name='radioGroup'
-                    value='trumpet'
-                    checked={context.state.graphPreset === 'trumpet'}
-                    onChange={context.handleGraphPresetChange}
-                  />
-                  <Radio
-                    label='Voice'
-                    name='radioGroup'
-                    value='voice'
-                    checked={context.state.graphPreset === 'voice'}
+                    value='alto'
+                    checked={context.state.graphPreset === 'alto'}
                     onChange={context.handleGraphPresetChange}
                   />
                   <Radio
@@ -83,17 +76,24 @@ class Tuning extends Component {
                     onChange={context.handleGraphPresetChange}
                   />
                   <Radio
-                    label='Violin'
-                    name='radioGroup'
-                    value='violin'
-                    checked={context.state.graphPreset === 'violin'}
-                    onChange={context.handleGraphPresetChange}
+                  label='Soprano'
+                  name='radioGroup'
+                  value='soprano'
+                  checked={context.state.graphPreset === 'soprano'}
+                  onChange={context.handleGraphPresetChange}
                   />
                   <Radio
-                    label='Piano'
+                  label='Tenor'
+                  name='radioGroup'
+                  value='tenor'
+                  checked={context.state.graphPreset === 'tenor'}
+                  onChange={context.handleGraphPresetChange}
+                  />
+                  <Radio
+                    label='Orchestra'
                     name='radioGroup'
-                    value='piano'
-                    checked={context.state.graphPreset === 'piano'}
+                    value='orchestra'
+                    checked={context.state.graphPreset === 'orchestra'}
                     onChange={context.handleGraphPresetChange}
                   />
 

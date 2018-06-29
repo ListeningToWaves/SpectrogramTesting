@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import '../styles/spectrogram.css';
 
 import Axes from './axes';
-// import Scales from './scale-controls'
+import Scales from './scale-controls'
 import ScaleControls from'./new-scale-controls';
 import NoteLines from './note-lines';
 import Oscillator from './oscillator';
@@ -238,15 +238,33 @@ handleHeadphoneModeToggle=()=>{
     if(this.state.headphoneMode){
       style = {'backgroundColor': '#2769d8'}
     }
-
+    let borderStyle={'border': '' }
+  if(this.props.tuningMode){
+    borderStyle = {'border': '2px solid #ff8177'}
+  }
     return (
-      <div onClick={this.startSpectrogram}>
+      <div onClick={this.startSpectrogram} >
 
-        <canvas width={this.props.width} height={this.props.height} ref={(c) => {
+        <canvas width={this.props.width} height={this.props.height} style={borderStyle} ref={(c) => {
           this.canvas = c;
         }}/>
         {this.props.isStarted &&
           <React.Fragment>
+          <ScaleControls
+          resolutionMax={this.props.resolutionMax}
+          resolutionMin={this.props.resolutionMin}
+          width={this.props.width}
+          height={this.props.height}
+          handleZoom={this.props.handleZoom}
+          handleResize={this.props.handleResize}/>
+          {/*<Scales
+          resolutionMax={this.props.resolutionMax}
+          resolutionMin={this.props.resolutionMin}
+          width={this.props.width}
+          height={this.props.height}
+          handleZoom={this.props.handleZoom}
+          handleResize={this.props.handleResize}/>*/}
+
           <Button icon onClick={this.props.handlePause} className="pause-button">
           {!this.props.speed  ?  <Icon fitted name="play" color="orange"/> :
             <Icon fitted name="pause" color="orange"/>}
@@ -261,13 +279,7 @@ handleHeadphoneModeToggle=()=>{
               Soft<span>Loud</span>
             </div>
           </div>
-            <ScaleControls
-            resolutionMax={this.props.resolutionMax}
-            resolutionMin={this.props.resolutionMin}
-            width={this.props.width}
-            height={this.props.height}
-            handleZoom={this.props.handleZoom}
-            handleResize={this.props.handleResize}/>
+
             {soundOrTuning}
             <Axes
             resolutionMax={this.props.resolutionMax}
