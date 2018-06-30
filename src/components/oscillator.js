@@ -89,6 +89,10 @@ class Oscillator extends Component {
         this.setState({feedback: false});
       }
     }
+    if(nextProps.noteLinesOn){
+      console.log("hi");
+      this.renderNoteLines();
+    }
   }
   componentWillUnmount() {
     this.masterVolume.mute = true;
@@ -340,6 +344,67 @@ class Oscillator extends Component {
     this.ctx.fill();
     this.ctx.stroke();
     }
+  }
+
+  freqToIndex(freq) {
+    let logResolution = Math.log(this.props.resolutionMax / this.props.resolutionMin);
+    let x = Math.log(freq / this.props.resolutionMin) / logResolution;
+
+    // console.log(x*100);
+    if (!isNaN(x)) {
+      return (1 - x) * this.props.height;
+    }
+    return 0;
+  }
+
+  renderNoteLines(){
+    let {height, width} = this.props;
+    this.ctx.clearRect(0, 0, width, height);
+    // this.ctx.fillStyle = 'white';
+
+    //  Maps to one of the 12 keys of the piano based on note and accidental
+    let newIndexedKey = this.props.musicKey.value;
+    // Edge cases
+    if (newIndexedKey === 0 && this.props.accidental.value === 2) {
+      // Cb->B
+      newIndexedKey = 11;
+    } else if (newIndexedKey === 11 && this.props.accidental.value === 1) {
+      // B#->C
+      newIndexedKey = 0;
+    } else {
+      newIndexedKey = (this.props.accidental.value === 1)
+        ? newIndexedKey + 1
+        : (this.props.accidental.value === 2)
+          ? newIndexedKey - 1
+          : newIndexedKey;
+    }
+
+    this.frequencies = {};
+    // Uses generateScale helper method to generate base frequency values
+    let s = generateScale(newIndexedKey, this.props.scale.value);
+    //Sweeps through scale object and draws frequency
+    for (let i = 0; i < s.scale.length; i++) {
+      let freq = s.scale[i];
+
+      for (let j = 0; j < 15; j++) {
+        if (freq > this.props.resolutionMax) {
+          break;
+        } else {
+          let name = s.scaleNames[i]+''+j;
+          let index = this.freqToIndex(freq);
+          this.frequencies[name] = freq;
+          if(index === this.goldIndex){
+            this.ctx.fillStyle = 'gold';
+            this.ctx.fillRect(0, index, width, 1.5);
+          } else {
+            this.ctx.fillStyle = 'white';
+            this.ctx.fillRect(0, index, width, 1.5);
+          }
+          freq = freq * 2;
+        }
+      }
+    }
+
   }
 
   render() {

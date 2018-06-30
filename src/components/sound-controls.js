@@ -50,6 +50,7 @@ class SoundControls extends Component {
                   {context.state.microphoneGain}
                 </div>
                 </Menu.Item>*/}
+                <br></br>
                 {/** Output Volume **/}
                   <div className="menu-header">Output Volume</div>
                   <Slider
@@ -81,7 +82,7 @@ class SoundControls extends Component {
                 </Menu.Item>
 
                 {/** ADSR **/}
-                <Menu.Item className="vert">
+                {/*<Menu.Item className="vert">
                   <div className="menu-header">ADSR</div>
                   <div className="horiz">
                     <div className="adsr-slider">
@@ -109,13 +110,13 @@ class SoundControls extends Component {
                       {context.state.release}
                     </div>
                   </div>
-                </Menu.Item>
+                </Menu.Item>*/}
 
                 {/** Scale Menu **/}
                 <Menu.Item className="vert">
                   <div className="menu-header">Scales</div>
                   <Menu.Menu className="horiz">
-                    <Menu.Item className="vert no-line">
+                    <Menu.Item className="vert no-line no-bot-padding">
                       <div>Scale Mode</div>
                       <Checkbox
                       toggle
@@ -150,12 +151,27 @@ class SoundControls extends Component {
                       onChange={context.handleScaleChange}
                       disabled={!context.state.isStarted}/>
                     </Menu.Item>
+
                   </Menu.Menu>
+                  <div className="scales-bottom">
+                  <div className="note-lines">
+                    <div>Note Lines</div>
+                    <Checkbox
+                    toggle
+                    className="scales-checkbox"
+                    checked={context.state.noteLinesOn}
+                    onChange={context.handleNoteLinesToggle}
+                    disabled={!context.state.isStarted || context.state.tuningMode}/>
+                  </div>
+                  <div>
                   {context.state.musicKey.name}{context.state.accidental.name}{context.state.scale.name}
+                  </div>
+                  </div>
                 </Menu.Item>
-                <Menu.Item className="vert">
+                  {/* Effects */}
+                {/*<Menu.Item className="vert">
                 <div className="menu-header effects-tab">Effects</div>
-                </Menu.Item>
+                </Menu.Item>*/}
               </Menu>
               <Button icon onClick={this.props.closeMenu} className="close-menu">
               <Icon fitted name="angle double up" size="large"/>

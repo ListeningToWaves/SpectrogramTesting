@@ -110,13 +110,13 @@ class MyProvider extends Component {
           if(this.state.tuningMode){
             this.setState({
               tuningMode: false,
-              noteLinesOn: true
+              noteLinesOn: false
 
             });
           } else {
             this.setState({
               tuningMode: true,
-              noteLinesOn: false
+              noteLinesOn: true
             });
           };
 

@@ -101,7 +101,7 @@ class GraphControls extends Component {
                 </Menu.Item>
 
                 {/** Scale Menu **/}
-                <Menu.Item className="vert">
+                {/*<Menu.Item className="vert">
                   <div className="menu-header">Scales</div>
                   <Menu.Menu className="horiz">
                     <Menu.Item className="vert no-line">
@@ -141,7 +141,7 @@ class GraphControls extends Component {
                     </Menu.Item>
                   </Menu.Menu>
                   {context.state.musicKey.name}{context.state.accidental.name}{context.state.scale.name}
-                </Menu.Item>
+                </Menu.Item>*/}
 
               </Menu>
 

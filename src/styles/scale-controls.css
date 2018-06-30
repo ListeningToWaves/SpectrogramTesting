@@ -19,3 +19,14 @@
   color: white;
   user-select: none;
 }
+.scales-bottom {
+  width: 100%;
+  display: flex;
+  padding: 0 0 0 1.14285714em;
+}
+.note-lines {
+  margin-right: 34%;
+}
+.no-bot-padding {
+  padding-bottom: 0!important;
+}

@@ -235,6 +235,7 @@ handleHeadphoneModeToggle=()=>{
       attack={this.props.attack}
       release={this.props.release}
       headphoneMode={this.props.headphoneMode}
+      noteLinesOn={this.props.noteLinesOn}
       handleResize={this.props.handleResize}/>
     );
       let style={'backgroundColor': ''}
