@@ -200,6 +200,12 @@ class MyProvider extends Component {
         handleZoom: (upper, lower) => {
           let upperValue = Number(upper);
           let lowerValue = Number(lower);
+          if(isNaN(lowerValue) || lowerValue > this.state.resolutionMax || lowerValue > 20000) {
+            lowerValue = this.state.resolutionMin;
+          }
+          if(isNaN(upperValue) || upperValue < this.state.resolutionMin || upperValue < 0) {
+            upperValue = this.state.resolutionMax;
+          }
           let newMax = Math.round(this.convertToLinear(upperValue, 1,100, 1, 20000));
           let newMin = Math.round(this.convertToLinear(lowerValue, 1, 100, 1, 20000));
           lowerValue = Math.round(lowerValue);

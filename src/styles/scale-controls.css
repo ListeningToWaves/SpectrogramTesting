@@ -1,10 +1,10 @@
 .scale-container {
-  border: 1px solid gold;
+  border: 1px dashed gold;
   position: absolute;
   width: 10%;
   height: 90%;
   top: 10%;
-  left: 0%;
+  left: 90%;
   z-index: 21;
   /* background-color: white; */
   border-radius: 1.5rem;

@@ -22,7 +22,7 @@
   .color-map-container {
     width: 20%;
     position: absolute;
-    left: 18%;
+    left: 8%;
     top: 10%;
     padding: 2px;
     color: white;
@@ -44,7 +44,7 @@
   }
   .pause-button {
     position: absolute;
-    left: 10%;
+    left: 0%;
     top: 10%;
     margin: 2px 2px!important;
     min-width: 3%;
@@ -56,7 +56,7 @@
   }
   .headphone-mode-button {
     position: absolute;
-    left: 14%;
+    left: 4%;
     top: 10%;
     margin: 2px 2px!important;
     min-width: 3%;

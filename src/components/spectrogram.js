@@ -2,8 +2,7 @@ import React, {Component} from 'react';
 import '../styles/spectrogram.css';
 
 import Axes from './axes';
-import Scales from './scale-controls'
-import ScaleControls from'./new-scale-controls';
+import ScaleControls from './scale-controls'
 import NoteLines from './note-lines';
 import Oscillator from './oscillator';
 
@@ -24,6 +23,7 @@ class Spectrogram extends Component {
     super(props);
     this.updateNoteLines = React.createRef();
     this.updateAxes = React.createRef();
+
     this.state = {
       resolutionMax: 20000,
       resolutionMin: 20,
@@ -263,13 +263,6 @@ handleHeadphoneModeToggle=()=>{
           height={this.props.height}
           handleZoom={this.props.handleZoom}
           handleResize={this.props.handleResize}/>
-          {/*<Scales
-          resolutionMax={this.props.resolutionMax}
-          resolutionMin={this.props.resolutionMin}
-          width={this.props.width}
-          height={this.props.height}
-          handleZoom={this.props.handleZoom}
-          handleResize={this.props.handleResize}/>*/}
 
           <Button icon onClick={this.props.handlePause} className="pause-button">
           {!this.props.speed  ?  <Icon fitted name="play" color="orange"/> :

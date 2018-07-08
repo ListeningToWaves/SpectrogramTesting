@@ -2,7 +2,9 @@ import React, {Component} from 'react';
 import Tone from 'tone';
 import "../styles/oscillator.css"
 import generateScale from '../util/generateScale';
+
 const NUM_VOICES = 6;
+const RAMPVALUE = 0.1;
 
 // Main sound-making class. Can handle click and touch inputs
 class Oscillator extends Component {
@@ -48,7 +50,11 @@ class Oscillator extends Component {
     //Off by default
     this.masterVolume.mute = !this.props.soundOn;
 
-    window.addEventListener("resize", this.props.handleResize);
+    this.frequencies = {};
+    this.freq = 1;
+    this.goldIndex = -1;
+
+    window.addEventListener("resize", this.handleResize);
   }
 
   // Sets up what will happen on controls changes
@@ -90,13 +96,15 @@ class Oscillator extends Component {
       }
     }
     if(nextProps.noteLinesOn){
-      console.log("hi");
+      this.ctx.clearRect(0, 0, this.props.width, this.props.height);
       this.renderNoteLines();
+    } else {
+      this.ctx.clearRect(0, 0, this.props.width, this.props.height);
     }
   }
   componentWillUnmount() {
     this.masterVolume.mute = true;
-    window.removeEventListener("resize", this.props.handleResize);
+    window.removeEventListener("resize", this.handleResize);
   }
 
   // Helper Function that gets the Mouse position based on the rescaled canvas
@@ -124,12 +132,16 @@ class Oscillator extends Component {
     let newVoice = (this.state.currentVoice + 1) % NUM_VOICES; // Mouse always changes to new "voice"
     this.synths[newVoice].triggerAttack(freq);
     this.synths[newVoice].volume.value = gain;
+    this.ctx.clearRect(0, 0, this.props.width, this.props.height);
     this.label(freq, pos.x, pos.y);
     this.setState({
       mouseDown: true,
       currentVoice: newVoice,
       voices: this.state.voices + 1
     });
+    if(this.props.noteLinesOn){
+      this.renderNoteLines();
+    }
 
   }
   onMouseMove(e) {
@@ -142,15 +154,32 @@ class Oscillator extends Component {
       let freq = this.newFreqAlgorithm(yPercent);
       // this.synths[this.state.currentVoice].oscillator.frequency.value = freq;
       // Ramps to new Frequency
-      this.synths[this.state.currentVoice].frequency.exponentialRampToValueAtTime(freq, this.props.context.currentTime+0.01);
+      this.synths[this.state.currentVoice].frequency.exponentialRampToValueAtTime(freq, this.props.context.currentTime+RAMPVALUE);
       // this.synths[this.state.currentVoice].volume.value = gain;
       // Ramps to new Gain
       this.synths[this.state.currentVoice].volume.exponentialRampToValueAtTime(gain,
-          this.props.context.currentTime+0.01);
+          this.props.context.currentTime+RAMPVALUE);
       // Clears the label
       this.ctx.clearRect(0, 0, this.props.width, this.props.height);
       this.label(freq, pos.x, pos.y);
+      if(this.props.noteLinesOn){
+        for(let j in this.frequencies){
+          if(Math.abs(this.frequencies[j] - freq) < 0.01 * freq){
+            if(this.frequencies[j] !== this.freq){
+              // this.ctx.fillStyle = 'white';
+              // let oldIndex = this.freqToIndex(this.freq);
+              // this.ctx.fillRect(0, oldIndex, width, 1.5);
+              this.freq = this.frequencies[j];
+              let index = this.freqToIndex(this.frequencies[j]);
+              this.goldIndex = index;// Sets the Gold Line to the new Line
+            }
+          }
+        }
+        this.renderNoteLines();
+
+      }
     }
+
 
   }
   onMouseUp(e) {
@@ -160,8 +189,12 @@ class Oscillator extends Component {
       this.setState({mouseDown: false, voices: 0});
       // Clears the label
       this.ctx.clearRect(0, 0, this.props.width, this.props.height);
-
+      if(this.props.noteLinesOn){
+        this.goldIndex = -1;
+        this.renderNoteLines();
+      }
     }
+
 
   }
   onMouseOut(e) {
@@ -171,6 +204,10 @@ class Oscillator extends Component {
       this.setState({mouseDown: false, voices: 0});
       // Clears the label
       this.ctx.clearRect(0, 0, this.props.width, this.props.height);
+      if(this.props.noteLinesOn){
+        this.goldIndex = -1;
+        this.renderNoteLines();
+      }
     }
   }
 
@@ -195,7 +232,12 @@ class Oscillator extends Component {
       });
       this.synths[newVoice].triggerAttack(freq);
       this.synths[newVoice].volume.value = gain;
+
+      this.ctx.clearRect(0, 0, this.props.width, this.props.height);
       this.label(freq, pos.x, pos.y);
+    }
+    if(this.props.noteLinesOn){
+      this.renderNoteLines();
     }
   }
   onTouchMove(e) {
@@ -214,11 +256,11 @@ class Oscillator extends Component {
           ? (NUM_VOICES + index)
           : index;
           // Ramps to new Frequency
-  this.synths[index].frequency.exponentialRampToValueAtTime(freq, this.props.context.currentTime+0.01);
+  this.synths[index].frequency.exponentialRampToValueAtTime(freq, this.props.context.currentTime+RAMPVALUE);
         // this.synths[index].frequency.value = freq;
         // Ramp to new Volume
         this.synths[index].volume.exponentialRampToValueAtTime(gain,
-            this.props.context.currentTime+0.01);
+            this.props.context.currentTime+RAMPVALUE);
         // Clears the canvas on touch move
       }
       //RedrawLabels
@@ -228,6 +270,9 @@ class Oscillator extends Component {
         let yPercent = 1 - pos.y / this.props.height;
         let freq = this.newFreqAlgorithm(yPercent);
         this.label(freq, pos.x, pos.y);
+      }
+      if(this.props.noteLinesOn){
+        this.renderNoteLines();
       }
     }
   }
@@ -259,6 +304,11 @@ class Oscillator extends Component {
     }
     // Clears the label
     this.ctx.clearRect(0, 0, this.props.width, this.props.height);
+    if(this.props.noteLinesOn){
+      this.goldIndex = -1;
+      this.renderNoteLines();
+    }
+
   }
 
   // Helper function that determines the frequency to play based on the mouse/finger position
@@ -318,8 +368,14 @@ class Oscillator extends Component {
   getGain(index) {
     //1 t0 0 ->
     //-30 to 0dB
-
+    index = index - 0.1;
+    // console.log(index);
     return -1 * (index * 30);
+  }
+  handleResize = () => {
+    this.props.handleResize();
+    this.ctx.clearRect(0, 0, this.props.width, this.props.height);
+    this.renderNoteLines();
   }
 
   // Helper method that generates a label for the frequency or the scale note
@@ -359,7 +415,7 @@ class Oscillator extends Component {
 
   renderNoteLines(){
     let {height, width} = this.props;
-    this.ctx.clearRect(0, 0, width, height);
+    // this.ctx.clearRect(0, 0, width, height);
     // this.ctx.fillStyle = 'white';
 
     //  Maps to one of the 12 keys of the piano based on note and accidental
@@ -393,7 +449,7 @@ class Oscillator extends Component {
           let name = s.scaleNames[i]+''+j;
           let index = this.freqToIndex(freq);
           this.frequencies[name] = freq;
-          if(index === this.goldIndex){
+          if(index === this.goldIndex && this.props.soundOn){
             this.ctx.fillStyle = 'gold';
             this.ctx.fillRect(0, index, width, 1.5);
           } else {

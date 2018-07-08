@@ -11,10 +11,10 @@ class Scales extends Component {
 
     this.state = {
       evCache: {},
+      originalCopy: {},
       prevDiff: -1,
       zoomMax: 0,
       zoomMin: 0,
-
     }
   }
   componentDidMount() {
@@ -44,85 +44,104 @@ class Scales extends Component {
     let pos = this.getMousePos(this.canvas, e);
     newObj[key] = pos.y;
     this.ctx.fillStyle = '#d6d1d5';
-
     this.ctx.fillRect(0, pos.y, this.canvas.width, 20);
+
+    let freq = this.newFreqAlgorithm(1-pos.y/this.props.height);
+    this.ctx.font = '24px Inconsolata';
+    this.ctx.fillStyle = 'white';
+    this.ctx.fillText(freq + ' Hz', 100, pos.y);
     this.setState({evCache: newObj});
   }
 
   onPointerMove(e) {
-    let {height, width} = this.props;
-    this.ctx.clearRect(0, 0, width, height);
-    // let newObj = this.state.evCache;
-    let key = e.pointerId;
-    let pos = this.getMousePos(this.canvas, e);
-    // newObj[key] = pos.y;
-    // for (key in newObj) {
-      // this.ctx.fillRect(0, newObj[key], this.canvas.width, 20);
-    // }
-    // this.setState({evCache: newObj});
-    // let length = Object.keys(newObj).length;
-    // if(length == 1 ){
-      // console.log("POS: "+pos.y);
-      // console.log("CACHE: "+this.state.evCache[key]);
-      let yPercent = 1 - this.state.evCache[key] / this.props.height;
-      let freq = this.newFreqAlgorithm(yPercent);
-      let newYPercent = 1-pos.y/this.props.height;
-      // console.log("FReq: "+freq);
-      if(newYPercent > yPercent){
-        this.calculateNewMax(newYPercent, freq);
+    // if(this.state.pointerDown){
+      let {height, width} = this.props;
+      this.ctx.clearRect(0, 0, width, height);
+      let originalCopy = JSON.parse(JSON.stringify(this.state.evCache));
+      let newObj = this.state.evCache;
+      let key = e.pointerId;
+      let pos = this.getMousePos(this.canvas, e);
+      newObj[key] = pos.y;
+      for (key in newObj) {
+        this.ctx.fillStyle = '#d6d1d5';
+        this.ctx.fillRect(0, newObj[key], this.canvas.width, 20);
+        // this.ctx.fillStyle = 'white';
+        // this.ctx.fillText(Math.round(freq) + ' Hz', 100, pos.y);
       }
 
-      // let curDiff = Math.abs(newObj[Object.keys(newObj)[0]] - evCache[key]);
-      // console.log(curDiff);
-      // newObj[Object.keys(newObj)[0]] + newObj[Object.keys(newObj)[1]]
+      this.setState({originalCopy: originalCopy});
+
+
+      // let curDiff = newYPercent-yPercent;
+
+      // If two pointers are down, check for pinch gestures
+    let length = Object.keys(newObj).length;
+    if (length === 2) {
+      // Calculate the distance between the two pointers
+      let top, bottom;
+      let finger1 = newObj[Object.keys(newObj)[0]];
+      let finger2 = newObj[Object.keys(newObj)[1]]
+      if (finger1 > finger2) {
+        top = finger2;
+        bottom = finger1;
+      } else {
+        top = finger1;
+        bottom = finger2;
+      }
+      let curDiff = Math.abs(top - bottom);
+
+      if (this.state.prevDiff > 0) {
+          if (curDiff > this.state.prevDiff) {
+            // console.log("ZOOM IN");
+             // Zoom In. Top finger sets the top, bottom sets the bottom
+             let A0 = this.state.zoomMin;
+             let yPercent1 = 1 - this.state.originalCopy[Object.keys(this.state.originalCopy)[0]] / this.props.height;
+             let yPercent2 = 1 - this.state.originalCopy[Object.keys(this.state.originalCopy)[1]] / this.props.height;
+             let freq1 = this.newFreqAlgorithm(yPercent1)
+             let freq2 = this.newFreqAlgorithm(yPercent2)
+             let newYPercent1 = 1 - top/this.props.height;
+             let newYPercent2 = 1 - bottom/this.props.height;
+             console.log("NEWPERCENT1: "+newYPercent1);
+             console.log("FREQ1: "+freq1);
+             // console.log("NEWPERCENT2: "+newYPercent2);
+
+             if (newYPercent1 > 1) newYPercent1 = 1;
+             if (newYPercent2 > 1) newYPercent2 = 1;
+             if (newYPercent1 < 0) newYPercent1 = 0;
+             if (newYPercent2 < 0) newYPercent2 = 0;
+
+             let newMax = this.calculateNewMax(freq1, A0, newYPercent1);
+             let newMin = this.calculateNewMin(freq2, A0, newYPercent2);
+             console.log(newMax);
+             // console.log(newMin);
+             // this.props.handleZoom(newMax, newMin);
+
+          }
+      if (curDiff < this.state.prevDiff) {
+          // Zoom Out
+          // console.log("ZZOM OUT");
+        }
+      }
+      this.setState({prevDiff: curDiff})
+    }
+      // A1 == A0
+      //   let B1 = Math.log(y/A0)/newYPercent;
+      //   let newMax = Math.pow(Math.E, B1)*A0;
+      //   this.props.handleZoom(newMax, this.state.zoomMin);
+      // } else if (curDiff < this.state.prevDiff) {
+      //   // A1e^b1 = A0e^b0
+      //   let intermediate = Math.log(y/A0)-logResolution;
+      //   let B1 = intermediate/(newYPercent - 1)
+      //   let newMin = this.state.zoomMax/Math.pow(Math.E, B1);
+      //   this.props.handleZoom(this.state.zoomMax, newMin);
+      //
+      // }
+      // this.ctx.fillStyle = '#d6d1d5';
+      // this.ctx.fillRect(0, pos.y, this.canvas.width, 20);
+      // this.ctx.fillStyle = 'white';
+      // this.ctx.fillText(Math.round(freq) + ' Hz', 100, pos.y);
     // }
-    // If two pointers are down, check for pinch gestures
-    // let length = Object.keys(newObj).length;
-    // if (length === 2) {
-    //   // Calculate the distance between the two pointers
-    //   let curDiff = Math.abs(newObj[Object.keys(newObj)[0]] - newObj[Object.keys(newObj)[1]]);
-    //
-    //   if (this.state.prevDiff > 0) {
-    //     if (this.state.centerFreq > 0) {
-    //       if (curDiff > this.state.prevDiff) {
-    //         // The distance between the two pointers has increased
-    //         // console.log("Pinch moving OUT -> Zoom in", e);
-    //         let ratio = curDiff / this.props.height;
-    //         if (ratio > 1)
-    //           ratio = 1;
-    //
-    //         let upperChange = (this.state.zoomMax - this.state.centerFreq) * ratio;
-    //         let lowerChange = (this.state.centerFreq - this.state.zoomMin) * ratio;
-    //         let newUpper = this.state.zoomMax - upperChange;
-    //         let newLower = this.state.zoomMin + lowerChange;
-    //         this.props.handleZoom(newUpper, newLower);
-    //       }
-    //       if (curDiff < this.state.prevDiff) {
-    //         // The distance between the two pointers has decreased
-    //         // console.log("Pinch moving IN -> Zoom out", e);
-    //         let ratio = 1 - curDiff / this.props.height;
-    //         //if(ratio > 1) ratio = 1;
-    //         let upperChange = (20000 - this.state.zoomMax) * ratio;
-    //         let lowerChange = (this.state.zoomMin + 1) * ratio;
-    //         let newUpper = this.props.resolutionMax + upperChange;
-    //         let newLower = this.props.resolutionMin - lowerChange;
-    //         if (newUpper > 20000)
-    //           newUpper = 20000;
-    //         if (newLower < 1)
-    //           newLower = 1;
-    //         this.props.handleZoom(newUpper, newLower);
-    //       }
-    //     } else {
-    //       let avg = (newObj[Object.keys(newObj)[0]] + newObj[Object.keys(newObj)[1]]) / 2;
-    //       let yPercent = 1 - avg / this.props.height;
-    //       let centerFreq = this.newFreqAlgorithm(yPercent);
-    //       this.setState({centerFreq: centerFreq});
-    //     }
-    //
-    //     // Cache the distance for the next move event
-    //   }
-    //   this.setState({prevDiff: curDiff});
-    // }
+
   }
 
   onPointerUp(e) {
@@ -131,14 +150,14 @@ class Scales extends Component {
     let {height, width} = this.props;
     this.ctx.clearRect(0, 0, width, height);
     if (length < 2) {
-      this.setState({prevDiff: -1, centerFreq: -1, zoomMax: this.props.resolutionMax, zoomMin: this.props.resolutionMin});
+      this.setState({prevDiff: -1, zoomMax: this.props.resolutionMax, zoomMin: this.props.resolutionMin});
     }
   }
   onPointerOut(e) {
     let {height, width} = this.props;
-    this.ctx.clearRect(0, 0, width, height);
+      this.ctx.clearRect(0, 0, width, height);
 
-    this.setState({prevDiff: -1, centerFreq: -1, zoomMax: this.props.resolutionMax, zoomMin: this.props.resolutionMin, evCache: {} });
+      this.setState({prevDiff: -1, zoomMax: this.props.resolutionMax, zoomMin: this.props.resolutionMin, evCache: {} });
   }
 
   remove_event(e) {
@@ -150,21 +169,27 @@ class Scales extends Component {
 
   }
 
-  newFreqAlgorithm(index) {
-    let logResolution = Math.log(this.props.resolutionMax / this.props.resolutionMin);
-    let freq = this.props.resolutionMin * Math.pow(Math.E, index * logResolution);
-    return Math.round(freq);
+  calculateNewMax(y, A0, newYPercent){
+    // A1 == A0
+      let B1 = Math.log(y/A0)/newYPercent;
+      let newMax = Math.pow(Math.E, B1)*A0;
+      return newMax;
   }
 
-  calculateNewMax(index, freq){
-    const originalMax = 20000;
-    const originalMin = 1;
-    let b = Math.log(this.props.resolutionMax/freq)/(originalMax - index);
-    let logResolution = b*(originalMax-originalMin);
-    let newMax = Math.pow(Math.E,(logResolution + Math.log(originalMin)));
-    console.log("INDEX: "+index);
-    console.log("NEW MAX: "+newMax);
-    return newMax;
+  calculateNewMin(y, A0, newYPercent){
+    // A1e^b1 = A0e^b0
+      let logResolution = Math.log(this.state.zoomMax / this.state.zoomMin); //b0
+      let intermediate = Math.log(y/A0)-logResolution;
+      let B1 = intermediate/(newYPercent - 1)
+      let newMin = this.state.zoomMax/Math.pow(Math.E, B1);
+      return newMin;
+  }
+
+
+  newFreqAlgorithm(index) {
+    let logResolution = Math.log(this.state.zoomMax / this.state.zoomMin);
+    let freq = this.state.zoomMin * Math.pow(Math.E, index * logResolution);
+    return Math.round(freq);
   }
 
   handleResize = () => {
@@ -175,9 +200,9 @@ class Scales extends Component {
   render() {
     return (
       <div className="scale-container">
-        <div className="zoom-text">
+        {/*<div className="zoom-text">
           Zoom
-        </div>
+        </div>*/}
         <canvas className="scale-canvas"
         onPointerDown={this.onPointerDown}
         onPointerMove={this.onPointerMove}

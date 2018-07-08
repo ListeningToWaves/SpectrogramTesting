@@ -161,7 +161,7 @@ class SoundControls extends Component {
                     className="scales-checkbox"
                     checked={context.state.noteLinesOn}
                     onChange={context.handleNoteLinesToggle}
-                    disabled={!context.state.isStarted || context.state.tuningMode}/>
+                    disabled={!context.state.isStarted || context.state.tuningMode || !context.state.scaleOn}/>
                   </div>
                   <div>
                   {context.state.musicKey.name}{context.state.accidental.name}{context.state.scale.name}
