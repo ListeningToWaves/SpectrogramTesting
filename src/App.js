@@ -95,7 +95,7 @@ class App extends Component {
           <br></br>
           while he was working at Google
         </h4>*/}
-        <a href="http://smus.com/spectrogram-and-oscillator/" target="_blank" rel="noopener noreferrer" >about</a>
+        <a href="https://github.com/ListeningToWaves/SpectrogramTesting" target="_blank" rel="noopener noreferrer" >about</a>
       </p>
       <Button icon onClick={this.toggleFullScreen} className="fullscreenbutton">
       {!this.state.fullScreen ?  <Icon fitted name="expand" color="orange" size="large"/> :

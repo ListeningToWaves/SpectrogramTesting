@@ -24,7 +24,7 @@
 }
 
 .tab-item:hover {
-  background-color: #d7dde5!important;
+  /* background-color: #d7dde5!important; */
 }
 
 .rangeslider__handle {
@@ -98,8 +98,8 @@
 }
 
 .function-switch-button:hover {
-  background-color: #a291fb;
-  color: white;
+  /* background-color: #a291fb; */
+  /* color: white; */
   outline: none;
   cursor: pointer;
 }

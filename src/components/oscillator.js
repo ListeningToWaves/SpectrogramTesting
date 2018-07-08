@@ -414,7 +414,7 @@ class Oscillator extends Component {
   }
 
   renderNoteLines(){
-    let {height, width} = this.props;
+    let {width} = this.props;
     // this.ctx.clearRect(0, 0, width, height);
     // this.ctx.fillStyle = 'white';
 

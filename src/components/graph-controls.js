@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import {Button, Icon, Form, Segment, Menu, Input, Dropdown, Checkbox, Radio} from 'semantic-ui-react';
+import {Button, Icon, Form, Segment, Menu, Input, Radio} from 'semantic-ui-react';
 import {MyContext} from './my-provider';
-import {scaleOptions, keyOptions, accidentalOptions} from '../util/dropdownOptions.js';
 
 import "../styles/tuning.css";
 // Using an ES6 transpiler like Babel

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Menu, Checkbox} from 'semantic-ui-react';
+import {Menu} from 'semantic-ui-react';
 import "../styles/menu.css";
 import GraphControls from './graph-controls';
 import SoundControls from './sound-controls';

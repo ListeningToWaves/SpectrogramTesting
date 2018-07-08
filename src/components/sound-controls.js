@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {MyContext} from './my-provider';
 
-import {Segment, Menu, Dropdown, Checkbox, Divider} from 'semantic-ui-react';
+import {Segment, Menu, Dropdown, Checkbox} from 'semantic-ui-react';
 import "../styles/sound.css";
 // Using an ES6 transpiler like Babel
 import Slider from 'react-rangeslider';
