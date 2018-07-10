@@ -6,6 +6,7 @@ import ScaleControls from './scale-controls'
 import NoteLines from './note-lines';
 import Oscillator from './oscillator';
 
+import { convertToLog, newFreqAlgorithm } from '../util/conversions';
 import { Button, Icon, Message } from 'semantic-ui-react';
 
 const ReactAnimationFrame = require('react-animation-frame');
@@ -30,7 +31,6 @@ class Spectrogram extends Component {
       musicKey: {name: 'C', value: 0 },
       accidental: {name: ' ', value: 0},
       scale: {name: 'Major', value: 0},
-      headphoneMode: false
     }
   }
   componentDidMount() {
@@ -44,7 +44,7 @@ class Spectrogram extends Component {
   // Connects the menu microphoneGain controls to gainNode
   componentWillReceiveProps(nextProps, prevState) {
     if (nextProps.isStarted) {
-      let gain = this.convertToLog(nextProps.microphoneGain, 1, 100, 0.01, 500);
+      let gain = convertToLog(nextProps.microphoneGain, 1, 100, 0.01, 500);
       if (gain !== gainNode.gain.value) {
         gainNode.gain.setTargetAtTime(gain, audioContext.currentTime, 0.01);
       }
@@ -136,7 +136,7 @@ class Spectrogram extends Component {
       // Gets the height and creates a log scale of the index
       if (log) {
         let myPercent = (i / height);
-        var logPercent = this.newFreqAlgorithm(myPercent);
+        var logPercent = newFreqAlgorithm(myPercent, resolutionMax, resolutionMin);
         let logIndex = Math.round(logPercent * freq.length / (audioContext.sampleRate / 2));
         value = freq[logIndex];
 
@@ -172,24 +172,10 @@ class Spectrogram extends Component {
     return 'hsl(H, 100%, P%)'.replace(/H/g, 255 - value).replace(/P/g, percent);
   }
 
-  // Helper function that converts the frequencies to a log scale
-  newFreqAlgorithm(index) {
-    let logResolution = Math.log(this.props.resolutionMax / this.props.resolutionMin);
-    let freq = this.props.resolutionMin * Math.pow(Math.E, index * logResolution);
-    return Math.round(freq);
-  }
 
-  // Helper Function for Conversion to log for outputVolume, graph scale
-  convertToLog(value, originalMin, originalMax,newMin, newMax){
-    //solving y=Ae^bx for y
-    let b = Math.log(newMax / newMin)/(originalMax-originalMin);
-    let a = newMax /  Math.pow(Math.E,  originalMax* b);
-    let y = Math.round(a *Math.pow(Math.E, b*value)*100)/100;
-    return y;
-  }
+
 
 handleHeadphoneModeToggle=()=>{
-  this.setState({headphoneMode: !this.state.headphoneMode});
   this.props.handleHeadphoneModeToggle();
 }
 
@@ -239,7 +225,7 @@ handleHeadphoneModeToggle=()=>{
       handleResize={this.props.handleResize}/>
     );
       let style={'backgroundColor': ''}
-    if(this.state.headphoneMode){
+    if(this.props.headphoneMode){
       style = {'backgroundColor': '#2769d8'}
     }
     let borderStyle={'border': '' }
@@ -272,7 +258,7 @@ handleHeadphoneModeToggle=()=>{
             <Icon fitted name="headphones" color="orange"/>
           </Button>
           <div className="color-map-container">
-            Graph Scale
+            <div className="color-map-text">Graph Scale</div>
             <div className="color-map"></div>
             <div className="color-map-labels">
               Soft<span>Loud</span>

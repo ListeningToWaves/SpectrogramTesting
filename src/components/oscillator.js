@@ -3,6 +3,8 @@ import Tone from 'tone';
 import "../styles/oscillator.css"
 import generateScale from '../util/generateScale';
 
+import { newFreqAlgorithm, getGain, freqToIndex, getMousePos } from "../util/conversions";
+
 const NUM_VOICES = 6;
 const RAMPVALUE = 0.1;
 
@@ -46,13 +48,13 @@ class Oscillator extends Component {
       this.synths[i] = new Tone.Synth(options);
       this.synths[i].connect(this.masterVolume);
     }
+    this.goldIndices = [];
     this.masterVolume.connect(Tone.Master);
     //Off by default
     this.masterVolume.mute = !this.props.soundOn;
 
     this.frequencies = {};
     this.freq = 1;
-    this.goldIndex = -1;
 
     window.addEventListener("resize", this.handleResize);
   }
@@ -65,7 +67,7 @@ class Oscillator extends Component {
       this.masterVolume.mute = false;
     }
     if (this.masterVolume.mute === false && nextProps.outputVolume && nextProps.outputVolume !== this.masterVolume.volume.value ) {
-      this.masterVolume.volume.value = this.getGain(1 - (nextProps.outputVolume) / 100);
+      this.masterVolume.volume.value = getGain(1 - (nextProps.outputVolume) / 100);
     }
     if (nextProps.timbre !== this.synths[0].oscillator.type) {
       let newTimbre = nextProps.timbre.toLowerCase();
@@ -123,11 +125,11 @@ class Oscillator extends Component {
   */
   onMouseDown(e) {
     e.preventDefault();
-    let pos = this.getMousePos(this.canvas, e);
+    let pos = getMousePos(this.canvas, e);
     let yPercent = 1 - pos.y / this.props.height;
     let xPercent = 1 - pos.x / this.props.width;
     let freq = this.newFreqAlgorithm(yPercent);
-    let gain = this.getGain(xPercent);
+    let gain = getGain(xPercent);
 
     let newVoice = (this.state.currentVoice + 1) % NUM_VOICES; // Mouse always changes to new "voice"
     this.synths[newVoice].triggerAttack(freq);
@@ -147,10 +149,12 @@ class Oscillator extends Component {
   onMouseMove(e) {
     e.preventDefault();
     if (this.state.mouseDown) {
-      let pos = this.getMousePos(this.canvas, e);
-      let yPercent = 1 - pos.y / this.props.height;
-      let xPercent = 1 - pos.x / this.props.width;
-      let gain = this.getGain(xPercent);
+      let {height, width} = this.props
+      let pos = getMousePos(this.canvas, e);
+      let yPercent = 1 - pos.y / height;
+      let xPercent = 1 - pos.x / width;
+      let gain = getGain(xPercent);
+      this.goldIndices.splice(this.state.currentVoice - 1, 1);
       let freq = this.newFreqAlgorithm(yPercent);
       // this.synths[this.state.currentVoice].oscillator.frequency.value = freq;
       // Ramps to new Frequency
@@ -163,18 +167,6 @@ class Oscillator extends Component {
       this.ctx.clearRect(0, 0, this.props.width, this.props.height);
       this.label(freq, pos.x, pos.y);
       if(this.props.noteLinesOn){
-        for(let j in this.frequencies){
-          if(Math.abs(this.frequencies[j] - freq) < 0.01 * freq){
-            if(this.frequencies[j] !== this.freq){
-              // this.ctx.fillStyle = 'white';
-              // let oldIndex = this.freqToIndex(this.freq);
-              // this.ctx.fillRect(0, oldIndex, width, 1.5);
-              this.freq = this.frequencies[j];
-              let index = this.freqToIndex(this.frequencies[j]);
-              this.goldIndex = index;// Sets the Gold Line to the new Line
-            }
-          }
-        }
         this.renderNoteLines();
 
       }
@@ -188,9 +180,11 @@ class Oscillator extends Component {
       this.synths[this.state.currentVoice].triggerRelease();
       this.setState({mouseDown: false, voices: 0});
       // Clears the label
+      this.goldIndices = []
+
+
       this.ctx.clearRect(0, 0, this.props.width, this.props.height);
       if(this.props.noteLinesOn){
-        this.goldIndex = -1;
         this.renderNoteLines();
       }
     }
@@ -202,10 +196,12 @@ class Oscillator extends Component {
     if (this.state.mouseDown) {
       this.synths[this.state.currentVoice].triggerRelease();
       this.setState({mouseDown: false, voices: 0});
+      this.goldIndices = [];
+
       // Clears the label
       this.ctx.clearRect(0, 0, this.props.width, this.props.height);
       if(this.props.noteLinesOn){
-        this.goldIndex = -1;
+        // this.goldIndex = -1;
         this.renderNoteLines();
       }
     }
@@ -219,10 +215,10 @@ class Oscillator extends Component {
   onTouchStart(e) {
     e.preventDefault();
     for (let i = 0; i < e.touches.length; i++) {
-      let pos = this.getMousePos(this.canvas, e.touches[i]);
+      let pos = getMousePos(this.canvas, e.touches[i]);
       let yPercent = 1 - pos.y / this.props.height;
       let xPercent = 1 - pos.x / this.props.width;
-      let gain = this.getGain(xPercent);
+      let gain = getGain(xPercent);
       let freq = this.newFreqAlgorithm(yPercent);
       let newVoice = (this.state.currentVoice + 1) % NUM_VOICES;
       this.setState({
@@ -242,19 +238,31 @@ class Oscillator extends Component {
   }
   onTouchMove(e) {
     e.preventDefault();
+    let {width, height} = this.props;
+
     if (this.state.touch) {
       let voiceToChange = this.state.currentVoice - (this.state.voices - 1);
       for (let i = 0; i < e.changedTouches.length; i++) {
-        let pos = this.getMousePos(this.canvas, e.changedTouches[i]);
+        let pos = getMousePos(this.canvas, e.changedTouches[i]);
         let yPercent = 1 - pos.y / this.props.height;
         let xPercent = 1 - pos.x / this.props.width;
-        let gain = this.getGain(xPercent);
+        let gain = getGain(xPercent);
+
         let freq = this.newFreqAlgorithm(yPercent);
         let index = (voiceToChange + e.changedTouches[i].identifier) % NUM_VOICES;
         // Wraps the array
         index = (index < 0)
           ? (NUM_VOICES + index)
           : index;
+
+          let oldFreq = this.synths[index].frequency.value;
+          for (let note in this.frequencies){
+            if (Math.abs(this.frequencies[note] - oldFreq) < 0.1*oldFreq){
+              oldFreq = this.frequencies[note]
+            }
+          }
+          this.goldIndices.splice(index - 1, 1);
+
           // Ramps to new Frequency
   this.synths[index].frequency.exponentialRampToValueAtTime(freq, this.props.context.currentTime+RAMPVALUE);
         // this.synths[index].frequency.value = freq;
@@ -264,9 +272,9 @@ class Oscillator extends Component {
         // Clears the canvas on touch move
       }
       //RedrawLabels
-        this.ctx.clearRect(0, 0, this.props.width, this.props.height);
+        this.ctx.clearRect(0, 0, width, height);
       for (let i = 0; i < e.touches.length; i++) {
-        let pos = this.getMousePos(this.canvas, e.touches[i]);
+        let pos = getMousePos(this.canvas, e.touches[i]);
         let yPercent = 1 - pos.y / this.props.height;
         let freq = this.newFreqAlgorithm(yPercent);
         this.label(freq, pos.x, pos.y);
@@ -278,10 +286,13 @@ class Oscillator extends Component {
   }
   onTouchEnd(e) {
     e.preventDefault();
+    let {width, height} = this.props;
     if (e.changedTouches.length === e.touches.length + 1) {
       for (var i = 0; i < NUM_VOICES; i++) {
         this.synths[i].triggerRelease();
       }
+      this.goldIndices = []
+
       this.setState({voices: 0, touch: false, notAllRelease: false, currentVoice: -1});
     } else {
       let voiceToRemoveFrom = this.state.currentVoice - (this.state.voices - 1);
@@ -291,6 +302,8 @@ class Oscillator extends Component {
         index = (index < 0)
           ? (NUM_VOICES + index)
           : index;
+
+          this.goldIndices.splice(index, 1);
         this.synths[index].triggerRelease();
         this.setState({
           voices: this.state.voices - 1
@@ -301,11 +314,11 @@ class Oscillator extends Component {
         ? (NUM_VOICES + newVoice)
         : newVoice;
       this.setState({currentVoice: newVoice});
+
     }
     // Clears the label
-    this.ctx.clearRect(0, 0, this.props.width, this.props.height);
+    this.ctx.clearRect(0, 0, width, height);
     if(this.props.noteLinesOn){
-      this.goldIndex = -1;
       this.renderNoteLines();
     }
 
@@ -314,8 +327,8 @@ class Oscillator extends Component {
   // Helper function that determines the frequency to play based on the mouse/finger position
   // Also deals with snapping it to a scale if scale mode is on
   newFreqAlgorithm(index) {
-    let logResolution = Math.log(this.props.resolutionMax / this.props.resolutionMin);
-    let freq = this.props.resolutionMin * Math.pow(Math.E, index * logResolution);
+    let {resolutionMax, resolutionMin, height} = this.props;
+    let freq = newFreqAlgorithm(index, resolutionMax, resolutionMin)
     if (this.props.scaleOn) {
       //  Maps to one of the 12 keys of the piano based on note and accidental
       let newIndexedKey = this.props.musicKey.value;
@@ -359,19 +372,17 @@ class Oscillator extends Component {
       freq = note;
       let textLabel = name + '' + harmonic;
       this.scaleLabel = textLabel;
+      let index = freqToIndex(freq, resolutionMax, resolutionMin, height);
+
+      if (!this.goldIndices.includes(index)){
+        this.goldIndices[this.state.currentVoice] = index;
+
+      }
 
     }
     return Math.round(freq);
   }
 
-  // Helper function that turns the x-pos into a decibel value for the volume
-  getGain(index) {
-    //1 t0 0 ->
-    //-30 to 0dB
-    index = index - 0.1;
-    // console.log(index);
-    return -1 * (index * 30);
-  }
   handleResize = () => {
     this.props.handleResize();
     this.ctx.clearRect(0, 0, this.props.width, this.props.height);
@@ -402,19 +413,8 @@ class Oscillator extends Component {
     }
   }
 
-  freqToIndex(freq) {
-    let logResolution = Math.log(this.props.resolutionMax / this.props.resolutionMin);
-    let x = Math.log(freq / this.props.resolutionMin) / logResolution;
-
-    // console.log(x*100);
-    if (!isNaN(x)) {
-      return (1 - x) * this.props.height;
-    }
-    return 0;
-  }
-
   renderNoteLines(){
-    let {width} = this.props;
+    let {height, width, resolutionMax, resolutionMin} = this.props;
     // this.ctx.clearRect(0, 0, width, height);
     // this.ctx.fillStyle = 'white';
 
@@ -443,13 +443,16 @@ class Oscillator extends Component {
       let freq = s.scale[i];
 
       for (let j = 0; j < 15; j++) {
-        if (freq > this.props.resolutionMax) {
+        if (freq > resolutionMax) {
           break;
         } else {
           let name = s.scaleNames[i]+''+j;
-          let index = this.freqToIndex(freq);
+          let index = freqToIndex(freq, resolutionMax, resolutionMin, height);
           this.frequencies[name] = freq;
-          if(index === this.goldIndex && this.props.soundOn){
+
+          // console.log("NOTELINES GOLD: "+this.goldIndices);
+          // console.log("NOTELINES INDEX: "+index);
+          if(this.goldIndices.includes(index) && this.props.soundOn){
             this.ctx.fillStyle = 'gold';
             this.ctx.fillRect(0, index, width, 1.5);
           } else {

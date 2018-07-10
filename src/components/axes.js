@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import "../styles/axes.css";
+import { newFreqAlgorithm } from "../util/conversions";
 
 class Axes extends Component {
 
@@ -29,7 +30,7 @@ class Axes extends Component {
   }
 
   renderAxesLabels = () => {
-    let {height, width} = this.props;
+    let {height, width, resolutionMax, resolutionMin} = this.props;
     this.ctx.clearRect(0, 0, width, height);
     // Render the vertical frequency axis.
     const units = 'Hz';
@@ -53,7 +54,7 @@ class Axes extends Component {
       // var logIndex = this.logScale(index, maxSample)+minSample;
       // Never show 0 Hz.
 
-      let freq = Math.max(1, this.newFreqAlgorithm(percent));
+      let freq = Math.max(1, newFreqAlgorithm(percent, resolutionMax, resolutionMin));
 
       this.ctx.font = '18px Inconsolata';
       // Draw the value.
@@ -69,12 +70,7 @@ class Axes extends Component {
       this.ctx.fillRect(x + 40, y, 30, 2);
     }
   }
-  // Logarithmic Algorithm to determine frequency
-  newFreqAlgorithm(index) {
-    let logResolution = Math.log(this.props.resolutionMax / this.props.resolutionMin);
-    let freq = this.props.resolutionMin * Math.pow(Math.E, index * logResolution);
-    return Math.round(freq);
-  }
+
 
   render() {
     return (

@@ -25,9 +25,12 @@
     left: 8%;
     top: 10%;
     padding: 2px;
-    color: white;
-    z-index: 12;
+
+    z-index: 21;
     user-select: none;
+    font-family: 'Lato';
+    /* font-size: 16px; */
+     /* font-family: "Lato,'Helvetica Neue',Arial,Helvetica,sans-serif"; */
   }
 
   .color-map {
@@ -37,31 +40,42 @@
     height: 20px;
   }
 
+  .color-map-text {
+    color: white;
+    display: flex;
+    justify-content: center;
+    font-family: 'Lato';
+    /* background-color: black; */
+  }
+
   .color-map-labels {
     color: white;
     display: flex;
     justify-content: space-between;
+    font-family: 'Lato';
+    /* background-color: black; */
   }
+
   .pause-button {
     position: absolute;
     left: 0%;
-    top: 10%;
+    top: 11%;
     margin: 2px 2px!important;
     min-width: 3%;
     max-width: 4%;
     z-index: 21;
-    opacity: 0.5;
+    /* opacity: 0.5; */
     border: 2px solid #ABE2FB!important;
     border-radius: 3rem!important;
   }
   .headphone-mode-button {
     position: absolute;
     left: 4%;
-    top: 10%;
+    top: 11%;
     margin: 2px 2px!important;
     min-width: 3%;
     z-index: 21;
-    opacity: 0.5;
+    /* opacity: 0.5; */
     border: 2px solid #ABE2FB!important;
     border-radius: 3rem!important;
   }

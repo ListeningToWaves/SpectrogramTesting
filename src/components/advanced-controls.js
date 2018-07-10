@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Icon, Form, Segment, Menu, Input, Dropdown, Checkbox, Radio} from 'semantic-ui-react';
+import {Button, Icon, Segment, Menu} from 'semantic-ui-react';
 import {MyContext} from './my-provider';
 
 

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {convertToLog, convertToLinear} from "../util/conversions";
 // React new Context API
 // Create Context
 export const MyContext = React.createContext();
@@ -41,23 +42,7 @@ class MyProvider extends Component {
   componentDidMount(){
     defaultState = this.state;
   }
-  // Helper Function for Conversion to log for outputVolume, graph scale
-  convertToLog(value, originalMin, originalMax,newMin, newMax){
-    //solving y=Ae^bx for y
-    let b = Math.log(newMax / newMin)/(originalMax-originalMin);
-    let a = newMax /  Math.pow(Math.E,  originalMax* b);
-    let y = a *Math.pow(Math.E, b*value);
-    // console.log(y);
-    return y;
-  }
 
-  convertToLinear(value, originalMin, originalMax, newMin, newMax){
-    //solving y=Ae^bx for x, x=ln(y-A)/b
-        let b = Math.log(newMax / newMin)/(originalMax-originalMin);
-        let a = newMax /  Math.pow(Math.E,  originalMax* b);
-        let x = Math.log(value - a)/b;
-      return x;
-  }
   //Functions that setState based on Controls
   render() {
     return (
@@ -65,7 +50,6 @@ class MyProvider extends Component {
         state: this.state,
         handleGainChange: value => {
           if(this.state.isStarted){
-            // let gain = this.convertToLog(value, 1, 100, 0.01, 500);
             this.setState({microphoneGain: value});
           }
         },
@@ -123,8 +107,8 @@ class MyProvider extends Component {
         },
         handleRangeChange: value => {
           if(value.length){
-            let newMin = Math.round(this.convertToLog(value[0], 1,100, 1, 20000));
-            let newMax = Math.round(this.convertToLog(value[1], 1,100, 1, 20000));
+            let newMin = Math.round(convertToLog(value[0], 1,100, 1, 20000));
+            let newMax = Math.round(convertToLog(value[1], 1,100, 1, 20000));
             this.setState({
               min: newMin,
               max: newMax,
@@ -151,9 +135,9 @@ class MyProvider extends Component {
             }
             if(lowerValue < 1) lowerValue = 1;
             if(upperValue > 20000) upperValue = 20000;
-            let newMin = Math.round(this.convertToLinear(lowerValue, 1, 100, 1, 20000));
+            let newMin = Math.round(convertToLinear(lowerValue, 1, 100, 1, 20000));
             // console.log(newMin);
-            let newMax = Math.round(this.convertToLinear(upperValue, 1,100, 1, 20000));
+            let newMax = Math.round(convertToLinear(upperValue, 1,100, 1, 20000));
             lowerValue = Math.round(lowerValue);
             upperValue = Math.round(upperValue);
             this.setState({min: lowerValue, max: upperValue, resolutionMin: lowerValue, resolutionMax: upperValue, limitMin: newMin, limitMax: newMax });
@@ -190,8 +174,8 @@ class MyProvider extends Component {
           }
 
 
-          let newMin = Math.round(this.convertToLinear(lowerValue, 1, 100, 1, 20000));
-          let newMax = Math.round(this.convertToLinear(upperValue, 1,100, 1, 20000));
+          let newMin = Math.round(convertToLinear(lowerValue, 1, 100, 1, 20000));
+          let newMax = Math.round(convertToLinear(upperValue, 1,100, 1, 20000));
           this.setState({resolutionMin: lowerValue, resolutionMax: upperValue, min: lowerValue, max: upperValue, limitMin: newMin, limitMax: newMax, graphPreset: data.value});
         },
         //menuClose: () => this.setState({hidePanes: true}),
@@ -206,8 +190,8 @@ class MyProvider extends Component {
           if(isNaN(upperValue) || upperValue < this.state.resolutionMin || upperValue < 0) {
             upperValue = this.state.resolutionMax;
           }
-          let newMax = Math.round(this.convertToLinear(upperValue, 1,100, 1, 20000));
-          let newMin = Math.round(this.convertToLinear(lowerValue, 1, 100, 1, 20000));
+          let newMax = Math.round(convertToLinear(upperValue, 1,100, 1, 20000));
+          let newMin = Math.round(convertToLinear(lowerValue, 1, 100, 1, 20000));
           lowerValue = Math.round(lowerValue);
           upperValue = Math.round(upperValue);
           this.setState({min: lowerValue, max: upperValue, resolutionMin: lowerValue, resolutionMax: upperValue, limitMin: newMin, limitMax: newMax });

@@ -1,5 +1,6 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import "../styles/scale-controls.css";
+import { getMousePos, newFreqAlgorithm, calculateNewMax, calculateNewMin } from "../util/conversions";
 
 class Scales extends Component {
   constructor(props) {
@@ -28,29 +29,21 @@ class Scales extends Component {
   componentWillUnmount() {
     window.removeEventListener("resize", this.handleResize);
   }
-  getMousePos(canvas, evt) {
-    var rect = canvas.getBoundingClientRect(), // abs. size of element
-      scaleX = canvas.width / rect.width, // relationship bitmap vs. element for X
-      scaleY = canvas.height / rect.height; // relationship bitmap vs. element for Y
 
-    return {
-      x: (evt.clientX - rect.left) * scaleX, // scale mouse coordinates after they have
-      y: (evt.clientY - rect.top) * scaleY // been adjusted to be relative to element
-    }
-  }
 
   onPointerDown(e) {
     let key = e.pointerId;
     let newObj = this.state.evCache;
-    let pos = this.getMousePos(this.canvas, e);
+    let pos = getMousePos(this.canvas, e);
     newObj[key] = pos.y;
     this.ctx.fillStyle = '#d6d1d5';
     this.ctx.fillRect(0, pos.y, this.canvas.width, 20);
 
-    let freq = this.newFreqAlgorithm(1-pos.y/this.props.height);
+    let freq = newFreqAlgorithm(1-pos.y/this.props.height, this.state.zoomMax, this.state.zoomMin);
     this.ctx.font = '24px Inconsolata';
     this.ctx.fillStyle = 'white';
     this.ctx.fillText(freq + ' Hz', 100, pos.y);
+
     let top,bottom;
     let length = Object.keys(newObj).length;
 
@@ -75,7 +68,7 @@ class Scales extends Component {
       this.ctx.clearRect(0, 0, width, height);
       let newObj = this.state.evCache;
       let key = e.pointerId;
-      let pos = this.getMousePos(this.canvas, e);
+      let pos = getMousePos(this.canvas, e);
       newObj[key] = pos.y;
 
 
@@ -95,8 +88,8 @@ class Scales extends Component {
         bottom = finger2;
       }
       // Color each pointer
-      let freq1 = this.newFreqAlgorithm(1-this.state.topFreq/this.props.height);
-      let freq2 = this.newFreqAlgorithm(1-this.state.bottomFreq/this.props.height);
+      let freq1 = newFreqAlgorithm(1-this.state.topFreq/this.props.height, this.state.zoomMax, this.state.zoomMin);
+      let freq2 = newFreqAlgorithm(1-this.state.bottomFreq/this.props.height, this.state.zoomMax, this.state.zoomMin);
       this.ctx.fillStyle = '#d6d1d5';
       this.ctx.fillRect(0, finger1, this.canvas.width, 20);
       this.ctx.fillRect(0, finger2, this.canvas.width, 20);
@@ -110,35 +103,14 @@ class Scales extends Component {
       let curDiff = Math.abs(top - bottom);
 
       if (this.state.prevDiff > 0) {
-      //     if (curDiff > this.state.prevDiff) {
-      //       let A0 = this.state.zoomMin;
-      //       let yPercent1 = 1 - this.state.topFreq / this.props.height;
-      //       let yPercent2 = 1 - this.state.bottomFreq / this.props.height;
-      //       let freq1 = this.newFreqAlgorithm(yPercent1)
-      //       let freq2 = this.newFreqAlgorithm(yPercent2)
-      //       let newYPercent1 = 1 - top/this.props.height;
-      //       let newYPercent2 = 1 - bottom/this.props.height;
-      //
-      //       if (newYPercent1 > 1) newYPercent1 = 1;
-      //       if (newYPercent2 > 1) newYPercent2 = 1;
-      //       if (newYPercent1 < 0) newYPercent1 = 0;
-      //       if (newYPercent2 < 0) newYPercent2 = 0;
-      //       // console.log("ZOOM IN");
-      //        // Zoom In. Top finger sets the top, bottom sets the bottom
-      //
-      //        let newMax = this.calculateNewMax(freq1, A0, newYPercent1);
-      //        let newMin = this.calculateNewMin(freq2, A0, newYPercent2);
-      //        this.props.handleZoom(newMax, newMin);
-      //
-      //     }
-      // if (curDiff < this.state.prevDiff) {
+        // if (curDiff < this.state.prevDiff) {
           // Zoom Out
           // console.log("ZZOM OUT");
           let A0 = this.state.zoomMin;
           let yPercent1 = 1 - this.state.topFreq / this.props.height;
           let yPercent2 = 1 - this.state.bottomFreq / this.props.height;
-          let freq1 = this.newFreqAlgorithm(yPercent1)
-          let freq2 = this.newFreqAlgorithm(yPercent2)
+          let freq1 = newFreqAlgorithm(yPercent1, this.state.zoomMax, this.state.zoomMin)
+          let freq2 = newFreqAlgorithm(yPercent2, this.state.zoomMax, this.state.zoomMin)
           let newYPercent1 = 1 - top/this.props.height;
           let newYPercent2 = 1 - bottom/this.props.height;
 
@@ -146,8 +118,8 @@ class Scales extends Component {
           if (newYPercent2 > 1) newYPercent2 = 1;
           if (newYPercent1 < 0) newYPercent1 = 0;
           if (newYPercent2 < 0) newYPercent2 = 0;
-          let newMax = this.calculateNewMax(freq1, A0, newYPercent1);
-          let newMin = this.calculateNewMin(freq2, A0, newYPercent2);
+          let newMax = calculateNewMax(freq1, A0, newYPercent1);
+          let newMin = calculateNewMin(freq2, A0, newYPercent2, this.state.zoomMax, this.state.zoomMin);
           if (newMax > 20000) newMax = 20000;
           if (newMin < 1) newMin = 1;
           this.props.handleZoom(newMax, newMin);
@@ -184,28 +156,9 @@ class Scales extends Component {
 
   }
 
-  calculateNewMax(y, A0, newYPercent){
-    // A1 == A0
-      let B1 = Math.log(y/A0)/newYPercent;
-      let newMax = Math.pow(Math.E, B1)*A0;
-      return newMax;
-  }
-
-  calculateNewMin(y, A0, newYPercent){
-    // A1e^b1 = A0e^b0
-      let logResolution = Math.log(this.state.zoomMax / this.state.zoomMin); //b0
-      let intermediate = Math.log(y/A0)-logResolution;
-      let B1 = intermediate/(newYPercent - 1)
-      let newMin = this.state.zoomMax/Math.pow(Math.E, B1);
-      return newMin;
-  }
 
 
-  newFreqAlgorithm(index) {
-    let logResolution = Math.log(this.state.zoomMax / this.state.zoomMin);
-    let freq = this.state.zoomMin * Math.pow(Math.E, index * logResolution);
-    return Math.round(freq);
-  }
+
 
   handleResize = () => {
     this.props.handleResize();
