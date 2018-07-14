@@ -38,7 +38,7 @@ function getGain(index) {
   //1 t0 0 ->
   //-30 to 0dB
   index = index - 0.1;
-  // console.log(index);
+  console.log(index);
   return -1 * (index * 30);
 }
 

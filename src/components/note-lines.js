@@ -259,8 +259,8 @@ class NoteLines extends Component {
   onTouchEnd(e){
     e.preventDefault();
     this.synth.triggerRelease();
-    this.renderNoteLines();
     this.goldIndices = [];
+    this.renderNoteLines();
     this.freq = -1;
     // this.touch = false;
   }
