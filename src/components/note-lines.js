@@ -4,14 +4,16 @@ import Tone from 'tone';
 import '../styles/note-lines.css';
 import { getGain, newFreqAlgorithm, getMousePos, freqToIndex } from "../util/conversions";
 
-const release = 0.01;
+const NUM_VOICES = 6;
+
+const release = 2;
 let options = {
   oscillator: {
     type: "sine"
   },
   envelope: {
     attack: 0.1,
-    release: 2
+    release: release
   }
 };
 class NoteLines extends Component {
@@ -25,6 +27,13 @@ class NoteLines extends Component {
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
     this.onTouchEnd = this.onTouchEnd.bind(this);
+    this.state = {
+      mouseDown: false,
+      touch: false,
+      currentVoice: 0,
+      voices: 0, //voices started with on event
+      feedback: false
+    }
   }
 
   componentDidMount() {
@@ -44,7 +53,7 @@ class NoteLines extends Component {
     }
     this.frequencies = {};
     this.freq = 1;
-    this.goldIndex = -1;
+    this.goldIndices = [];
     this.renderNoteLines();
 
   }
@@ -65,15 +74,48 @@ class NoteLines extends Component {
   }
 
   onMouseDown(e){
-    console.log("DOWN");
     e.preventDefault();
-    this.mouseDown = true;
-    this.onMouseMove(e);
+    let {height, width, soundOn, resolutionMax, resolutionMin} = this.props;
+    let pos = getMousePos(this.canvas, e);
+    let yPercent = 1 - pos.y / height;
+    let xPercent = 1 - pos.x / width;
+    let gain = getGain(xPercent);
+    let freq = newFreqAlgorithm(yPercent, resolutionMax, resolutionMin);
+
+    if(soundOn){
+      for(let j in this.frequencies){
+        if(Math.abs(this.frequencies[j] - freq) < 0.01 * freq){
+          if(this.frequencies[j] !== this.freq){
+            this.synth = new Tone.Synth(options);
+            this.synth.connect(this.masterVolume);
+            this.synth.triggerAttack(this.frequencies[j]);
+            this.synth.volume.value = gain;
+            this.freq = this.frequencies[j];
+            let index = freqToIndex(this.frequencies[j], this.props.resolutionMax, this.props.resolutionMin, this.props.height);
+            // this.goldIndices.splice(this.state.currentVoice, 1);// Sets the Gold Line to the new Line
+            if (!this.goldIndices.includes(index)){
+              this.goldIndices[this.state.currentVoice] = index;
+            }
+            this.renderNoteLines();
+            // let endTime =  this.props.context.currentTime + release;
+            this.label(j, pos.x, pos.y+2);
+
+          }
+
+          break;
+        }
+      }
+      let newVoice = (this.state.currentVoice + 1) % NUM_VOICES; // Mouse always changes to new "voice"
+      this.setState({
+        mouseDown: true,
+        currentVoice: newVoice,
+        voices: this.state.voices + 1});
+    }
   }
 
   onMouseMove(e) {
     e.preventDefault();
-    if(this.mouseDown){
+    if(this.state.mouseDown){
         let {height, width, soundOn, resolutionMax, resolutionMin} = this.props;
         let pos = getMousePos(this.canvas, e);
         let yPercent = 1 - pos.y / height;
@@ -84,33 +126,27 @@ class NoteLines extends Component {
           for(let j in this.frequencies){
             if(Math.abs(this.frequencies[j] - freq) < 0.01 * freq){
               if(this.frequencies[j] !== this.freq){
-                this.synth.triggerRelease();
-
-                // this.ctx.fillStyle = 'white';
-                // let oldIndex = this.freqToIndex(this.freq);
-                // this.ctx.fillRect(0, oldIndex, width, 1.5);
-                this.freq = this.frequencies[j];
-                let index = freqToIndex(this.frequencies[j], this.props.resolutionMax, this.props.resolutionMin, this.props.height);
-                this.goldIndex = index;// Sets the Gold Line to the new Line
-                this.renderNoteLines();
                 let endTime =  this.props.context.currentTime + release;
                 this.synth.volume.cancelAndHoldAtTime(this.props.context.currentTime);
-                this.synth.volume.exponentialRampToValueAtTime(0.0001, endTime);
-                this.synth.oscillator.stop(this.props.context.currentTime + options.envelope.release);
-                // this.synth = null;
-
+                this.synth.volume.exponentialRampToValueAtTime(-80, endTime);
+                this.synth.oscillator.stop(this.props.context.currentTime + release);
+                this.synth = null;
                 this.synth = new Tone.Synth(options);
-
                 this.synth.connect(this.masterVolume);
-                this.synth.triggerAttack(this.frequencies[j]);
+                this.synth.triggerAttack(this.frequencies[j])
+                this.synth.volume.value = gain;
+
+                let index = freqToIndex(this.frequencies[j], this.props.resolutionMax, this.props.resolutionMin, this.props.height);
+                if (!this.goldIndices.includes(index)){
+                  this.goldIndices[this.state.currentVoice] = index;
+                }
+                this.goldIndices.splice(this.state.currentVoice - 1, 1);// Sets the Gold Line to the new Line
+                this.renderNoteLines();
+                this.freq = this.frequencies[j];
                 this.label(j, pos.x, pos.y+2);
 
-                // this.synth.volume.value = gain;
               }
-              console.log(gain);
-              if(gain < -40){
-                // this.synth.triggerRelease();
-              }
+              this.synth.volume.value = gain;
               break;
             }
           }
@@ -120,22 +156,21 @@ class NoteLines extends Component {
 
   onMouseUp(e){
     e.preventDefault();
-    this.mouseDown = false;
+    this.setState({mouseDown: false});
     this.synth.triggerRelease();
     this.synth = null;
     this.synth = new Tone.Synth(options);
     this.synth.volume.value  = -Infinity;
-    console.log(this.synth);
-    this.goldIndex = -1;
+    this.goldIndices = [];
     this.freq = -1;
     this.renderNoteLines();
 
   }
   onMouseOut(e){
     e.preventDefault();
-    this.mouseDown = false;
+    this.setState({mouseDown: false});
     this.synth.triggerRelease();
-    this.goldIndex = -1;
+    this.goldIndices = [];
     this.freq = -1;
     this.renderNoteLines();
 
@@ -143,8 +178,42 @@ class NoteLines extends Component {
 
   onTouchStart(e){
     e.preventDefault();
-    // this.touch = true;
-    this.onTouchMove(e);
+    let {height, width, soundOn, resolutionMax, resolutionMin} = this.props;
+    let pos = getMousePos(this.canvas, e.touches[0]);
+    let yPercent = 1 - pos.y / height;
+    let xPercent = 1 - pos.x / width;
+    let gain = getGain(xPercent);
+    let freq = newFreqAlgorithm(yPercent, resolutionMax, resolutionMin);
+
+    if(soundOn){
+      for(let j in this.frequencies){
+        if(Math.abs(this.frequencies[j] - freq) < 0.01 * freq){
+          if(this.frequencies[j] !== this.freq){
+            this.synth = new Tone.Synth(options);
+            this.synth.connect(this.masterVolume);
+            this.synth.triggerAttack(this.frequencies[j]);
+            this.synth.volume.value = gain;
+            this.freq = this.frequencies[j];
+            let index = freqToIndex(this.frequencies[j], this.props.resolutionMax, this.props.resolutionMin, this.props.height);
+            this.goldIndices.splice(this.state.currentVoice, 1);// Sets the Gold Line to the new Line
+            if (!this.goldIndices.includes(index)){
+              this.goldIndices[this.state.currentVoice] = index;
+            }
+            this.renderNoteLines();
+            // let endTime =  this.props.context.currentTime + release;
+            this.label(j, pos.x, pos.y+2);
+
+          }
+
+          break;
+        }
+      }
+      let newVoice = (this.state.currentVoice + 1) % NUM_VOICES; // Mouse always changes to new "voice"
+      this.setState({
+        mouseDown: true,
+        currentVoice: newVoice,
+        voices: this.state.voices + 1});
+    }
   }
   onTouchMove(e) {
     e.preventDefault();
@@ -159,26 +228,23 @@ class NoteLines extends Component {
           for(let j in this.frequencies){
             if(Math.abs(this.frequencies[j] - freq) < 0.01 * freq){
               if(this.frequencies[j] !== this.freq){
-                this.synth.triggerRelease();
-                // this.ctx.fillStyle = 'white';
-                // let oldIndex = this.freqToIndex(this.freq);
-                // this.ctx.fillRect(0, oldIndex, width, 1.5);
-                this.freq = this.frequencies[j];
-                let index = freqToIndex(this.frequencies[j], this.props.resolutionMax, this.props.resolutionMin, this.props.height);
-                this.goldIndex = index;
-                this.renderNoteLines();
-
                 let endTime =  this.props.context.currentTime + release;
                 this.synth.volume.cancelAndHoldAtTime(this.props.context.currentTime);
-                this.synth.volume.exponentialRampToValueAtTime(0.0001, endTime);
-                this.synth.oscillator.stop(endTime);
+                this.synth.volume.exponentialRampToValueAtTime(-80, endTime);
+                this.synth.oscillator.stop(this.props.context.currentTime + release);
                 this.synth = null;
-
                 this.synth = new Tone.Synth(options);
-
                 this.synth.connect(this.masterVolume);
+                this.synth.triggerAttack(this.frequencies[j])
+                this.synth.volume.value = gain;
 
-                this.synth.triggerAttack(this.frequencies[j]);
+                let index = freqToIndex(this.frequencies[j], this.props.resolutionMax, this.props.resolutionMin, this.props.height);
+                if (!this.goldIndices.includes(index)){
+                  this.goldIndices[this.state.currentVoice] = index;
+                }
+                this.goldIndices.splice(this.state.currentVoice - 1, 1);// Sets the Gold Line to the new Line
+                this.renderNoteLines();
+                this.freq = this.frequencies[j];
                 this.label(j, pos.x, pos.y+2);
 
               }
@@ -194,7 +260,7 @@ class NoteLines extends Component {
     e.preventDefault();
     this.synth.triggerRelease();
     this.renderNoteLines();
-    this.goldIndex = -1;
+    this.goldIndices = [];
     this.freq = -1;
     // this.touch = false;
   }
@@ -209,14 +275,13 @@ class NoteLines extends Component {
   label(name, x, y) {
     this.ctx.font = '20px Inconsolata';
     this.ctx.fillStyle = 'white';
-
     if(this.props.soundOn){
         this.ctx.fillText(name, x, y);
     }
   }
 
   renderNoteLines = () => {
-    let {height, width} = this.props;
+    let {height, width, resolutionMax, resolutionMin} = this.props;
     this.ctx.clearRect(0, 0, width, height);
     // this.ctx.fillStyle = 'white';
 
@@ -245,13 +310,13 @@ class NoteLines extends Component {
       let freq = s.scale[i];
 
       for (let j = 0; j < 15; j++) {
-        if (freq > this.props.resolutionMax) {
+        if (freq > resolutionMax) {
           break;
         } else {
           let name = s.scaleNames[i]+''+j;
-          let index = freqToIndex(freq, this.props.resolutionMax, this.props.resolutionMin, this.props.height);
+          let index = freqToIndex(freq, resolutionMax, resolutionMin, height);
           this.frequencies[name] = freq;
-          if(index === this.goldIndex){
+          if(this.goldIndices.includes(index) && this.props.soundOn){
             this.ctx.fillStyle = 'gold';
             this.ctx.fillRect(0, index, width, 1.5);
           } else {

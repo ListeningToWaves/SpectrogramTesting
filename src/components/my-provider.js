@@ -187,7 +187,7 @@ class MyProvider extends Component {
           if(isNaN(lowerValue) || lowerValue > this.state.resolutionMax || lowerValue > 20000) {
             lowerValue = this.state.resolutionMin;
           }
-          if(isNaN(upperValue) || upperValue < this.state.resolutionMin || upperValue < 0) {
+          if(isNaN(upperValue) || upperValue < this.state.resolutionMin || upperValue < 1) {
             upperValue = this.state.resolutionMax;
           }
           let newMax = Math.round(convertToLinear(upperValue, 1,100, 1, 20000));

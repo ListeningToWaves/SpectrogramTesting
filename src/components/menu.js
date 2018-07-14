@@ -84,7 +84,7 @@ class MyMenu extends Component {
   // Function that handles the push of the reset button
   // (resets all params except isStarted)
   handleReset = () => {
-    this.setState({value: 50, soundOn: false, mode: false});
+    this.setState({value: 50, soundOn: false, tuningMode: false});
     this.props.reset();
   }
 

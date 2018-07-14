@@ -53,14 +53,11 @@ class Axes extends Component {
       // Handle a logarithmic scale.
       // var logIndex = this.logScale(index, maxSample)+minSample;
       // Never show 0 Hz.
-
       let freq = Math.max(1, newFreqAlgorithm(percent, resolutionMax, resolutionMin));
-
       this.ctx.font = '18px Inconsolata';
       // Draw the value.
       this.ctx.textAlign = 'right';
       this.ctx.fillStyle = 'white';
-
       this.ctx.fillText(freq, x, y + this.state.yLabelOffset);
       // Draw the units.
       this.ctx.textAlign = 'left';

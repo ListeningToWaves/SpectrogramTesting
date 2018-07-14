@@ -38,6 +38,19 @@ const scaleOptions = [
     text: "Chromatic",
     value: 3
   },
+  {
+    text: "Major Blues",
+    value: 4
+  },
+  {
+    text: "Flemenco/Harmonic Major",
+    value: 5
+  },
+  {
+    text: "Hungarian Minor",
+    value: 6
+  }
+
 ];
 const keyOptions = [
   {
