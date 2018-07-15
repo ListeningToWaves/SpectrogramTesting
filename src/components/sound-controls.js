@@ -7,12 +7,110 @@ import "../styles/sound.css";
 import Slider from 'react-rangeslider';
 // To include the default styles
 import 'react-rangeslider/lib/index.css';
-import {timbreOptions, scaleOptions, keyOptions, accidentalOptions} from '../util/dropdownOptions.js';
+import {timbreOptions, scaleOptions, keyOptions, accidentalOptions} from '../util/dropdownOptions';
 import { Button, Icon } from 'semantic-ui-react';
+
+ import { getMousePos } from '../util/conversions'
 // Sound Controls Class that renders all of the sound controls and uses the
 // React Context API to hook up their functionality to the main state in app.js
 // Which passes the controls down to Spectrogram
 class SoundControls extends Component {
+  constructor(props) {
+    super();
+    this.onPointerDown = this.onPointerDown.bind(this);
+    this.onPointerUp = this.onPointerUp.bind(this);
+    this.onPointerMove = this.onPointerMove.bind(this);
+    this.onPointerOut = this.onPointerOut.bind(this);
+
+    this.state = {
+      pointerDown: false
+    };
+  }
+
+  componentDidMount() {
+    this.ctx = this.canvas.getContext('2d');
+    // this.drawADSR();
+  }
+
+onPointerDown(e){
+  this.setState({pointerDown: true});
+  // console.log("DOWN");
+}
+
+onPointerMove(e){
+  if(this.state.pointerDown){
+    let pos = getMousePos(this.canvas, e);
+    // console.log("MOVE");
+
+  }
+}
+onPointerUp(e){
+  this.setState({pointerDown: false});
+
+}
+onPointerOut(e){
+  this.setState({pointerDown: false});
+
+}
+
+  drawADSR(){
+    const attackShift = 0;
+    const decayShift = 0;
+    const sustainShift = 0;
+    const releaseShift = 0;
+
+    this.ctx.lineCap = 'butt';
+    this.ctx.lineWidth=10;
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = '#4da2c6';
+
+    // ADSR
+    this.ctx.moveTo(5,100);
+    this.ctx.lineTo(30+attackShift, 10);
+    this.ctx.lineTo(80+decayShift, 50-sustainShift);
+    this.ctx.lineTo(140, 50-sustainShift);
+    this.ctx.lineTo(190+releaseShift, 95);
+    this.ctx.stroke();
+    this.ctx.closePath();
+
+    // Points
+    this.ctx.lineWidth=1;
+    // Attack
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = '#F8635C';
+    this.ctx.fillStyle = '#F8635C';
+    this.ctx.arc(30+attackShift, 10, 8, 0, 2*Math.PI);
+    this.ctx.fill();
+    this.ctx.stroke();
+    this.ctx.closePath();
+
+    // Decay
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = '#6DEAA6';
+    this.ctx.fillStyle = '#6DEAA6';
+    this.ctx.arc(80+decayShift, 50-sustainShift, 8, 0, 2*Math.PI);
+    this.ctx.fill();
+    this.ctx.stroke();
+    this.ctx.closePath();
+
+    // Sustain
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = '#F2BB3C';
+    this.ctx.fillStyle = '#F2BB3C';
+    this.ctx.arc(140, 50-sustainShift, 8, 0, 2*Math.PI);
+    this.ctx.fill();
+    this.ctx.stroke();
+    this.ctx.closePath();
+
+    //Release
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = "#843DB7";
+    this.ctx.fillStyle = '#843DB7';
+    this.ctx.arc(190+releaseShift, 95, 8, 0, 2*Math.PI);
+    this.ctx.fill();
+    this.ctx.stroke();
+    this.ctx.closePath();
+  }
 
   render() {
     return (
@@ -111,6 +209,22 @@ class SoundControls extends Component {
                     </div>
                   </div>
                 </Menu.Item>*/}
+                {/* Experimental Canvas */}
+                {/*<Menu.Item className="vert">
+                <div className="menu-header">ADSR</div>
+                <div className="adsr-container">
+                <canvas
+                width={220}
+                height={110}
+                onPointerDown={this.onPointerDown}
+                onPointerMove={this.onPointerMove}
+                onPointerUp={this.onPointerUp}
+                onPointerOut={this.onPointerOut}
+                ref={(c) => {this.canvas = c}}
+                className="adsr-canvas">
+                </canvas>
+                </div>
+                </Menu.Item>*/}
 
                 {/** Scale Menu **/}
                 <Menu.Item className="vert">
@@ -172,10 +286,12 @@ class SoundControls extends Component {
                 {/*<Menu.Item className="vert">
                 <div className="menu-header effects-tab">Effects</div>
                 </Menu.Item>*/}
+
               </Menu>
               <Button icon onClick={this.props.closeMenu} className="close-menu">
               <Icon fitted name="angle double up" size="large"/>
               </Button>
+
             </Segment>
           </React.Fragment>
         )}

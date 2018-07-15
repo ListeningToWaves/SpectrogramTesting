@@ -64,3 +64,19 @@
   /* border: 2px solid red; */
   /* height: 100%; */
 }
+
+.adsr-canvas{
+  position: relative!important;
+  top:0%!important;
+  /* height: 100%; */
+  width: 275px;
+  /* height: px; */
+  /* border: 4px solid black; */
+
+}
+.adsr-container {
+  background-color: #282828;
+  border: 1px solid #282828;
+  border-radius: 0.5em;
+  margin-top: 2px;
+}
